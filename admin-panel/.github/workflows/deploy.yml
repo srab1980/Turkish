@@ -1,0 +1,130 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ main, production ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18'
+  WORKING_DIRECTORY: admin-panel
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm ci
+
+    - name: Run linting
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm run lint
+
+    - name: Run type checking
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm run type-check
+
+    - name: Build application
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+      VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+      VPS_PORT: ${{ secrets.VPS_PORT }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Validate required secrets
+      run: |
+        if [ -z "$VPS_HOST" ]; then
+          echo "Error: VPS_HOST secret is not set"
+          exit 1
+        fi
+        if [ -z "$VPS_USERNAME" ]; then
+          echo "Error: VPS_USERNAME secret is not set"
+          exit 1
+        fi
+        if [ -z "$VPS_SSH_KEY" ]; then
+          echo "Error: VPS_SSH_KEY secret is not set"
+          exit 1
+        fi
+        echo "All required secrets are configured"
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ env.VPS_HOST }}
+        username: ${{ env.VPS_USERNAME }}
+        key: ${{ env.VPS_SSH_KEY }}
+        port: ${{ env.VPS_PORT || '22' }}
+        script: |
+          cd /var/www/turkish-learning-admin
+          
+          # Backup current version
+          cp -r admin-panel admin-panel-backup-$(date +%Y%m%d-%H%M%S)
+          
+          # Pull latest changes
+          git fetch origin
+          git reset --hard origin/main
+          
+          # Install dependencies and build
+          cd admin-panel
+          npm ci --only=production
+          npm run build
+          
+          # Restart application
+          pm2 restart turkish-learning-admin
+          
+          # Health check
+          sleep 10
+          if curl -f http://localhost:3003/api/health; then
+            echo "✅ Deployment successful"
+            # Clean up old backups (keep last 5)
+            cd /var/www/turkish-learning-admin
+            ls -t admin-panel-backup-* | tail -n +6 | xargs rm -rf
+          else
+            echo "❌ Deployment failed, rolling back"
+            pm2 stop turkish-learning-admin
+            rm -rf admin-panel
+            mv admin-panel-backup-$(date +%Y%m%d)* admin-panel
+            pm2 start turkish-learning-admin
+            exit 1
+          fi
+
+  notify:
+    needs: [test, deploy]
+    runs-on: ubuntu-latest
+    if: always()
+
+    env:
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+    steps:
+    - name: Notify deployment status
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ env.SLACK_WEBHOOK }}
+      if: always() && env.SLACK_WEBHOOK != ''

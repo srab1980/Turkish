@@ -1,0 +1,11 @@
+Merhaba! Ben Türkçe öğreniyorum. Bu basit bir metin dosyasıdır. 
+
+Türkiye güzel bir ülkedir. İstanbul çok büyük bir şehirdir. Boğaz köprüsü çok ünlüdür.
+
+Bu metin A1 seviyesinde Türkçe içerir. Basit kelimeler ve cümleler kullanılmıştır.
+
+Hello! I am learning Turkish. This is a simple text file.
+
+Turkey is a beautiful country. Istanbul is a very big city. The Bosphorus bridge is very famous.
+
+This text contains A1 level Turkish. Simple words and sentences are used.

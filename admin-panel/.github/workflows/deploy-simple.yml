@@ -1,0 +1,197 @@
+name: Simple Deploy to VPS
+
+on:
+  push:
+    branches: 
+      - main
+      - production
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 18
+  APP_NAME: turkish-learning-admin
+  APP_PATH: /var/www/turkish-learning-admin
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: admin-panel/package-lock.json
+          
+      - name: Install dependencies
+        working-directory: admin-panel
+        run: npm ci
+        
+      - name: Run linting
+        working-directory: admin-panel
+        run: npm run lint
+        
+      - name: Run type checking
+        working-directory: admin-panel
+        run: npm run type-check
+        
+      - name: Build application
+        working-directory: admin-panel
+        run: npm run build
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: admin-panel/.next
+          retention-days: 1
+
+  deploy:
+    name: Deploy to VPS
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup deployment environment
+        run: |
+          echo "TIMESTAMP=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+          echo "BACKUP_DIR=${{ env.APP_PATH }}-backup-$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+          
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          APP_NAME: ${{ env.APP_NAME }}
+          APP_PATH: ${{ env.APP_PATH }}
+          BACKUP_DIR: ${{ env.BACKUP_DIR }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          envs: APP_NAME,APP_PATH,BACKUP_DIR
+          script: |
+            set -e
+            echo "🚀 Starting deployment..."
+            
+            # Create backup
+            if [ -d "$APP_PATH" ]; then
+              echo "📦 Creating backup..."
+              sudo cp -r $APP_PATH $BACKUP_DIR
+              echo "✅ Backup created at $BACKUP_DIR"
+            fi
+            
+            # Navigate to app directory
+            cd $APP_PATH
+            
+            # Pull latest changes
+            echo "📥 Pulling latest changes..."
+            git fetch origin
+            git reset --hard origin/main
+            
+            # Install dependencies and build
+            echo "📦 Installing dependencies..."
+            cd admin-panel
+            npm ci --only=production
+            
+            echo "🔨 Building application..."
+            npm run build
+            
+            # Restart application
+            echo "🔄 Restarting application..."
+            pm2 restart $APP_NAME || pm2 start ecosystem.config.js --env production --name $APP_NAME
+            
+            # Wait for application to start
+            echo "⏳ Waiting for application to start..."
+            sleep 10
+            
+            # Health check
+            echo "🏥 Running health check..."
+            if curl -f http://localhost:3003/api/health > /dev/null 2>&1; then
+              echo "✅ Deployment successful!"
+              echo "🧹 Cleaning up old backups..."
+              # Keep only last 3 backups
+              ls -t $APP_PATH-backup-* 2>/dev/null | tail -n +4 | xargs rm -rf 2>/dev/null || true
+            else
+              echo "❌ Health check failed! Rolling back..."
+              pm2 stop $APP_NAME
+              sudo rm -rf $APP_PATH/admin-panel
+              sudo mv $BACKUP_DIR/admin-panel $APP_PATH/
+              pm2 start $APP_NAME
+              exit 1
+            fi
+            
+            echo "🎉 Deployment completed successfully!"
+
+  notify:
+    name: Notify
+    needs: [build-and-test, deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Determine status
+        id: status
+        run: |
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "status=✅ Deployment Successful" >> $GITHUB_OUTPUT
+            echo "color=good" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.deploy.result }}" == "failure" ]; then
+            echo "status=❌ Deployment Failed" >> $GITHUB_OUTPUT
+            echo "color=danger" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.build-and-test.result }}" == "failure" ]; then
+            echo "status=🔨 Build Failed" >> $GITHUB_OUTPUT
+            echo "color=warning" >> $GITHUB_OUTPUT
+          else
+            echo "status=⏸️ Deployment Skipped" >> $GITHUB_OUTPUT
+            echo "color=#439FE0" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Send Slack notification
+        if: env.SLACK_WEBHOOK_URL != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "text": "${{ steps.status.outputs.status }}",
+              "attachments": [
+                {
+                  "color": "${{ steps.status.outputs.color }}",
+                  "fields": [
+                    {
+                      "title": "Repository",
+                      "value": "${{ github.repository }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Branch",
+                      "value": "${{ github.ref_name }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Commit",
+                      "value": "${{ github.sha }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Author",
+                      "value": "${{ github.actor }}",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}

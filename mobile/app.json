@@ -1,0 +1,191 @@
+{
+  "expo": {
+    "name": "Turkish Learning App",
+    "slug": "turkish-learning-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1e40af"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "description": "Learn Turkish with AI-powered lessons, interactive exercises, and personalized learning paths. Master Turkish language skills through immersive content based on Istanbul Book Curriculum.",
+    "keywords": [
+      "turkish",
+      "language learning",
+      "education",
+      "ai",
+      "istanbul book",
+      "pronunciation",
+      "vocabulary",
+      "grammar"
+    ],
+    "primaryColor": "#3b82f6",
+    "scheme": "turkishlearning",
+    "privacy": "public",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.turkishlearning.app",
+      "buildNumber": "1",
+      "icon": "./assets/ios-icon.png",
+      "splash": {
+        "image": "./assets/ios-splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#1e40af",
+        "tabletImage": "./assets/ios-splash-tablet.png"
+      },
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app uses the microphone to record your pronunciation for Turkish language learning exercises.",
+        "NSSpeechRecognitionUsageDescription": "This app uses speech recognition to evaluate your pronunciation and provide feedback.",
+        "NSCameraUsageDescription": "This app uses the camera to scan text for translation and learning purposes.",
+        "NSPhotoLibraryUsageDescription": "This app accesses your photo library to let you select images for translation and learning.",
+        "NSLocationWhenInUseUsageDescription": "This app uses location to provide location-based Turkish learning content.",
+        "NSUserNotificationsUsageDescription": "This app sends notifications to remind you about your Turkish learning schedule and progress.",
+        "NSBackgroundAppRefreshUsageDescription": "This app refreshes content in the background to keep your learning materials up to date.",
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleLocalizations": [
+          "en",
+          "tr"
+        ],
+        "UIBackgroundModes": [
+          "background-fetch",
+          "background-processing",
+          "audio"
+        ],
+        "UIRequiredDeviceCapabilities": [
+          "arm64"
+        ],
+        "UISupportedInterfaceOrientations": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown"
+        ],
+        "UISupportedInterfaceOrientations~ipad": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown",
+          "UIInterfaceOrientationLandscapeLeft",
+          "UIInterfaceOrientationLandscapeRight"
+        ]
+      },
+      "associatedDomains": [
+        "applinks:turkishlearning.app"
+      ],
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1e40af"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.turkishlearning.app",
+      "versionCode": 1,
+      "compileSdkVersion": 34,
+      "targetSdkVersion": 34,
+      "minSdkVersion": 21,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.WAKE_LOCK",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.BACKGROUND_TASK"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "turkishlearning.app"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
+      "splash": {
+        "image": "./assets/android-splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#1e40af",
+        "mdpi": "./assets/android-splash-mdpi.png",
+        "hdpi": "./assets/android-splash-hdpi.png",
+        "xhdpi": "./assets/android-splash-xhdpi.png",
+        "xxhdpi": "./assets/android-splash-xxhdpi.png",
+        "xxxhdpi": "./assets/android-splash-xxxhdpi.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-localization",
+      "expo-notifications",
+      "expo-background-fetch",
+      "expo-task-manager",
+      "expo-av",
+      "expo-speech",
+      "expo-camera",
+      "expo-image-picker",
+      "expo-location",
+      "expo-secure-store",
+      "expo-file-system",
+      "expo-sqlite",
+      "expo-network",
+      "expo-device",
+      "expo-constants",
+      "expo-linking",
+      "expo-font",
+      "expo-splash-screen",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "13.0"
+          },
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "minSdkVersion": 21
+          }
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#1e40af",
+          "sounds": [
+            "./assets/notification-sound.wav"
+          ]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "turkish-learning-app"
+      }
+    }
+  }
+}

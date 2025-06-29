@@ -1,0 +1,111 @@
+{
+  "cli": {
+    "version": ">= 5.9.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium",
+        "simulator": true
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "production": {
+      "ios": {
+        "resourceClass": "m-medium",
+        "autoIncrement": "buildNumber"
+      },
+      "android": {
+        "autoIncrement": "versionCode",
+        "gradleCommand": ":app:bundleRelease"
+      }
+    },
+    "production-ios": {
+      "extends": "production",
+      "ios": {
+        "resourceClass": "m-medium",
+        "autoIncrement": "buildNumber",
+        "bundleIdentifier": "com.turkishlearning.app",
+        "buildConfiguration": "Release"
+      }
+    },
+    "production-android": {
+      "extends": "production",
+      "android": {
+        "autoIncrement": "versionCode",
+        "gradleCommand": ":app:bundleRelease",
+        "buildType": "app-bundle"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "your-apple-id@example.com",
+        "ascAppId": "your-app-store-connect-app-id",
+        "appleTeamId": "your-apple-team-id",
+        "sku": "turkish-learning-app-ios",
+        "language": "en-US",
+        "companyName": "Turkish Learning Company",
+        "appName": "Turkish Learning App",
+        "copyright": "© 2024 Turkish Learning Company. All rights reserved.",
+        "primaryCategory": "EDUCATION",
+        "secondaryCategory": "REFERENCE",
+        "primarySubcategoryOne": "EDUCATION_LANGUAGE",
+        "primarySubcategoryTwo": "EDUCATION_REFERENCE",
+        "contentRights": {
+          "containsThirdPartyContent": false,
+          "hasRights": true
+        },
+        "appReviewInformation": {
+          "contactEmail": "support@turkishlearning.app",
+          "contactPhone": "+1-555-123-4567",
+          "demoAccountName": "demo@turkishlearning.app",
+          "demoAccountPassword": "DemoPassword123!",
+          "notes": "This is a Turkish language learning app with AI-powered features. Demo account provides access to all features for review purposes."
+        },
+        "appStoreInformation": {
+          "keywords": "turkish, language learning, education, ai, pronunciation, vocabulary, grammar, istanbul book",
+          "supportUrl": "https://turkishlearning.app/support",
+          "marketingUrl": "https://turkishlearning.app",
+          "privacyPolicyUrl": "https://turkishlearning.app/privacy",
+          "categoryId": "6017"
+        }
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "production",
+        "releaseStatus": "completed",
+        "applicationId": "com.turkishlearning.app",
+        "packageName": "com.turkishlearning.app",
+        "changesNotSentForReview": false
+      }
+    },
+    "preview": {
+      "ios": {
+        "appleId": "your-apple-id@example.com",
+        "ascAppId": "your-app-store-connect-app-id",
+        "appleTeamId": "your-apple-team-id"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
+      }
+    }
+  }
+}

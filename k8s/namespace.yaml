@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: turkish-learning
+  labels:
+    name: turkish-learning
+    environment: production
