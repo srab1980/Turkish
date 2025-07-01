@@ -1,132 +1,41 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MainLayout } from "@/components/layout/main-layout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Search, Filter, BookOpen, Clock, Users, Star, Play, CheckCircle } from "lucide-react"
+import { Search, Filter, BookOpen, Clock, Users, Star, Play, CheckCircle, Loader2 } from "lucide-react"
+import { curriculumService, type Course, type Unit, type Lesson, type Exercise } from "@/lib/curriculum-service"
+import { apiService } from "@/lib/api-service"
+import { useToast } from "@/components/ui/toast"
 
-// Mock courses data
-const mockCourses = [
-  {
-    id: "beginner-turkish",
-    title: "Complete Turkish for Beginners",
-    description: "Master the fundamentals of Turkish language with our comprehensive beginner course based on Istanbul Book A1-A2 curriculum",
-    instructor: "Dr. Ayşe Demir",
-    duration: "12 weeks",
-    totalLessons: 48,
-    completedLessons: 12,
-    difficulty: "A1-A2" as const,
-    rating: 4.9,
-    enrolledCount: 2450,
-    price: 99,
-    category: "Complete Course",
-    topics: ["Grammar", "Vocabulary", "Speaking", "Listening", "Reading", "Writing"],
-    thumbnail: "/images/courses/beginner-turkish.jpg",
-    isEnrolled: true,
-    progress: 25,
-    nextLesson: "Lesson 13: Past Tense"
-  },
-  {
-    id: "business-turkish",
-    title: "Turkish for Business",
-    description: "Professional Turkish language skills for business communication and workplace scenarios",
-    instructor: "Prof. Mehmet Özkan",
-    duration: "8 weeks",
-    totalLessons: 32,
-    completedLessons: 0,
-    difficulty: "B1-B2" as const,
-    rating: 4.7,
-    enrolledCount: 890,
-    price: 149,
-    category: "Specialized",
-    topics: ["Business Vocabulary", "Formal Communication", "Presentations", "Negotiations"],
-    thumbnail: "/images/courses/business-turkish.jpg",
-    isEnrolled: false,
-    progress: 0
-  },
-  {
-    id: "turkish-culture",
-    title: "Turkish Culture & Language",
-    description: "Explore Turkish culture while learning the language through authentic materials and cultural contexts",
-    instructor: "Zeynep Kaya",
-    duration: "10 weeks",
-    totalLessons: 40,
-    completedLessons: 40,
-    difficulty: "A2-B1" as const,
-    rating: 4.8,
-    enrolledCount: 1560,
-    price: 79,
-    category: "Cultural",
-    topics: ["Culture", "History", "Traditions", "Daily Life", "Food", "Travel"],
-    thumbnail: "/images/courses/turkish-culture.jpg",
-    isEnrolled: true,
-    progress: 100
-  },
-  {
-    id: "conversation-practice",
-    title: "Turkish Conversation Mastery",
-    description: "Intensive speaking practice with native speakers and interactive conversation scenarios",
-    instructor: "Emre Yılmaz",
-    duration: "6 weeks",
-    totalLessons: 24,
-    completedLessons: 8,
-    difficulty: "B1-C1" as const,
-    rating: 4.6,
-    enrolledCount: 720,
-    price: 129,
-    category: "Speaking",
-    topics: ["Conversation", "Pronunciation", "Fluency", "Confidence"],
-    thumbnail: "/images/courses/conversation.jpg",
-    isEnrolled: true,
-    progress: 33
-  },
-  {
-    id: "grammar-intensive",
-    title: "Turkish Grammar Intensive",
-    description: "Deep dive into Turkish grammar structures with comprehensive exercises and explanations",
-    instructor: "Dr. Fatma Şen",
-    duration: "14 weeks",
-    totalLessons: 56,
-    completedLessons: 0,
-    difficulty: "A1-C1" as const,
-    rating: 4.5,
-    enrolledCount: 1200,
-    price: 119,
-    category: "Grammar",
-    topics: ["Grammar Rules", "Sentence Structure", "Verb Conjugation", "Cases"],
-    thumbnail: "/images/courses/grammar.jpg",
-    isEnrolled: false,
-    progress: 0
-  },
-  {
-    id: "exam-preparation",
-    title: "Turkish Proficiency Exam Prep",
-    description: "Comprehensive preparation for Turkish proficiency exams with practice tests and strategies",
-    instructor: "Ahmet Kılıç",
-    duration: "16 weeks",
-    totalLessons: 64,
-    completedLessons: 0,
-    difficulty: "B2-C2" as const,
-    rating: 4.4,
-    enrolledCount: 650,
-    price: 199,
-    category: "Exam Prep",
-    topics: ["Test Strategies", "Practice Tests", "Time Management", "All Skills"],
-    thumbnail: "/images/courses/exam-prep.jpg",
-    isEnrolled: false,
-    progress: 0
-  }
-]
+// Extended course interface for display
+interface DisplayCourse extends Course {
+  instructor: string;
+  duration: string;
+  totalLessons: number;
+  completedLessons: number;
+  difficulty: string;
+  rating: number;
+  enrolledCount: number;
+  price: number;
+  category: string;
+  topics: string[];
+  thumbnail: string;
+  isEnrolled: boolean;
+  progress: number;
+  nextLesson?: string;
+}
 
 const categories = ["All", "Complete Course", "Specialized", "Cultural", "Speaking", "Grammar", "Exam Prep"]
 const difficulties = ["All", "A1", "A2", "B1", "B2", "C1", "C2"]
 const priceRanges = ["All", "Free", "$1-50", "$51-100", "$101-150", "$151+"]
 
 export default function CoursesPage() {
+  const { showToast, ToastContainer } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [selectedDifficulty, setSelectedDifficulty] = useState("All")
@@ -134,16 +43,120 @@ export default function CoursesPage() {
   const [sortBy, setSortBy] = useState("popularity") // popularity, rating, price, newest
   const [showEnrolledOnly, setShowEnrolledOnly] = useState(false)
 
-  const handleEnrollCourse = (courseId: string) => {
-    console.log("Enrolling in course:", courseId)
-    // Handle course enrollment
+  // Real curriculum data state
+  const [courses, setCourses] = useState<DisplayCourse[]>([])
+  const [units, setUnits] = useState<Unit[]>([])
+  const [lessons, setLessons] = useState<Lesson[]>([])
+  const [exercises, setExercises] = useState<Exercise[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [enrollingCourseId, setEnrollingCourseId] = useState<string | null>(null)
+
+  // Load curriculum data on component mount
+  useEffect(() => {
+    loadCurriculumData()
+  }, [])
+
+  const loadCurriculumData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const curriculumData = await curriculumService.getCurriculumData()
+
+      // Transform curriculum data to display format
+      const displayCourses: DisplayCourse[] = curriculumData.courses.map(course => {
+        const courseUnits = curriculumService.getUnitsByCourse(curriculumData.units, course.id)
+        const totalLessons = courseUnits.reduce((total, unit) => {
+          return total + curriculumService.getLessonsByUnit(curriculumData.lessons, unit.id).length
+        }, 0)
+
+        return {
+          ...course,
+          instructor: "Turkish Language Institute",
+          duration: `${course.estimatedHours} hours`,
+          totalLessons,
+          completedLessons: 0, // This would come from user progress
+          difficulty: course.level,
+          rating: 4.8,
+          enrolledCount: 1250,
+          price: course.level === 'A1' ? 99 : 149,
+          category: "Complete Course",
+          topics: ["Grammar", "Vocabulary", "Speaking", "Listening", "Reading", "Writing"],
+          thumbnail: "/images/courses/turkish-a1.jpg",
+          isEnrolled: false, // This would come from user enrollment status
+          progress: 0, // This would come from user progress
+          nextLesson: undefined
+        }
+      })
+
+      setCourses(displayCourses)
+      setUnits(curriculumData.units)
+      setLessons(curriculumData.lessons)
+      setExercises(curriculumData.exercises)
+    } catch (err) {
+      console.error('Error loading curriculum data:', err)
+      setError('Failed to load courses. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEnrollCourse = async (courseId: string) => {
+    try {
+      setEnrollingCourseId(courseId)
+      console.log("Enrolling in course:", courseId)
+
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Update the course state to show as enrolled
+      setCourses(prevCourses =>
+        prevCourses.map(course =>
+          course.id === courseId
+            ? {
+                ...course,
+                isEnrolled: true,
+                progress: 0,
+                nextLesson: "Basic Greetings" // First lesson
+              }
+            : course
+        )
+      )
+
+      // In a real app, you would make an API call here:
+      // await apiService.enrollInCourse(courseId)
+
+      // Show success message with toast notification
+      showToast({
+        type: 'success',
+        title: 'Successfully Enrolled!',
+        description: 'You can now start learning. Click "Continue Learning" to begin.',
+        duration: 5000
+      })
+
+      // Optionally navigate to the course content
+      // window.location.href = `/course/${courseId}`
+
+    } catch (error) {
+      console.error('Error enrolling in course:', error)
+      showToast({
+        type: 'error',
+        title: 'Enrollment Failed',
+        description: 'Failed to enroll in course. Please try again.',
+        duration: 5000
+      })
+    } finally {
+      setEnrollingCourseId(null)
+    }
   }
 
   const handleContinueCourse = (courseId: string) => {
+    // Navigate to the course content page with real curriculum data
     window.location.href = `/course/${courseId}`
   }
 
-  const filteredCourses = mockCourses
+  const filteredCourses = courses
     .filter(course => {
       const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -182,14 +195,55 @@ export default function CoursesPage() {
     })
 
   const stats = {
-    totalCourses: mockCourses.length,
-    enrolledCourses: mockCourses.filter(c => c.isEnrolled).length,
-    completedCourses: mockCourses.filter(c => c.progress === 100).length,
-    averageProgress: Math.round(mockCourses.filter(c => c.isEnrolled).reduce((sum, c) => sum + c.progress, 0) / mockCourses.filter(c => c.isEnrolled).length)
+    totalCourses: courses.length,
+    enrolledCourses: courses.filter(c => c.isEnrolled).length,
+    completedCourses: courses.filter(c => c.progress === 100).length,
+    averageProgress: courses.filter(c => c.isEnrolled).length > 0
+      ? Math.round(courses.filter(c => c.isEnrolled).reduce((sum, c) => sum + c.progress, 0) / courses.filter(c => c.isEnrolled).length)
+      : 0
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+            <p className="text-muted-foreground">Loading courses...</p>
+          </div>
+        </div>
+      </MainLayout>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Card className="w-full max-w-md">
+            <CardContent className="pt-6">
+              <div className="text-center space-y-4">
+                <div className="text-red-500">
+                  <BookOpen className="h-12 w-12 mx-auto mb-4" />
+                </div>
+                <h3 className="text-lg font-semibold">Error Loading Courses</h3>
+                <p className="text-muted-foreground">{error}</p>
+                <Button onClick={loadCurriculumData}>
+                  Try Again
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </MainLayout>
+    )
   }
 
   return (
     <MainLayout>
+      <ToastContainer />
       <div className="space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -471,12 +525,20 @@ export default function CoursesPage() {
                         {course.progress === 100 ? "Review Course" : "Continue Learning"}
                       </Button>
                     ) : (
-                      <Button 
-                        onClick={() => handleEnrollCourse(course.id)} 
-                        variant="outline" 
+                      <Button
+                        onClick={() => handleEnrollCourse(course.id)}
+                        variant="outline"
                         className="w-full"
+                        disabled={enrollingCourseId === course.id}
                       >
-                        Enroll Now
+                        {enrollingCourseId === course.id ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Enrolling...
+                          </>
+                        ) : (
+                          'Enroll Now'
+                        )}
                       </Button>
                     )}
                   </CardContent>

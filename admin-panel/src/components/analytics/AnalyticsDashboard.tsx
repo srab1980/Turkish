@@ -13,8 +13,6 @@ import {
   ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline';
 import {
-  LineChart,
-  Line,
   AreaChart,
   Area,
   BarChart,
@@ -114,55 +112,55 @@ export default function AnalyticsDashboard() {
   });
 
   const analytics = analyticsData?.data;
-  const userMetrics = userMetricsData?.data;
+  
 
   const metrics = useMemo(() => [
     {
       title: 'Total Users',
       value: analytics?.totalUsers || 0,
-      change: analytics?.userGrowth || 0,
-      changeType: (analytics?.userGrowth || 0) >= 0 ? 'increase' as const : 'decrease' as const,
+      change: analytics?.metrics?.userGrowth || 0,
+      changeType: (analytics?.metrics?.userGrowth || 0) >= 0 ? 'increase' as const : 'decrease' as const,
       icon: UserGroupIcon,
       color: 'bg-primary-500',
     },
     {
       title: 'Active Learners',
       value: analytics?.activeUsers || 0,
-      change: analytics?.activeUserGrowth || 0,
-      changeType: (analytics?.activeUserGrowth || 0) >= 0 ? 'increase' as const : 'decrease' as const,
+      change: analytics?.metrics?.activeUserGrowth || 0,
+      changeType: (analytics?.metrics?.activeUserGrowth || 0) >= 0 ? 'increase' as const : 'decrease' as const,
       icon: UserGroupIcon,
       color: 'bg-success-500',
     },
     {
       title: 'Total Courses',
       value: analytics?.totalCourses || 0,
-      change: analytics?.courseGrowth || 0,
-      changeType: (analytics?.courseGrowth || 0) >= 0 ? 'increase' as const : 'decrease' as const,
+      change: analytics?.metrics?.courseGrowth || 0,
+      changeType: (analytics?.metrics?.courseGrowth || 0) >= 0 ? 'increase' as const : 'decrease' as const,
       icon: BookOpenIcon,
       color: 'bg-warning-500',
     },
     {
       title: 'Completion Rate',
-      value: analytics?.completionRate ? `${analytics.completionRate}%` : '0%',
-      change: analytics?.completionRateChange || 0,
-      changeType: (analytics?.completionRateChange || 0) >= 0 ? 'increase' as const : 'decrease' as const,
+      value: analytics?.metrics?.completionRate ? `${analytics?.completionRate}%` : '0%',
+      change: analytics?.metrics?.completionRateChange || 0,
+      changeType: (analytics?.metrics?.completionRateChange || 0) >= 0 ? 'increase' as const : 'decrease' as const,
       icon: ChartBarIcon,
       color: 'bg-error-500',
     },
   ], [analytics]);
 
   const chartData = useMemo(() => {
-    if (!analytics?.chartData) return [];
-    return analytics.chartData.map((item: any) => ({
+    if (!analytics?.metrics?.chartData) return [];
+    return analytics?.chartData.map((item: any) => ({
       ...item,
       date: new Date(item.date).toLocaleDateString(),
     }));
   }, [analytics]);
 
   const pieData = useMemo(() => [
-    { name: 'Beginner (A1-A2)', value: analytics?.levelDistribution?.beginner || 0, color: '#3B82F6' },
-    { name: 'Intermediate (B1-B2)', value: analytics?.levelDistribution?.intermediate || 0, color: '#10B981' },
-    { name: 'Advanced (C1-C2)', value: analytics?.levelDistribution?.advanced || 0, color: '#F59E0B' },
+    { name: 'Beginner (A1-A2)', value: analytics?.metrics?.levelDistribution?.beginner || 0, color: '#3B82F6' },
+    { name: 'Intermediate (B1-B2)', value: analytics?.metrics?.levelDistribution?.intermediate || 0, color: '#10B981' },
+    { name: 'Advanced (C1-C2)', value: analytics?.metrics?.levelDistribution?.advanced || 0, color: '#F59E0B' },
   ], [analytics]);
 
   const handleExportData = async () => {

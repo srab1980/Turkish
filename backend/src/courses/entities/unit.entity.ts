@@ -19,17 +19,29 @@ export class Unit {
   @Column({ name: 'course_id' })
   courseId: string;
 
-  @Column({ length: 200 })
+  @Column({ length: 255 })
   title: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ name: 'order_index' })
-  order: number;
+  @Column({ name: 'unit_number', nullable: true })
+  unitNumber: number;
 
-  @Column({ name: 'is_locked', default: false })
-  isLocked: boolean;
+  @Column({ type: 'text', array: true, nullable: true })
+  learningObjectives: string[];
+
+  @Column({ type: 'text', nullable: true })
+  culturalNotes: string;
+
+  @Column({ name: 'estimated_hours', default: 0 })
+  estimatedHours: number;
+
+  @Column({ name: 'order_index', nullable: true })
+  orderIndex: number;
+
+  @Column({ name: 'is_published', default: false })
+  isPublished: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

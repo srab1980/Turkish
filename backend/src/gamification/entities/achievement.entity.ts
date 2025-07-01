@@ -40,7 +40,7 @@ export class Achievement {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'enum', enum: AchievementType })
+  @Column({ type: 'enum', enum: AchievementType, nullable: true })
   type: AchievementType;
 
   @Column({ type: 'enum', enum: AchievementRarity, default: AchievementRarity.COMMON })

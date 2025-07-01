@@ -136,23 +136,13 @@ export interface GrammarExample {
 export interface Exercise {
   id: string;
   lessonId: string;
-  type: ExerciseType;
+  type: string;
   question: string;
   options?: string[];
   correctAnswer: string | string[];
   explanation?: string;
   order: number;
   xpReward: number;
-}
-
-export enum ExerciseType {
-  MULTIPLE_CHOICE = 'multiple_choice',
-  FILL_BLANK = 'fill_blank',
-  MATCHING = 'matching',
-  ORDERING = 'ordering',
-  SPEAKING = 'speaking',
-  LISTENING = 'listening',
-  TRANSLATION = 'translation',
 }
 
 // Progress Tracking

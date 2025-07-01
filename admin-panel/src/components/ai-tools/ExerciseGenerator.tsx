@@ -7,18 +7,16 @@ import {
   SparklesIcon,
   PuzzlePieceIcon,
   CheckIcon,
-  XMarkIcon,
   ArrowPathIcon,
-  PlusIcon,
-} from '@heroicons/react/24/outline';
+  } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
-import { CEFRLevel, ExerciseType } from '@/types';
+import { CEFRLevel } from '@/types';
 import apiClient from '@/lib/api';
 import { clsx } from 'clsx';
 
 interface GenerationOptions {
   lessonId: string;
-  exerciseTypes: ExerciseType[];
+  exerciseTypes: string[];
   count: number;
   difficulty: CEFRLevel;
   focusAreas: string[];
@@ -28,7 +26,7 @@ interface GenerationOptions {
 
 interface GeneratedExercise {
   id: string;
-  type: ExerciseType;
+  type: string;
   title: string;
   question: string;
   options?: string[];
@@ -46,10 +44,10 @@ interface GeneratedExercise {
 
 export default function ExerciseGenerator() {
   const queryClient = useQueryClient();
-  const [selectedLesson, setSelectedLesson] = useState<string>('');
+  
   const [generationOptions, setGenerationOptions] = useState<GenerationOptions>({
     lessonId: '',
-    exerciseTypes: [ExerciseType.MULTIPLE_CHOICE],
+    exerciseTypes: ['MULTIPLE_CHOICE'],
     count: 5,
     difficulty: CEFRLevel.A1,
     focusAreas: [],
@@ -91,12 +89,12 @@ export default function ExerciseGenerator() {
   const lessons = lessonsResponse?.data || [];
 
   const exerciseTypeOptions = [
-    { value: ExerciseType.MULTIPLE_CHOICE, label: 'Multiple Choice' },
-    { value: ExerciseType.FILL_IN_BLANK, label: 'Fill in the Blank' },
-    { value: ExerciseType.DRAG_DROP, label: 'Drag & Drop' },
-    { value: ExerciseType.VOCABULARY_MATCHING, label: 'Vocabulary Matching' },
-    { value: ExerciseType.GRAMMAR_CORRECTION, label: 'Grammar Correction' },
-    { value: ExerciseType.READING_COMPREHENSION, label: 'Reading Comprehension' },
+    { value: 'MULTIPLE_CHOICE', label: 'Multiple Choice' },
+    { value: 'FILL_IN_BLANK', label: 'Fill in the Blank' },
+    { value: 'DRAG_DROP', label: 'Drag & Drop' },
+    { value: 'VOCABULARY_MATCHING', label: 'Vocabulary Matching' },
+    { value: 'GRAMMAR_CORRECTION', label: 'Grammar Correction' },
+    { value: 'READING_COMPREHENSION', label: 'Reading Comprehension' },
   ];
 
   const focusAreaOptions = [
@@ -149,7 +147,7 @@ export default function ExerciseGenerator() {
     setSelectedExercises([]);
   };
 
-  const getExerciseTypeIcon = (type: ExerciseType) => {
+  const getExerciseTypeIcon = (type: string) => {
     return <PuzzlePieceIcon className="h-5 w-5" />;
   };
 

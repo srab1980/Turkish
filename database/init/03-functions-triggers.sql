@@ -85,11 +85,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger to update streak when user completes a lesson
-CREATE TRIGGER update_streak_on_lesson_complete
-    AFTER INSERT OR UPDATE ON user_progress
+-- Trigger to update streak when user completes a lesson (INSERT)
+CREATE TRIGGER update_streak_on_lesson_complete_insert
+    AFTER INSERT ON user_progress
     FOR EACH ROW
-    WHEN (NEW.is_completed = true AND (OLD IS NULL OR OLD.is_completed = false))
+    WHEN (NEW.is_completed = true)
+    EXECUTE FUNCTION update_user_streak();
+
+-- Trigger to update streak when user completes a lesson (UPDATE)
+CREATE TRIGGER update_streak_on_lesson_complete_update
+    AFTER UPDATE ON user_progress
+    FOR EACH ROW
+    WHEN (NEW.is_completed = true AND OLD.is_completed = false)
     EXECUTE FUNCTION update_user_streak();
 
 -- Function to update course lesson count

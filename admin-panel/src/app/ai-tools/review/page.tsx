@@ -122,16 +122,13 @@ export default function ContentReviewPage() {
   };
 
   const handleApprove = (id: string) => {
-    console.log('Approving item:', id);
-  };
+      };
 
   const handleReject = (id: string) => {
-    console.log('Rejecting item:', id);
-  };
+      };
 
   const handleEdit = (id: string) => {
-    console.log('Editing item:', id);
-  };
+      };
 
   return (
     <Layout>

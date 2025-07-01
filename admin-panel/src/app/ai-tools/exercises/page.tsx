@@ -6,10 +6,8 @@ import {
   SparklesIcon, 
   PuzzlePieceIcon, 
   CogIcon,
-  PlayIcon,
   CheckIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline';
+  } from '@heroicons/react/24/outline';
 
 export default function ExerciseGeneratorPage() {
   const [selectedType, setSelectedType] = useState('multiple_choice');

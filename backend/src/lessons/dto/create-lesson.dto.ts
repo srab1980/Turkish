@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsEnum, IsNumber, IsArray, IsBoolean, IsObject, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { LessonType, ExerciseType, CEFRLevel } from '../../shared/types';
+import { LessonType, CEFRLevel } from '../../shared/types';
 
 export class CreateLessonDto {
   @ApiProperty()
@@ -145,9 +145,9 @@ export class CreateExerciseDto {
   @IsString()
   lessonId: string;
 
-  @ApiProperty({ enum: ExerciseType })
-  @IsEnum(ExerciseType)
-  type: ExerciseType;
+  @ApiProperty()
+  @IsString()
+  type: string;
 
   @ApiProperty()
   @IsObject()
@@ -193,10 +193,10 @@ export class UpdateExerciseDto {
   @MaxLength(1000)
   description?: string;
 
-  @ApiProperty({ enum: ExerciseType, required: false })
+  @ApiProperty({ required: false })
   @IsOptional()
-  @IsEnum(ExerciseType)
-  type?: ExerciseType;
+  @IsString()
+  type?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

@@ -49,7 +49,7 @@ jobs:
       VPS_HOST: ${{ secrets.VPS_HOST }}
       VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
       VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-      VPS_PORT: ${{ secrets.VPS_PORT }}
+      VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
 
     steps:
     - name: Checkout code
@@ -117,14 +117,44 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
 
-    env:
-      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-
     steps:
     - name: Notify deployment status
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        channel: '#deployments'
-        webhook_url: ${{ env.SLACK_WEBHOOK }}
-      if: always() && env.SLACK_WEBHOOK != ''
+      if: always()
+      run: |
+        if [ -n "$SLACK_WEBHOOK_URL" ]; then
+          echo "Sending deployment notification to Slack..."
+
+          # Determine status emoji
+          if [ "${{ needs.deploy.result }}" = "success" ]; then
+            STATUS_EMOJI="✅"
+            STATUS_COLOR="good"
+          elif [ "${{ needs.deploy.result }}" = "failure" ]; then
+            STATUS_EMOJI="❌"
+            STATUS_COLOR="danger"
+          else
+            STATUS_EMOJI="⚠️"
+            STATUS_COLOR="warning"
+          fi
+
+          # Send notification
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{
+              \"text\": \"${STATUS_EMOJI} Admin Panel Deployment Status\",
+              \"attachments\": [{
+                \"color\": \"${STATUS_COLOR}\",
+                \"fields\": [
+                  {\"title\": \"Status\", \"value\": \"${{ needs.deploy.result }}\", \"short\": true},
+                  {\"title\": \"Repository\", \"value\": \"${{ github.repository }}\", \"short\": true},
+                  {\"title\": \"Branch\", \"value\": \"${{ github.ref_name }}\", \"short\": true},
+                  {\"title\": \"Commit\", \"value\": \"${{ github.sha }}\", \"short\": true},
+                  {\"title\": \"Author\", \"value\": \"${{ github.actor }}\", \"short\": true},
+                  {\"title\": \"Workflow\", \"value\": \"${{ github.workflow }}\", \"short\": true}
+                ]
+              }]
+            }" \
+            "$SLACK_WEBHOOK_URL"
+        else
+          echo "Slack webhook not configured, skipping notification"
+        fi
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

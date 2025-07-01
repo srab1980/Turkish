@@ -259,9 +259,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [docker, e2e-tests]
     if: github.ref == 'refs/heads/develop'
-    environment:
-      name: staging
-      url: https://staging.turkishlearning.com
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -284,9 +281,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [docker, performance-tests]
     if: github.event_name == 'release'
-    environment:
-      name: production
-      url: https://turkishlearning.com
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -304,12 +298,18 @@ jobs:
           # Add smoke test commands here
 
       - name: Notify deployment
-        uses: 8398a7/action-slack@v3
         if: always()
-        with:
-          status: ${{ job.status }}
-          channel: '#deployments'
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            echo "Sending Slack notification..."
+            curl -X POST -H 'Content-type: application/json' \
+              --data "{\"text\":\"Admin Panel Deployment Status: ${{ job.status }}\\nRepository: ${{ github.repository }}\\nBranch: ${{ github.ref_name }}\\nCommit: ${{ github.sha }}\\nAuthor: ${{ github.actor }}\"}" \
+              "$SLACK_WEBHOOK_URL"
+          else
+            echo "Slack webhook not configured, skipping notification"
+          fi
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   # Cleanup
   cleanup:

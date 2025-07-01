@@ -28,13 +28,20 @@ export enum LessonType {
   CULTURE = 'culture',
 }
 
-export enum ExerciseType {
-  MULTIPLE_CHOICE = 'multiple_choice',
-  FILL_IN_BLANK = 'fill_in_blank',
-  MATCHING = 'matching',
-  TRANSLATION = 'translation',
-  PRONUNCIATION = 'pronunciation',
-  LISTENING_COMPREHENSION = 'listening_comprehension',
+export enum SubLessonType {
+  PREPARATION = 'preparation',     // HAZIRLIK ÇALIŞMALARI
+  READING = 'reading',            // OKUMA
+  GRAMMAR = 'grammar',            // DİLBİLGİSİ
+  LISTENING = 'listening',        // DİNLEME
+  SPEAKING = 'speaking',          // KONUŞMA
+  WRITING = 'writing',            // YAZMA
+  VOCABULARY = 'vocabulary',      // KELİME LİSTESİ
+  CULTURE = 'culture',           // KÜLTÜRDEN KÜLTÜRE
+  INTERACTIVE = 'interactive',    // YA SİZ (What About You)
+  CLASSROOM = 'classroom',        // SINIF DİLİ
+  FUN_LEARNING = 'fun_learning',  // EĞLENELİM ÖĞRENELİM
+  REVIEW = 'review',             // NELER ÖĞRENDİK
+  ASSESSMENT = 'assessment'       // ÖZ DEĞERLENDİRME
 }
 
 export enum AchievementType {
@@ -121,11 +128,34 @@ export interface Lesson {
   description: string;
   type: LessonType;
   content: LessonContent;
+  subLessons: SubLesson[];
   exercises: Exercise[];
   order: number;
   xpReward: number;
   estimatedMinutes: number;
   isCompleted: boolean;
+}
+
+export interface SubLesson {
+  id: string;
+  lessonId: string;
+  title: string;
+  description: string;
+  type: SubLessonType;
+  content: any;
+  learningObjectives: string[];
+  estimatedDuration: number;
+  difficultyLevel: number;
+  orderIndex: number;
+  isPublished: boolean;
+  isRequired: boolean;
+  audioUrl?: string;
+  videoUrl?: string;
+  imageUrls?: string[];
+  exercises: Exercise[];
+  vocabularyItems: VocabularyItem[];
+  grammarRules: GrammarRule[];
+  metadata?: any;
 }
 
 export interface LessonContent {
@@ -162,13 +192,19 @@ export interface GrammarExample {
 export interface Exercise {
   id: string;
   lessonId: string;
-  type: ExerciseType;
-  question: string;
-  options?: string[];
-  correctAnswer: string | string[];
-  explanation?: string;
-  order: number;
-  xpReward: number;
+  subLessonId?: string;
+  type: string;
+  title?: string;
+  instructions?: string;
+  content?: any;
+  correctAnswers?: any;
+  hints?: any;
+  feedback?: any;
+  points: number;
+  timeLimit?: number;
+  difficultyLevel: number;
+  orderIndex: number;
+  isPublished: boolean;
 }
 
 // Progress Tracking

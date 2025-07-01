@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Layout from '@/components/layout/Layout';
 import { apiClient } from '@/lib/api';
@@ -27,7 +27,7 @@ export default function ContentImportPage() {
     refetchInterval: 5000, // Refetch every 5 seconds to get real-time updates
   });
 
-  const importJobs = importJobsResponse?.data?.data || [];
+  const importJobs = importJobsResponse?.data || [];
 
   // Import content mutation
   const importMutation = useMutation({

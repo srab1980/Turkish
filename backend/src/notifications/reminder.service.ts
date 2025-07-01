@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
+import { Repository, LessThan, MoreThan } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { UserProgress } from '../progress/entities/user-progress.entity';
 import { NotificationsService } from './notifications.service';
@@ -244,7 +244,7 @@ export class ReminderService {
       where: {
         userId,
         isCompleted: true,
-        completedAt: LessThan(today) // This should be Between(weekStart, today) but simplified for demo
+        completedAt: MoreThan(weekStart)
       }
     });
 

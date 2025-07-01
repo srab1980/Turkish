@@ -587,8 +587,7 @@ class ApiClient {
 
   // Mock data generator for development mode
   private getMockResponse(url: string, method: string = 'GET', data?: any): any {
-    console.log('Generating mock response for:', method, url, data);
-
+    
     // Mock authentication
     if (url.includes('/auth/admin/login')) {
       if (data?.email === 'admin@turkishlearning.com' && data?.password === 'admin123') {
@@ -769,8 +768,10 @@ class ApiClient {
               id: '1',
               title: 'Turkish for Beginners',
               description: 'Learn basic Turkish vocabulary and grammar',
-              level: 'BEGINNER',
+              level: 'A1',
               isPublished: true,
+              estimatedHours: 20,
+              order: 1,
               createdAt: new Date('2024-01-01'),
               updatedAt: new Date('2024-01-15'),
               units: [],
@@ -781,8 +782,10 @@ class ApiClient {
               id: '2',
               title: 'Intermediate Turkish Conversation',
               description: 'Practice speaking and listening skills',
-              level: 'INTERMEDIATE',
+              level: 'B1',
               isPublished: true,
+              estimatedHours: 25,
+              order: 2,
               createdAt: new Date('2024-01-05'),
               updatedAt: new Date('2024-01-18'),
               units: [],
@@ -793,8 +796,10 @@ class ApiClient {
               id: '3',
               title: 'Advanced Turkish Grammar',
               description: 'Master complex grammar structures',
-              level: 'ADVANCED',
+              level: 'C1',
               isPublished: false,
+              estimatedHours: 30,
+              order: 3,
               createdAt: new Date('2024-01-10'),
               updatedAt: new Date('2024-01-20'),
               units: [],

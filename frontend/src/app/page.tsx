@@ -1,12 +1,15 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { MainLayout } from "@/components/layout/main-layout"
 import { StatsOverview } from "@/components/dashboard/stats-overview"
 import { LessonCard } from "@/components/lessons/lesson-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { apiService } from "@/lib/api-service"
 
-import { ArrowRight, BookOpen, Target, Trophy } from "lucide-react"
+import { ArrowRight, BookOpen, Target, Trophy, Wifi, WifiOff } from "lucide-react"
 
 // Mock data for demonstration
 const mockStats = {
@@ -66,6 +69,28 @@ const mockLessons = [
 ]
 
 export default function Home() {
+  const [apiStatus, setApiStatus] = useState<'checking' | 'connected' | 'mock'>('checking')
+  const [courses, setCourses] = useState<any[]>([])
+
+  useEffect(() => {
+    checkApiStatus()
+    loadCourses()
+  }, [])
+
+  const checkApiStatus = async () => {
+    const isHealthy = await apiService.healthCheck()
+    setApiStatus(isHealthy ? 'connected' : 'mock')
+  }
+
+  const loadCourses = async () => {
+    try {
+      const coursesData = await apiService.getCourses()
+      setCourses(coursesData || [])
+    } catch (error) {
+      console.error('Failed to load courses:', error)
+    }
+  }
+
   const handleStartLesson = (lessonId: string) => {
     window.location.href = `/lesson/${lessonId}`
   }
@@ -75,12 +100,31 @@ export default function Home() {
       <div className="space-y-8">
         {/* Welcome Section */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-turkish-red to-red-600 bg-clip-text text-transparent">
-            Welcome to Türkçe Öğren
-          </h1>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-turkish-red to-red-600 bg-clip-text text-transparent">
+              Welcome to Türkçe Öğren
+            </h1>
+            <Badge
+              variant={apiStatus === 'connected' ? 'default' : 'secondary'}
+              className="flex items-center gap-1"
+            >
+              {apiStatus === 'checking' ? (
+                <>⏳ Checking</>
+              ) : apiStatus === 'connected' ? (
+                <><Wifi className="h-3 w-3" /> Live</>
+              ) : (
+                <><WifiOff className="h-3 w-3" /> Demo</>
+              )}
+            </Badge>
+          </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Master Turkish with AI-powered lessons based on the Istanbul Book Curriculum
           </p>
+          {apiStatus === 'mock' && (
+            <p className="text-sm text-orange-600 bg-orange-50 border border-orange-200 rounded-lg p-3 max-w-lg mx-auto">
+              📡 Backend not available - Running in demo mode with sample data
+            </p>
+          )}
           <div className="flex items-center justify-center space-x-4">
             <Button size="lg" className="bg-turkish-red hover:bg-red-700" onClick={() => window.location.href = '/courses'}>
               <BookOpen className="h-5 w-5 mr-2" />

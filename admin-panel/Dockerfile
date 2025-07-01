@@ -16,7 +16,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-EXPOSE 3000
+EXPOSE 3003
 CMD ["npm", "run", "dev"]
 
 # Build stage
@@ -29,8 +29,8 @@ RUN npm ci
 COPY . .
 
 # Set environment variables for build
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
 # Build the application
 RUN npm run build
@@ -54,7 +54,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3001
+ENV PORT=3003
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create reports directory for testing
@@ -64,11 +64,11 @@ RUN mkdir -p /app/reports && chown nextjs:nodejs /app/reports
 USER nextjs
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3003
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3003/api/health || exit 1
 
 # Start the application
 CMD ["node", "server.js"]

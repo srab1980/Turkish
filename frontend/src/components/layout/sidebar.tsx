@@ -56,12 +56,12 @@ const sidebarItems = [
       },
       {
         title: "Statistics",
-        href: "/stats",
+        href: "/statistics",
         icon: TrendingUp,
       },
       {
-        title: "Streak",
-        href: "/streak",
+        title: "Streaks",
+        href: "/streaks",
         icon: Calendar,
       }
     ]

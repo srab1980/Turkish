@@ -15,17 +15,6 @@ export enum CEFRLevel {
   C2 = 'C2',
 }
 
-export enum ExerciseType {
-  MULTIPLE_CHOICE = 'multiple_choice',
-  FILL_IN_BLANK = 'fill_in_blank',
-  DRAG_DROP = 'drag_drop',
-  SPEAKING = 'speaking',
-  LISTENING = 'listening',
-  READING_COMPREHENSION = 'reading_comprehension',
-  VOCABULARY_MATCHING = 'vocabulary_matching',
-  GRAMMAR_CORRECTION = 'grammar_correction',
-}
-
 export enum ContentStatus {
   DRAFT = 'draft',
   REVIEW = 'review',
@@ -72,6 +61,7 @@ export interface Course {
   level: CEFRLevel;
   imageUrl?: string;
   totalLessons: number;
+  totalStudents?: number;
   estimatedHours: number;
   isPublished: boolean;
   order: number;
@@ -118,7 +108,7 @@ export interface Lesson {
 export interface Exercise {
   id: string;
   lessonId: string;
-  type: ExerciseType;
+  type: string;
   title: string;
   question: string;
   options?: string[];
@@ -268,13 +258,13 @@ export interface ApiResponse<T = any> {
 }
 
 export interface PaginatedResponse<T> {
-  data: T[];
+  items: T[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
+  hasNext?: boolean;
+  hasPrev?: boolean;
 }
 
 // Form types
@@ -306,7 +296,7 @@ export interface CreateLessonForm {
 
 export interface CreateExerciseForm {
   lessonId: string;
-  type: ExerciseType;
+  type: string;
   title: string;
   question: string;
   options?: string[];

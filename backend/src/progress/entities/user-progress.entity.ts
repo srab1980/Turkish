@@ -18,32 +18,53 @@ export class UserProgress {
   @Column({ name: 'user_id' })
   userId: string;
 
-  @Column({ name: 'lesson_id' })
+  @Column({ name: 'course_id', nullable: true })
+  courseId: string;
+
+  @Column({ name: 'unit_id', nullable: true })
+  unitId: string;
+
+  @Column({ name: 'lesson_id', nullable: true })
   lessonId: string;
 
-  @Column({ default: 0 })
+  @Column({ name: 'exercise_id', nullable: true })
+  exerciseId: string;
+
+  @Column({ name: 'progress_type', length: 50 })
+  progressType: string; // course, unit, lesson, exercise, vocabulary, grammar
+
+  @Column({ length: 50, default: 'not_started' })
+  status: string; // not_started, in_progress, completed, mastered
+
+  @Column({ nullable: true })
   score: number;
 
-  @Column({ name: 'time_spent', default: 0 })
-  timeSpent: number;
+  @Column({ name: 'max_score', nullable: true })
+  maxScore: number;
 
-  @Column({ name: 'is_completed', default: false })
-  isCompleted: boolean;
-
-  @Column({ name: 'completion_percentage', default: 0 })
-  completionPercentage: number;
+  @Column({ default: 0 })
+  attempts: number;
 
   @Column({ name: 'attempts_count', default: 0 })
   attemptsCount: number;
 
-  @Column({ name: 'best_score', default: 0 })
+  @Column({ name: 'best_score', nullable: true })
   bestScore: number;
 
-  @Column({ name: 'completed_at', type: 'timestamp', nullable: true })
-  completedAt?: Date;
+  @Column({ name: 'is_completed', default: false })
+  isCompleted: boolean;
 
-  @Column({ name: 'last_accessed_at', type: 'timestamp', nullable: true })
-  lastAccessedAt?: Date;
+  @Column({ name: 'time_spent', default: 0 })
+  timeSpent: number;
+
+  @Column({ name: 'first_attempt_at', type: 'timestamp', nullable: true })
+  firstAttemptAt: Date;
+
+  @Column({ name: 'completed_at', type: 'timestamp', nullable: true })
+  completedAt: Date;
+
+  @Column({ name: 'last_accessed_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  lastAccessedAt: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -8,6 +8,7 @@ import { LessonsModule } from './lessons/lessons.module';
 import { ProgressModule } from './progress/progress.module';
 import { GamificationModule } from './gamification/gamification.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { CurriculumModule } from './curriculum/curriculum.module';
 import { DatabaseModule } from './database/database.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { DatabaseModule } from './database/database.module';
     ProgressModule,
     GamificationModule,
     NotificationsModule,
+    CurriculumModule,
   ],
 })
 export class AppModule {}

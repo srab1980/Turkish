@@ -1,0 +1,426 @@
+{
+  "lesson": {
+    "id": "lesson-1-2-alphabet",
+    "unitId": "unit-1-merhaba",
+    "title": "Türk Alfabesi (Turkish Alphabet)",
+    "lessonNumber": 2,
+    "lessonType": "vocabulary",
+    "estimatedDuration": 50,
+    "difficultyLevel": 1,
+    "learningObjectives": [
+      "Learn all 29 letters of the Turkish alphabet",
+      "Practice pronunciation of Turkish sounds",
+      "Recognize letter-sound relationships",
+      "Understand special Turkish letters"
+    ],
+    "prerequisites": ["lesson-1-1-greetings"],
+    "content": {
+      "sections": [
+        {
+          "type": "alphabet_introduction",
+          "title": "Türk Alfabesi (Turkish Alphabet)",
+          "duration": 15,
+          "content": {
+            "introduction": "Turkish uses the Latin alphabet with 29 letters. It has 8 vowels and 21 consonants. Some letters are special to Turkish.",
+            "specialFeatures": [
+              "29 letters total (English has 26)",
+              "No Q, W, X in Turkish alphabet",
+              "Special letters: Ç, Ğ, I, İ, Ö, Ş, Ü",
+              "Each letter has one sound (phonetic)"
+            ],
+            "letters": [
+              {
+                "letter": "A a",
+                "pronunciation": "ah",
+                "audioUrl": "/audio/letter-a.mp3",
+                "exampleWord": "araba",
+                "exampleMeaning": "car",
+                "exampleAudio": "/audio/word-araba.mp3",
+                "type": "vowel"
+              },
+              {
+                "letter": "B b",
+                "pronunciation": "beh",
+                "audioUrl": "/audio/letter-b.mp3",
+                "exampleWord": "ben",
+                "exampleMeaning": "I",
+                "exampleAudio": "/audio/word-ben.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "C c",
+                "pronunciation": "jeh",
+                "audioUrl": "/audio/letter-c.mp3",
+                "exampleWord": "cam",
+                "exampleMeaning": "glass",
+                "exampleAudio": "/audio/word-cam.mp3",
+                "type": "consonant",
+                "note": "Pronounced like 'j' in 'jam'"
+              },
+              {
+                "letter": "Ç ç",
+                "pronunciation": "cheh",
+                "audioUrl": "/audio/letter-c-cedilla.mp3",
+                "exampleWord": "çay",
+                "exampleMeaning": "tea",
+                "exampleAudio": "/audio/word-cay.mp3",
+                "type": "consonant",
+                "special": true,
+                "note": "Pronounced like 'ch' in 'chair'"
+              },
+              {
+                "letter": "D d",
+                "pronunciation": "deh",
+                "audioUrl": "/audio/letter-d.mp3",
+                "exampleWord": "dört",
+                "exampleMeaning": "four",
+                "exampleAudio": "/audio/word-dort.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "E e",
+                "pronunciation": "eh",
+                "audioUrl": "/audio/letter-e.mp3",
+                "exampleWord": "ev",
+                "exampleMeaning": "house",
+                "exampleAudio": "/audio/word-ev.mp3",
+                "type": "vowel"
+              },
+              {
+                "letter": "F f",
+                "pronunciation": "feh",
+                "audioUrl": "/audio/letter-f.mp3",
+                "exampleWord": "fıstık",
+                "exampleMeaning": "peanut",
+                "exampleAudio": "/audio/word-fistik.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "G g",
+                "pronunciation": "geh",
+                "audioUrl": "/audio/letter-g.mp3",
+                "exampleWord": "gül",
+                "exampleMeaning": "rose",
+                "exampleAudio": "/audio/word-gul.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "Ğ ğ",
+                "pronunciation": "yumuşak g",
+                "audioUrl": "/audio/letter-g-breve.mp3",
+                "exampleWord": "dağ",
+                "exampleMeaning": "mountain",
+                "exampleAudio": "/audio/word-dag.mp3",
+                "type": "consonant",
+                "special": true,
+                "note": "Silent or lengthens the preceding vowel"
+              },
+              {
+                "letter": "H h",
+                "pronunciation": "heh",
+                "audioUrl": "/audio/letter-h.mp3",
+                "exampleWord": "hasta",
+                "exampleMeaning": "sick",
+                "exampleAudio": "/audio/word-hasta.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "I ı",
+                "pronunciation": "uh",
+                "audioUrl": "/audio/letter-i-undotted.mp3",
+                "exampleWord": "ısı",
+                "exampleMeaning": "heat",
+                "exampleAudio": "/audio/word-isi.mp3",
+                "type": "vowel",
+                "special": true,
+                "note": "Undotted i, like 'uh' in 'about'"
+              },
+              {
+                "letter": "İ i",
+                "pronunciation": "ee",
+                "audioUrl": "/audio/letter-i-dotted.mp3",
+                "exampleWord": "iyi",
+                "exampleMeaning": "good",
+                "exampleAudio": "/audio/word-iyi.mp3",
+                "type": "vowel",
+                "special": true,
+                "note": "Dotted i, like 'ee' in 'see'"
+              },
+              {
+                "letter": "J j",
+                "pronunciation": "jeh",
+                "audioUrl": "/audio/letter-j.mp3",
+                "exampleWord": "jimnastik",
+                "exampleMeaning": "gymnastics",
+                "exampleAudio": "/audio/word-jimnastik.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "K k",
+                "pronunciation": "keh",
+                "audioUrl": "/audio/letter-k.mp3",
+                "exampleWord": "kitap",
+                "exampleMeaning": "book",
+                "exampleAudio": "/audio/word-kitap.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "L l",
+                "pronunciation": "leh",
+                "audioUrl": "/audio/letter-l.mp3",
+                "exampleWord": "lale",
+                "exampleMeaning": "tulip",
+                "exampleAudio": "/audio/word-lale.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "M m",
+                "pronunciation": "meh",
+                "audioUrl": "/audio/letter-m.mp3",
+                "exampleWord": "masa",
+                "exampleMeaning": "table",
+                "exampleAudio": "/audio/word-masa.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "N n",
+                "pronunciation": "neh",
+                "audioUrl": "/audio/letter-n.mp3",
+                "exampleWord": "ne",
+                "exampleMeaning": "what",
+                "exampleAudio": "/audio/word-ne.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "O o",
+                "pronunciation": "oh",
+                "audioUrl": "/audio/letter-o.mp3",
+                "exampleWord": "okul",
+                "exampleMeaning": "school",
+                "exampleAudio": "/audio/word-okul.mp3",
+                "type": "vowel"
+              },
+              {
+                "letter": "Ö ö",
+                "pronunciation": "ur",
+                "audioUrl": "/audio/letter-o-umlaut.mp3",
+                "exampleWord": "öğretmen",
+                "exampleMeaning": "teacher",
+                "exampleAudio": "/audio/word-ogretmen.mp3",
+                "type": "vowel",
+                "special": true,
+                "note": "Like 'ur' in 'fur' but with rounded lips"
+              },
+              {
+                "letter": "P p",
+                "pronunciation": "peh",
+                "audioUrl": "/audio/letter-p.mp3",
+                "exampleWord": "para",
+                "exampleMeaning": "money",
+                "exampleAudio": "/audio/word-para.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "R r",
+                "pronunciation": "reh",
+                "audioUrl": "/audio/letter-r.mp3",
+                "exampleWord": "renk",
+                "exampleMeaning": "color",
+                "exampleAudio": "/audio/word-renk.mp3",
+                "type": "consonant",
+                "note": "Rolled r, like in Spanish"
+              },
+              {
+                "letter": "S s",
+                "pronunciation": "seh",
+                "audioUrl": "/audio/letter-s.mp3",
+                "exampleWord": "su",
+                "exampleMeaning": "water",
+                "exampleAudio": "/audio/word-su.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "Ş ş",
+                "pronunciation": "sheh",
+                "audioUrl": "/audio/letter-s-cedilla.mp3",
+                "exampleWord": "şeker",
+                "exampleMeaning": "sugar",
+                "exampleAudio": "/audio/word-seker.mp3",
+                "type": "consonant",
+                "special": true,
+                "note": "Like 'sh' in 'shoe'"
+              },
+              {
+                "letter": "T t",
+                "pronunciation": "teh",
+                "audioUrl": "/audio/letter-t.mp3",
+                "exampleWord": "top",
+                "exampleMeaning": "ball",
+                "exampleAudio": "/audio/word-top.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "U u",
+                "pronunciation": "oo",
+                "audioUrl": "/audio/letter-u.mp3",
+                "exampleWord": "uzun",
+                "exampleMeaning": "long",
+                "exampleAudio": "/audio/word-uzun.mp3",
+                "type": "vowel"
+              },
+              {
+                "letter": "Ü ü",
+                "pronunciation": "ew",
+                "audioUrl": "/audio/letter-u-umlaut.mp3",
+                "exampleWord": "üç",
+                "exampleMeaning": "three",
+                "exampleAudio": "/audio/word-uc.mp3",
+                "type": "vowel",
+                "special": true,
+                "note": "Like 'ew' in 'few'"
+              },
+              {
+                "letter": "V v",
+                "pronunciation": "veh",
+                "audioUrl": "/audio/letter-v.mp3",
+                "exampleWord": "var",
+                "exampleMeaning": "there is",
+                "exampleAudio": "/audio/word-var.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "Y y",
+                "pronunciation": "yeh",
+                "audioUrl": "/audio/letter-y.mp3",
+                "exampleWord": "yol",
+                "exampleMeaning": "road",
+                "exampleAudio": "/audio/word-yol.mp3",
+                "type": "consonant"
+              },
+              {
+                "letter": "Z z",
+                "pronunciation": "zeh",
+                "audioUrl": "/audio/letter-z.mp3",
+                "exampleWord": "zor",
+                "exampleMeaning": "difficult",
+                "exampleAudio": "/audio/word-zor.mp3",
+                "type": "consonant"
+              }
+            ]
+          }
+        },
+        {
+          "type": "pronunciation_practice",
+          "title": "Telaffuz Çalışması (Pronunciation Practice)",
+          "duration": 20,
+          "content": {
+            "focusSounds": [
+              {
+                "letter": "ı",
+                "description": "Undotted i - like 'uh' in 'about'",
+                "practiceWords": ["ısı", "kırk", "sınıf", "ışık"],
+                "practiceWordsEn": ["heat", "forty", "classroom", "light"],
+                "audioUrl": "/audio/sound-undotted-i.mp3",
+                "tips": "Keep your tongue relaxed and low"
+              },
+              {
+                "letter": "ö",
+                "description": "Like 'ur' in 'fur' but with rounded lips",
+                "practiceWords": ["öğretmen", "dört", "göz", "köy"],
+                "practiceWordsEn": ["teacher", "four", "eye", "village"],
+                "audioUrl": "/audio/sound-o-umlaut.mp3",
+                "tips": "Round your lips while saying 'e'"
+              },
+              {
+                "letter": "ü",
+                "description": "Like 'ew' in 'few'",
+                "practiceWords": ["üç", "güzel", "türk", "üzüm"],
+                "practiceWordsEn": ["three", "beautiful", "Turkish", "grape"],
+                "audioUrl": "/audio/sound-u-umlaut.mp3",
+                "tips": "Round your lips while saying 'i'"
+              },
+              {
+                "letter": "ç",
+                "description": "Like 'ch' in 'chair'",
+                "practiceWords": ["çay", "çok", "çiçek", "çanta"],
+                "practiceWordsEn": ["tea", "very", "flower", "bag"],
+                "audioUrl": "/audio/sound-ch.mp3",
+                "tips": "Touch tongue to roof of mouth"
+              },
+              {
+                "letter": "ş",
+                "description": "Like 'sh' in 'shoe'",
+                "practiceWords": ["şeker", "şehir", "işte", "başla"],
+                "practiceWordsEn": ["sugar", "city", "here", "start"],
+                "audioUrl": "/audio/sound-sh.mp3",
+                "tips": "Tongue slightly back from 's' position"
+              },
+              {
+                "letter": "ğ",
+                "description": "Silent or lengthens the preceding vowel",
+                "practiceWords": ["dağ", "doğru", "eğitim", "ağaç"],
+                "practiceWordsEn": ["mountain", "correct", "education", "tree"],
+                "audioUrl": "/audio/sound-soft-g.mp3",
+                "tips": "Usually silent, just lengthens the vowel before it"
+              }
+            ]
+          }
+        },
+        {
+          "type": "spelling_practice",
+          "title": "Yazım Çalışması (Spelling Practice)",
+          "duration": 10,
+          "content": {
+            "instructions": "Practice spelling Turkish words using the alphabet",
+            "spellWords": [
+              {
+                "word": "merhaba",
+                "audioUrl": "/audio/spell-merhaba.mp3",
+                "meaning": "hello",
+                "letters": ["m", "e", "r", "h", "a", "b", "a"]
+              },
+              {
+                "word": "öğrenci",
+                "audioUrl": "/audio/spell-ogrenci.mp3",
+                "meaning": "student",
+                "letters": ["ö", "ğ", "r", "e", "n", "c", "i"]
+              },
+              {
+                "word": "çiçek",
+                "audioUrl": "/audio/spell-cicek.mp3",
+                "meaning": "flower",
+                "letters": ["ç", "i", "ç", "e", "k"]
+              }
+            ]
+          }
+        },
+        {
+          "type": "cultural_notes",
+          "title": "KÜLTÜRDEN KÜLTÜRE (Culture to Culture)",
+          "duration": 5,
+          "content": {
+            "topic": "Turkish Alphabet History",
+            "notes": [
+              "Turkish used Arabic script until 1928",
+              "Mustafa Kemal Atatürk introduced the Latin-based alphabet",
+              "The alphabet reform was part of modernization efforts",
+              "Turkish is now one of the most phonetic languages",
+              "Each letter represents one sound consistently"
+            ],
+            "comparison": "How does the Turkish alphabet compare to your native language alphabet?"
+          }
+        }
+      ]
+    },
+    "vocabularyFocus": [
+      "alphabet letters", "pronunciation terms", "spelling vocabulary"
+    ],
+    "grammarFocus": ["letter_sound_correspondence", "phonetic_spelling"],
+    "culturalNotes": [
+      "Turkish alphabet reform was a major modernization step",
+      "Turkish is highly phonetic - you read exactly what you see",
+      "Learning the alphabet is crucial for reading Turkish",
+      "Special letters make Turkish unique among Latin-script languages"
+    ]
+  }
+}

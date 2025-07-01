@@ -1,0 +1,322 @@
+{
+  "course": {
+    "id": "a1-turkish-course",
+    "title": "Turkish A1 - İstanbul Yabancılar İçin Türkçe",
+    "description": "Complete A1 level Turkish language course based on official curriculum",
+    "level": "A1",
+    "total_units": 12,
+    "estimated_hours": 120
+  },
+  "unit_1": {
+    "id": "unit-1-merhaba",
+    "title": "MERHABA (Hello)",
+    "description": "Introduction to Turkish language, greetings, and basic communication",
+    "unit_number": 1,
+    "estimated_hours": 10,
+    "learning_objectives": [
+      "Greet people in Turkish appropriately",
+      "Introduce yourself and others",
+      "Learn the Turkish alphabet",
+      "Identify basic objects and people",
+      "Use basic question words"
+    ],
+    "cultural_notes": "Turkish greeting customs and social etiquette",
+    "lessons": [
+      {
+        "id": "lesson-1-1-greetings",
+        "title": "Tanışma ve Selamlaşma (Greetings and Introductions)",
+        "lesson_number": 1,
+        "lesson_type": "introduction",
+        "estimated_duration": 45,
+        "learning_objectives": [
+          "Use basic greetings in Turkish",
+          "Introduce yourself with name and nationality",
+          "Ask and answer 'How are you?'"
+        ],
+        "content": {
+          "sections": [
+            {
+              "type": "warmup",
+              "title": "HAZIRLIK ÇALIŞMALARI (Preparation Activities)",
+              "content": {
+                "activity": "Look at the pictures and match them with the situations",
+                "images": [
+                  {"url": "/images/morning-greeting.jpg", "alt": "People greeting in the morning"},
+                  {"url": "/images/evening-greeting.jpg", "alt": "People greeting in the evening"},
+                  {"url": "/images/formal-meeting.jpg", "alt": "Formal business meeting"}
+                ],
+                "instructions": "Match each image with the appropriate greeting time"
+              }
+            },
+            {
+              "type": "vocabulary_introduction",
+              "title": "Yeni Kelimeler (New Words)",
+              "content": {
+                "vocabulary": [
+                  {
+                    "turkish": "merhaba",
+                    "english": "hello",
+                    "pronunciation": "mer-ha-ba",
+                    "audio_url": "/audio/merhaba.mp3",
+                    "usage": "General greeting for any time of day"
+                  },
+                  {
+                    "turkish": "günaydın",
+                    "english": "good morning",
+                    "pronunciation": "gün-ay-dın",
+                    "audio_url": "/audio/gunaydin.mp3",
+                    "usage": "Morning greeting until noon"
+                  },
+                  {
+                    "turkish": "iyi günler",
+                    "english": "good day",
+                    "pronunciation": "i-yi gün-ler",
+                    "audio_url": "/audio/iyigunler.mp3",
+                    "usage": "Afternoon greeting"
+                  },
+                  {
+                    "turkish": "nasılsınız?",
+                    "english": "how are you? (formal)",
+                    "pronunciation": "na-sıl-sı-nız",
+                    "audio_url": "/audio/nasilsiniz.mp3",
+                    "usage": "Formal way to ask how someone is"
+                  },
+                  {
+                    "turkish": "iyiyim",
+                    "english": "I'm fine",
+                    "pronunciation": "i-yi-yim",
+                    "audio_url": "/audio/iyiyim.mp3",
+                    "usage": "Standard positive response"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "dialogue",
+              "title": "OKUMA (Reading)",
+              "content": {
+                "dialogue": {
+                  "title": "İlk Tanışma (First Meeting)",
+                  "participants": ["Ahmet", "Sarah"],
+                  "lines": [
+                    {"speaker": "Ahmet", "text": "Merhaba! Ben Ahmet.", "translation": "Hello! I'm Ahmet."},
+                    {"speaker": "Sarah", "text": "Merhaba Ahmet! Ben Sarah. Nasılsınız?", "translation": "Hello Ahmet! I'm Sarah. How are you?"},
+                    {"speaker": "Ahmet", "text": "İyiyim, teşekkürler. Siz nasılsınız?", "translation": "I'm fine, thank you. How are you?"},
+                    {"speaker": "Sarah", "text": "Ben de iyiyim. Tanıştığımıza memnun oldum.", "translation": "I'm fine too. Nice to meet you."}
+                  ],
+                  "audio_url": "/audio/dialogue-1-1.mp3"
+                },
+                "comprehension_questions": [
+                  {
+                    "question": "Ahmet nasıl?",
+                    "options": ["İyi", "Kötü", "Yorgun", "Hasta"],
+                    "correct_answer": 0,
+                    "explanation": "Ahmet 'İyiyim' diyor."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "grammar",
+              "title": "DİLBİLGİSİ (Grammar)",
+              "content": {
+                "topic": "Personal Pronouns and 'to be' verb",
+                "explanation": "In Turkish, personal pronouns are often omitted because the verb ending shows who is doing the action.",
+                "examples": [
+                  {
+                    "turkish": "Ben öğrenciyim.",
+                    "english": "I am a student.",
+                    "breakdown": "Ben (I) + öğrenci (student) + -yim (am)"
+                  },
+                  {
+                    "turkish": "Siz öğretmensiniz.",
+                    "english": "You are a teacher.",
+                    "breakdown": "Siz (You formal) + öğretmen (teacher) + -siniz (are)"
+                  }
+                ],
+                "pattern": {
+                  "description": "Personal pronouns + noun + 'to be' suffix",
+                  "structure": "Ben/Sen/O/Biz/Siz/Onlar + [noun] + [suffix]"
+                }
+              }
+            },
+            {
+              "type": "practice",
+              "title": "YA SİZ? (What About You?)",
+              "content": {
+                "activity_type": "personalization",
+                "instructions": "Now introduce yourself using the patterns you learned",
+                "prompts": [
+                  "Adınız ne? (What's your name?)",
+                  "Nerelisiniz? (Where are you from?)",
+                  "Mesleğiniz ne? (What's your profession?)"
+                ],
+                "example_responses": [
+                  "Benim adım [name].",
+                  "Ben [country]'liyim.",
+                  "Ben [profession]'im."
+                ]
+              }
+            }
+          ]
+        },
+        "exercises": [
+          {
+            "id": "exercise-1-1-1",
+            "type": "vocabulary_matching",
+            "title": "Kelime Eşleştirme (Word Matching)",
+            "instructions": "Match the Turkish greetings with their English meanings",
+            "content": {
+              "pairs": [
+                {"turkish": "merhaba", "english": "hello"},
+                {"turkish": "günaydın", "english": "good morning"},
+                {"turkish": "iyi günler", "english": "good day"},
+                {"turkish": "iyi akşamlar", "english": "good evening"}
+              ]
+            },
+            "points": 10,
+            "time_limit": 120
+          },
+          {
+            "id": "exercise-1-1-2",
+            "type": "fill_in_blank",
+            "title": "Boşlukları Doldurun (Fill in the Blanks)",
+            "instructions": "Complete the dialogue with appropriate greetings",
+            "content": {
+              "text": "A: _____, ben Mehmet.\nB: _____ Mehmet! Ben Lisa. _____?\nA: İyiyim, teşekkürler.",
+              "blanks": [
+                {"position": 0, "correct_answers": ["Merhaba", "merhaba"], "hint": "General greeting"},
+                {"position": 1, "correct_answers": ["Merhaba", "merhaba"], "hint": "Respond with the same greeting"},
+                {"position": 2, "correct_answers": ["Nasılsınız", "nasılsınız"], "hint": "How are you? (formal)"}
+              ]
+            },
+            "points": 15,
+            "time_limit": 180
+          },
+          {
+            "id": "exercise-1-1-3",
+            "type": "audio_comprehension",
+            "title": "Dinleme (Listening)",
+            "instructions": "Listen to the audio and choose the correct answer",
+            "content": {
+              "audio_url": "/audio/exercise-1-1-3.mp3",
+              "questions": [
+                {
+                  "question": "What time of day is this greeting appropriate for?",
+                  "options": ["Morning", "Afternoon", "Evening", "Any time"],
+                  "correct_answer": 0
+                }
+              ]
+            },
+            "points": 10,
+            "time_limit": 60
+          }
+        ],
+        "vocabulary_focus": [
+          "merhaba", "günaydın", "iyi günler", "iyi akşamlar", 
+          "nasılsınız", "iyiyim", "teşekkürler", "ben", "siz"
+        ],
+        "grammar_focus": ["personal_pronouns", "to_be_verb", "basic_sentence_structure"]
+      },
+      {
+        "id": "lesson-1-2-alphabet",
+        "title": "Türk Alfabesi (Turkish Alphabet)",
+        "lesson_number": 2,
+        "lesson_type": "vocabulary",
+        "estimated_duration": 50,
+        "learning_objectives": [
+          "Learn all 29 letters of the Turkish alphabet",
+          "Practice pronunciation of Turkish sounds",
+          "Recognize letter-sound relationships"
+        ],
+        "content": {
+          "sections": [
+            {
+              "type": "alphabet_introduction",
+              "title": "Türk Alfabesi (Turkish Alphabet)",
+              "content": {
+                "letters": [
+                  {"letter": "A a", "pronunciation": "ah", "audio_url": "/audio/letter-a.mp3", "example_word": "araba (car)"},
+                  {"letter": "B b", "pronunciation": "beh", "audio_url": "/audio/letter-b.mp3", "example_word": "ben (I)"},
+                  {"letter": "C c", "pronunciation": "jeh", "audio_url": "/audio/letter-c.mp3", "example_word": "cam (glass)"},
+                  {"letter": "Ç ç", "pronunciation": "cheh", "audio_url": "/audio/letter-c-cedilla.mp3", "example_word": "çay (tea)"},
+                  {"letter": "D d", "pronunciation": "deh", "audio_url": "/audio/letter-d.mp3", "example_word": "dört (four)"}
+                ],
+                "special_notes": [
+                  "Turkish has 29 letters (English has 26)",
+                  "No Q, W, X in Turkish alphabet",
+                  "Special letters: Ç, Ğ, I, İ, Ö, Ş, Ü"
+                ]
+              }
+            },
+            {
+              "type": "pronunciation_practice",
+              "title": "Telaffuz Çalışması (Pronunciation Practice)",
+              "content": {
+                "focus_sounds": [
+                  {
+                    "letter": "ı",
+                    "description": "Undotted i - like 'uh' in 'about'",
+                    "practice_words": ["ısı", "kırk", "sınıf"],
+                    "audio_url": "/audio/sound-undotted-i.mp3"
+                  },
+                  {
+                    "letter": "ö",
+                    "description": "Like 'ur' in 'fur' but with rounded lips",
+                    "practice_words": ["öğretmen", "dört", "göz"],
+                    "audio_url": "/audio/sound-o-umlaut.mp3"
+                  },
+                  {
+                    "letter": "ü",
+                    "description": "Like 'ew' in 'few'",
+                    "practice_words": ["üç", "güzel", "türk"],
+                    "audio_url": "/audio/sound-u-umlaut.mp3"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "exercises": [
+          {
+            "id": "exercise-1-2-1",
+            "type": "letter_recognition",
+            "title": "Harf Tanıma (Letter Recognition)",
+            "instructions": "Click on the letter you hear",
+            "content": {
+              "audio_prompts": [
+                {"audio_url": "/audio/letter-prompt-1.mp3", "correct_letter": "ç"},
+                {"audio_url": "/audio/letter-prompt-2.mp3", "correct_letter": "ğ"},
+                {"audio_url": "/audio/letter-prompt-3.mp3", "correct_letter": "ş"}
+              ],
+              "letter_options": ["ç", "c", "ğ", "g", "ş", "s", "ı", "i", "ö", "o"]
+            },
+            "points": 15,
+            "time_limit": 300
+          }
+        ],
+        "vocabulary_focus": ["alphabet_letters", "pronunciation_terms"],
+        "grammar_focus": ["letter_sound_correspondence"]
+      }
+    ],
+    "unit_vocabulary": [
+      "merhaba", "günaydın", "iyi günler", "iyi akşamlar", "iyi geceler",
+      "nasılsınız", "iyiyim", "teşekkürler", "ben", "sen", "siz", "o",
+      "ad", "soyad", "meslek", "öğrenci", "öğretmen", "doktor"
+    ],
+    "unit_grammar": [
+      "personal_pronouns", "to_be_verb", "basic_sentence_structure", 
+      "turkish_alphabet", "pronunciation_rules"
+    ],
+    "assessment": {
+      "type": "unit_test",
+      "sections": [
+        {"skill": "vocabulary", "weight": 30},
+        {"skill": "grammar", "weight": 25},
+        {"skill": "listening", "weight": 25},
+        {"skill": "speaking", "weight": 20}
+      ],
+      "passing_score": 70
+    }
+  }
+}

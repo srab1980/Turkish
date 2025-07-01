@@ -1,0 +1,310 @@
+{
+  "lesson": {
+    "id": "lesson-1-3-numbers",
+    "unitId": "unit-1-merhaba",
+    "title": "Sayılar ve Yaş (Numbers and Age)",
+    "lessonNumber": 3,
+    "lessonType": "vocabulary",
+    "estimatedDuration": 45,
+    "difficultyLevel": 1,
+    "learningObjectives": [
+      "Count from 0 to 100 in Turkish",
+      "Ask and answer about age",
+      "Use numbers in basic contexts",
+      "Understand Turkish number system"
+    ],
+    "prerequisites": ["lesson-1-1-greetings", "lesson-1-2-alphabet"],
+    "content": {
+      "sections": [
+        {
+          "type": "warmup",
+          "title": "HAZIRLIK ÇALIŞMALARI (Preparation Activities)",
+          "duration": 5,
+          "content": {
+            "activity": "Look at the numbers around you",
+            "instructions": "Think about: How often do you use numbers in daily life? What numbers are important to you?",
+            "images": [
+              {
+                "url": "/images/numbers-daily-life.jpg",
+                "alt": "Numbers in daily life - clock, calendar, prices",
+                "caption": "Numbers are everywhere!"
+              }
+            ]
+          }
+        },
+        {
+          "type": "vocabulary_introduction",
+          "title": "Sayılar 0-20 (Numbers 0-20)",
+          "duration": 15,
+          "content": {
+            "vocabulary": [
+              {
+                "id": "num-0",
+                "turkish": "sıfır",
+                "english": "zero",
+                "pronunciation": "sı-fır",
+                "audioUrl": "/audio/numbers/sifir.mp3",
+                "number": 0
+              },
+              {
+                "id": "num-1",
+                "turkish": "bir",
+                "english": "one",
+                "pronunciation": "bir",
+                "audioUrl": "/audio/numbers/bir.mp3",
+                "number": 1
+              },
+              {
+                "id": "num-2",
+                "turkish": "iki",
+                "english": "two",
+                "pronunciation": "i-ki",
+                "audioUrl": "/audio/numbers/iki.mp3",
+                "number": 2
+              },
+              {
+                "id": "num-3",
+                "turkish": "üç",
+                "english": "three",
+                "pronunciation": "üç",
+                "audioUrl": "/audio/numbers/uc.mp3",
+                "number": 3
+              },
+              {
+                "id": "num-4",
+                "turkish": "dört",
+                "english": "four",
+                "pronunciation": "dört",
+                "audioUrl": "/audio/numbers/dort.mp3",
+                "number": 4
+              },
+              {
+                "id": "num-5",
+                "turkish": "beş",
+                "english": "five",
+                "pronunciation": "beş",
+                "audioUrl": "/audio/numbers/bes.mp3",
+                "number": 5
+              },
+              {
+                "id": "num-6",
+                "turkish": "altı",
+                "english": "six",
+                "pronunciation": "al-tı",
+                "audioUrl": "/audio/numbers/alti.mp3",
+                "number": 6
+              },
+              {
+                "id": "num-7",
+                "turkish": "yedi",
+                "english": "seven",
+                "pronunciation": "ye-di",
+                "audioUrl": "/audio/numbers/yedi.mp3",
+                "number": 7
+              },
+              {
+                "id": "num-8",
+                "turkish": "sekiz",
+                "english": "eight",
+                "pronunciation": "se-kiz",
+                "audioUrl": "/audio/numbers/sekiz.mp3",
+                "number": 8
+              },
+              {
+                "id": "num-9",
+                "turkish": "dokuz",
+                "english": "nine",
+                "pronunciation": "do-kuz",
+                "audioUrl": "/audio/numbers/dokuz.mp3",
+                "number": 9
+              },
+              {
+                "id": "num-10",
+                "turkish": "on",
+                "english": "ten",
+                "pronunciation": "on",
+                "audioUrl": "/audio/numbers/on.mp3",
+                "number": 10
+              },
+              {
+                "id": "num-11",
+                "turkish": "on bir",
+                "english": "eleven",
+                "pronunciation": "on bir",
+                "audioUrl": "/audio/numbers/onbir.mp3",
+                "number": 11,
+                "note": "Pattern: on + number"
+              },
+              {
+                "id": "num-20",
+                "turkish": "yirmi",
+                "english": "twenty",
+                "pronunciation": "yir-mi",
+                "audioUrl": "/audio/numbers/yirmi.mp3",
+                "number": 20
+              }
+            ],
+            "patterns": [
+              {
+                "pattern": "11-19: on + number",
+                "examples": ["on bir (11)", "on iki (12)", "on üç (13)"]
+              },
+              {
+                "pattern": "21-29: yirmi + number",
+                "examples": ["yirmi bir (21)", "yirmi iki (22)", "yirmi üç (23)"]
+              }
+            ]
+          }
+        },
+        {
+          "type": "dialogue",
+          "title": "OKUMA (Reading)",
+          "duration": 10,
+          "content": {
+            "dialogue": {
+              "title": "Yaş Sorma (Asking About Age)",
+              "setting": "Two friends meeting and talking about age",
+              "participants": [
+                {
+                  "name": "Elif",
+                  "role": "Turkish student",
+                  "avatar": "/images/avatars/elif.jpg"
+                },
+                {
+                  "name": "Tom",
+                  "role": "Foreign student",
+                  "avatar": "/images/avatars/tom.jpg"
+                }
+              ],
+              "lines": [
+                {
+                  "speaker": "Elif",
+                  "text": "Merhaba Tom! Kaç yaşındasın?",
+                  "translation": "Hello Tom! How old are you?",
+                  "audioUrl": "/audio/dialogue-1-3-line1.mp3",
+                  "notes": "Asking about age politely"
+                },
+                {
+                  "speaker": "Tom",
+                  "text": "Ben yirmi üç yaşındayım. Sen kaç yaşındasın?",
+                  "translation": "I am twenty-three years old. How old are you?",
+                  "audioUrl": "/audio/dialogue-1-3-line2.mp3",
+                  "notes": "Giving age and asking back"
+                },
+                {
+                  "speaker": "Elif",
+                  "text": "Ben yirmi bir yaşındayım.",
+                  "translation": "I am twenty-one years old.",
+                  "audioUrl": "/audio/dialogue-1-3-line3.mp3",
+                  "notes": "Simple age statement"
+                },
+                {
+                  "speaker": "Tom",
+                  "text": "Çok genç görünüyorsun!",
+                  "translation": "You look very young!",
+                  "audioUrl": "/audio/dialogue-1-3-line4.mp3",
+                  "notes": "Compliment about appearance"
+                }
+              ],
+              "audioUrl": "/audio/dialogue-1-3-complete.mp3"
+            },
+            "comprehensionQuestions": [
+              {
+                "question": "Tom kaç yaşında?",
+                "questionEn": "How old is Tom?",
+                "options": ["21", "22", "23", "24"],
+                "correctAnswer": 2,
+                "explanation": "Tom 'yirmi üç yaşındayım' diyor - Tom says 'I am twenty-three years old'"
+              },
+              {
+                "question": "Elif kaç yaşında?",
+                "questionEn": "How old is Elif?",
+                "options": ["20", "21", "22", "23"],
+                "correctAnswer": 1,
+                "explanation": "Elif 'yirmi bir yaşındayım' diyor - Elif says 'I am twenty-one years old'"
+              }
+            ]
+          }
+        },
+        {
+          "type": "grammar",
+          "title": "DİLBİLGİSİ (Grammar)",
+          "duration": 10,
+          "content": {
+            "topic": "Age Expressions and Number Usage",
+            "explanation": "In Turkish, age is expressed using 'yaşında' (years old). Numbers follow specific patterns for teens and compound numbers.",
+            "grammarPoints": [
+              {
+                "point": "Age Expression",
+                "explanation": "Use number + yaşında/yaşındayım",
+                "examples": [
+                  {
+                    "turkish": "Ben on sekiz yaşındayım.",
+                    "english": "I am eighteen years old.",
+                    "breakdown": "Ben (I) + on sekiz (eighteen) + yaşındayım (years old am)",
+                    "audioUrl": "/audio/grammar-age-1.mp3"
+                  },
+                  {
+                    "turkish": "O yirmi beş yaşında.",
+                    "english": "He/She is twenty-five years old.",
+                    "breakdown": "O (He/She) + yirmi beş (twenty-five) + yaşında (years old)",
+                    "audioUrl": "/audio/grammar-age-2.mp3"
+                  }
+                ]
+              },
+              {
+                "point": "Number Patterns",
+                "explanation": "Turkish numbers follow logical patterns",
+                "patterns": [
+                  {
+                    "range": "11-19",
+                    "pattern": "on + basic number",
+                    "examples": ["on bir (11)", "on iki (12)", "on dokuz (19)"]
+                  },
+                  {
+                    "range": "20-99",
+                    "pattern": "tens + basic number",
+                    "examples": ["yirmi bir (21)", "otuz beş (35)", "doksan dokuz (99)"]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "practice",
+          "title": "YA SİZ? (What About You?)",
+          "duration": 5,
+          "content": {
+            "activityType": "personalization",
+            "instructions": "Practice talking about ages and numbers",
+            "prompts": [
+              {
+                "question": "Kaç yaşındasınız?",
+                "questionEn": "How old are you?",
+                "pattern": "Ben [number] yaşındayım.",
+                "example": "Ben yirmi yaşındayım."
+              },
+              {
+                "question": "Telefon numaranızın ilk üç rakamı nedir?",
+                "questionEn": "What are the first three digits of your phone number?",
+                "pattern": "[number] [number] [number]",
+                "example": "Beş üç yedi"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "vocabularyFocus": [
+      "numbers 0-100", "age expressions", "yaşında", "kaç", "yaşındayım"
+    ],
+    "grammarFocus": ["number_patterns", "age_expressions", "question_formation"],
+    "culturalNotes": [
+      "In Turkish culture, asking about age is generally acceptable",
+      "Numbers are used frequently in daily Turkish conversation",
+      "Turkish number system is very logical and regular",
+      "Age is often discussed openly in social contexts"
+    ]
+  }
+}

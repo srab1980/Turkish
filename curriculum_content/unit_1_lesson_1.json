@@ -1,0 +1,297 @@
+{
+  "lesson": {
+    "id": "lesson-1-1-greetings",
+    "unitId": "unit-1-merhaba",
+    "title": "Tanışma ve Selamlaşma (Greetings and Introductions)",
+    "lessonNumber": 1,
+    "lessonType": "introduction",
+    "estimatedDuration": 45,
+    "difficultyLevel": 1,
+    "learningObjectives": [
+      "Use basic greetings in Turkish",
+      "Introduce yourself with name and nationality",
+      "Ask and answer 'How are you?'",
+      "Understand formal vs informal greetings"
+    ],
+    "prerequisites": [],
+    "content": {
+      "sections": [
+        {
+          "type": "warmup",
+          "title": "HAZIRLIK ÇALIŞMALARI (Preparation Activities)",
+          "duration": 5,
+          "content": {
+            "activity": "Look at the pictures and think about when you would use these greetings",
+            "images": [
+              {
+                "url": "/images/morning-greeting.jpg",
+                "alt": "People greeting in the morning",
+                "caption": "Günaydın - Good morning"
+              },
+              {
+                "url": "/images/evening-greeting.jpg",
+                "alt": "People greeting in the evening",
+                "caption": "İyi akşamlar - Good evening"
+              },
+              {
+                "url": "/images/formal-meeting.jpg",
+                "alt": "Formal business meeting",
+                "caption": "Formal greetings in business"
+              }
+            ],
+            "instructions": "Think about: When do you greet people? How do greetings differ in your culture?"
+          }
+        },
+        {
+          "type": "vocabulary_introduction",
+          "title": "Yeni Kelimeler (New Words)",
+          "duration": 10,
+          "content": {
+            "vocabulary": [
+              {
+                "id": "vocab-merhaba",
+                "turkish": "merhaba",
+                "english": "hello",
+                "pronunciation": "mer-ha-ba",
+                "audioUrl": "/audio/merhaba.mp3",
+                "usage": "General greeting for any time of day",
+                "example": "Merhaba! Nasılsınız?",
+                "imageUrl": "/images/hello-gesture.jpg"
+              },
+              {
+                "id": "vocab-gunaydin",
+                "turkish": "günaydın",
+                "english": "good morning",
+                "pronunciation": "gün-ay-dın",
+                "audioUrl": "/audio/gunaydin.mp3",
+                "usage": "Morning greeting until noon",
+                "example": "Günaydın! İyi günler!",
+                "imageUrl": "/images/morning-sun.jpg"
+              },
+              {
+                "id": "vocab-iyigunler",
+                "turkish": "iyi günler",
+                "english": "good day",
+                "pronunciation": "i-yi gün-ler",
+                "audioUrl": "/audio/iyigunler.mp3",
+                "usage": "Afternoon greeting",
+                "example": "İyi günler! Nasıl gidiyor?",
+                "imageUrl": "/images/afternoon.jpg"
+              },
+              {
+                "id": "vocab-iyiaksamlar",
+                "turkish": "iyi akşamlar",
+                "english": "good evening",
+                "pronunciation": "i-yi ak-şam-lar",
+                "audioUrl": "/audio/iyiaksamlar.mp3",
+                "usage": "Evening greeting",
+                "example": "İyi akşamlar! Hoş geldiniz!",
+                "imageUrl": "/images/evening.jpg"
+              },
+              {
+                "id": "vocab-nasilsiniz",
+                "turkish": "nasılsınız?",
+                "english": "how are you? (formal)",
+                "pronunciation": "na-sıl-sı-nız",
+                "audioUrl": "/audio/nasilsiniz.mp3",
+                "usage": "Formal way to ask how someone is",
+                "example": "Merhaba! Nasılsınız?",
+                "imageUrl": "/images/question-gesture.jpg"
+              },
+              {
+                "id": "vocab-iyiyim",
+                "turkish": "iyiyim",
+                "english": "I'm fine",
+                "pronunciation": "i-yi-yim",
+                "audioUrl": "/audio/iyiyim.mp3",
+                "usage": "Standard positive response",
+                "example": "İyiyim, teşekkürler.",
+                "imageUrl": "/images/thumbs-up.jpg"
+              },
+              {
+                "id": "vocab-tesekkurler",
+                "turkish": "teşekkürler",
+                "english": "thank you",
+                "pronunciation": "te-şek-kür-ler",
+                "audioUrl": "/audio/tesekkurler.mp3",
+                "usage": "Expressing gratitude",
+                "example": "İyiyim, teşekkürler.",
+                "imageUrl": "/images/thank-you.jpg"
+              },
+              {
+                "id": "vocab-ben",
+                "turkish": "ben",
+                "english": "I",
+                "pronunciation": "ben",
+                "audioUrl": "/audio/ben.mp3",
+                "usage": "First person pronoun",
+                "example": "Ben Ahmet.",
+                "imageUrl": "/images/pointing-self.jpg"
+              }
+            ]
+          }
+        },
+        {
+          "type": "dialogue",
+          "title": "OKUMA (Reading)",
+          "duration": 10,
+          "content": {
+            "dialogue": {
+              "title": "İlk Tanışma (First Meeting)",
+              "setting": "Two people meeting for the first time at a language school",
+              "participants": [
+                {
+                  "name": "Ahmet",
+                  "role": "Turkish teacher",
+                  "avatar": "/images/avatars/ahmet.jpg"
+                },
+                {
+                  "name": "Sarah",
+                  "role": "English student",
+                  "avatar": "/images/avatars/sarah.jpg"
+                }
+              ],
+              "lines": [
+                {
+                  "speaker": "Ahmet",
+                  "text": "Merhaba! Ben Ahmet.",
+                  "translation": "Hello! I'm Ahmet.",
+                  "audioUrl": "/audio/dialogue-1-1-line1.mp3",
+                  "notes": "Simple self-introduction"
+                },
+                {
+                  "speaker": "Sarah",
+                  "text": "Merhaba Ahmet! Ben Sarah. Nasılsınız?",
+                  "translation": "Hello Ahmet! I'm Sarah. How are you?",
+                  "audioUrl": "/audio/dialogue-1-1-line2.mp3",
+                  "notes": "Greeting + self-introduction + polite inquiry"
+                },
+                {
+                  "speaker": "Ahmet",
+                  "text": "İyiyim, teşekkürler. Siz nasılsınız?",
+                  "translation": "I'm fine, thank you. How are you?",
+                  "audioUrl": "/audio/dialogue-1-1-line3.mp3",
+                  "notes": "Response + returning the question"
+                },
+                {
+                  "speaker": "Sarah",
+                  "text": "Ben de iyiyim. Tanıştığımıza memnun oldum.",
+                  "translation": "I'm fine too. Nice to meet you.",
+                  "audioUrl": "/audio/dialogue-1-1-line4.mp3",
+                  "notes": "Response + expressing pleasure at meeting"
+                }
+              ],
+              "audioUrl": "/audio/dialogue-1-1-complete.mp3"
+            },
+            "comprehensionQuestions": [
+              {
+                "question": "Ahmet nasıl?",
+                "questionEn": "How is Ahmet?",
+                "options": ["İyi", "Kötü", "Yorgun", "Hasta"],
+                "optionsEn": ["Good", "Bad", "Tired", "Sick"],
+                "correctAnswer": 0,
+                "explanation": "Ahmet 'İyiyim' diyor - Ahmet says 'I'm fine'"
+              },
+              {
+                "question": "Sarah kimle tanışıyor?",
+                "questionEn": "Who is Sarah meeting?",
+                "options": ["Mehmet", "Ahmet", "Ali", "Mustafa"],
+                "correctAnswer": 1,
+                "explanation": "Sarah, Ahmet ile tanışıyor - Sarah is meeting Ahmet"
+              }
+            ]
+          }
+        },
+        {
+          "type": "grammar",
+          "title": "DİLBİLGİSİ (Grammar)",
+          "duration": 15,
+          "content": {
+            "topic": "Personal Pronouns and 'to be' verb",
+            "explanation": "In Turkish, personal pronouns are often omitted because the verb ending shows who is doing the action. The 'to be' verb is expressed through suffixes attached to nouns.",
+            "grammarPoints": [
+              {
+                "point": "Personal Pronouns",
+                "explanation": "Turkish personal pronouns",
+                "examples": [
+                  {
+                    "turkish": "Ben öğrenciyim.",
+                    "english": "I am a student.",
+                    "breakdown": "Ben (I) + öğrenci (student) + -yim (am)",
+                    "audioUrl": "/audio/grammar-ben-ogrenciyim.mp3"
+                  },
+                  {
+                    "turkish": "Siz öğretmensiniz.",
+                    "english": "You are a teacher.",
+                    "breakdown": "Siz (You formal) + öğretmen (teacher) + -siniz (are)",
+                    "audioUrl": "/audio/grammar-siz-ogretmensiniz.mp3"
+                  }
+                ]
+              },
+              {
+                "point": "To Be Suffixes",
+                "explanation": "Turkish uses suffixes to express 'to be'",
+                "table": [
+                  ["Ben", "-(y)im", "I am"],
+                  ["Sen", "-(s)in", "You are (informal)"],
+                  ["O", "-(dir)", "He/She/It is"],
+                  ["Biz", "-(y)iz", "We are"],
+                  ["Siz", "-(s)iniz", "You are (formal/plural)"],
+                  ["Onlar", "-(dir)lar", "They are"]
+                ]
+              }
+            ],
+            "pattern": {
+              "description": "Basic sentence structure with 'to be'",
+              "structure": "Subject + Noun + To Be Suffix",
+              "examples": [
+                "Ben + doktor + um = Ben doktorum (I am a doctor)",
+                "O + öğrenci + (dir) = O öğrenci (He/She is a student)"
+              ]
+            }
+          }
+        },
+        {
+          "type": "practice",
+          "title": "YA SİZ? (What About You?)",
+          "duration": 5,
+          "content": {
+            "activityType": "personalization",
+            "instructions": "Now introduce yourself using the patterns you learned",
+            "prompts": [
+              {
+                "question": "Adınız ne?",
+                "questionEn": "What's your name?",
+                "pattern": "Ben [name].",
+                "example": "Ben Sarah."
+              },
+              {
+                "question": "Nerelisiniz?",
+                "questionEn": "Where are you from?",
+                "pattern": "Ben [country]'liyim.",
+                "example": "Ben Amerikalıyım."
+              },
+              {
+                "question": "Mesleğiniz ne?",
+                "questionEn": "What's your profession?",
+                "pattern": "Ben [profession]'im.",
+                "example": "Ben öğrenciyim."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "vocabularyFocus": [
+      "merhaba", "günaydın", "iyi günler", "iyi akşamlar", 
+      "nasılsınız", "iyiyim", "teşekkürler", "ben", "siz"
+    ],
+    "grammarFocus": ["personal_pronouns", "to_be_verb", "basic_sentence_structure"],
+    "culturalNotes": [
+      "Turkish people often shake hands when meeting for the first time",
+      "Eye contact is important when greeting someone",
+      "Use 'siz' (formal you) with people you don't know well",
+      "Time-specific greetings are commonly used"
+    ]
+  }
+}

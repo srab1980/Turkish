@@ -69,8 +69,8 @@ export default function CourseList({ onCreateCourse, onEditCourse, onViewCourse 
     },
   });
 
-  const courses = coursesResponse?.data?.data?.items || [];
-  const totalCourses = coursesResponse?.data?.data?.total || 0;
+  const courses = coursesResponse?.data?.items || [];
+  const totalCourses = coursesResponse?.data?.total || 0;
 
   const handleDeleteCourse = async (course: Course) => {
     if (window.confirm(`Are you sure you want to delete "${course.title}"?`)) {

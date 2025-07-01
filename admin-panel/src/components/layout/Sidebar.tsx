@@ -39,6 +39,7 @@ const navigation: SidebarItem[] = [
     href: '/content',
     icon: BookOpenIcon,
     children: [
+      { name: 'Curriculum', href: '/content/curriculum', icon: AcademicCapIcon },
       { name: 'Courses', href: '/content/courses', icon: AcademicCapIcon },
       { name: 'Lessons', href: '/content/lessons', icon: DocumentTextIcon },
       { name: 'Exercises', href: '/content/exercises', icon: BeakerIcon },

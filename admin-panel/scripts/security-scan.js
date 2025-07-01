@@ -4,6 +4,23 @@ const fs = require('fs').promises;
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Load environment variables from .env.local
+try {
+  const envPath = path.join(__dirname, '../.env.local');
+  const envContent = require('fs').readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const [key, ...valueParts] = line.split('=');
+    if (key && valueParts.length > 0 && !key.startsWith('#')) {
+      const value = valueParts.join('=').trim();
+      if (!process.env[key]) {
+        process.env[key] = value;
+      }
+    }
+  });
+} catch (error) {
+  // .env.local file not found, continue without it
+}
+
 /**
  * Security Scanner and Vulnerability Assessment
  */

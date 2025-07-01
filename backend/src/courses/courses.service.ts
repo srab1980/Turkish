@@ -85,7 +85,7 @@ export class CoursesService {
     return this.unitRepository.find({
       where: { course: { id: courseId } },
       relations: ['lessons'],
-      order: { order: 'ASC' },
+      order: { orderIndex: 'ASC' },
     });
   }
 
@@ -174,13 +174,13 @@ export class CoursesService {
 
   async reorderCourses(courseOrders: { id: string; order: number }[]): Promise<void> {
     for (const { id, order } of courseOrders) {
-      await this.courseRepository.update(id, { order });
+      await this.courseRepository.update(id, { orderIndex: order });
     }
   }
 
   async reorderUnits(unitOrders: { id: string; order: number }[]): Promise<void> {
     for (const { id, order } of unitOrders) {
-      await this.unitRepository.update(id, { order });
+      await this.unitRepository.update(id, { orderIndex: order });
     }
   }
 }

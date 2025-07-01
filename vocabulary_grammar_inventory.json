@@ -1,0 +1,284 @@
+{
+  "vocabulary_inventory": {
+    "unit_1": {
+      "theme": "Greetings and Introductions",
+      "categories": {
+        "greetings": [
+          {"turkish": "merhaba", "english": "hello", "pronunciation": "mer-ha-ba", "usage": "general greeting"},
+          {"turkish": "günaydın", "english": "good morning", "pronunciation": "gün-ay-dın", "usage": "morning greeting"},
+          {"turkish": "iyi günler", "english": "good day", "pronunciation": "i-yi gün-ler", "usage": "afternoon greeting"},
+          {"turkish": "iyi akşamlar", "english": "good evening", "pronunciation": "i-yi ak-şam-lar", "usage": "evening greeting"},
+          {"turkish": "iyi geceler", "english": "good night", "pronunciation": "i-yi ge-ce-ler", "usage": "night farewell"},
+          {"turkish": "hoşça kal", "english": "goodbye", "pronunciation": "hoş-ça kal", "usage": "informal farewell"},
+          {"turkish": "görüşürüz", "english": "see you later", "pronunciation": "gö-rü-şü-rüz", "usage": "casual farewell"}
+        ],
+        "personal_info": [
+          {"turkish": "ad", "english": "name", "pronunciation": "ad", "usage": "first name"},
+          {"turkish": "soyad", "english": "surname", "pronunciation": "soy-ad", "usage": "family name"},
+          {"turkish": "yaş", "english": "age", "pronunciation": "yaş", "usage": "how old someone is"},
+          {"turkish": "meslek", "english": "profession", "pronunciation": "mes-lek", "usage": "job/occupation"},
+          {"turkish": "ülke", "english": "country", "pronunciation": "ül-ke", "usage": "nation"},
+          {"turkish": "şehir", "english": "city", "pronunciation": "şe-hir", "usage": "urban area"}
+        ],
+        "classroom": [
+          {"turkish": "sınıf", "english": "classroom", "pronunciation": "sı-nıf", "usage": "learning space"},
+          {"turkish": "masa", "english": "table/desk", "pronunciation": "ma-sa", "usage": "furniture"},
+          {"turkish": "sandalye", "english": "chair", "pronunciation": "san-dal-ye", "usage": "seating"},
+          {"turkish": "tahta", "english": "board", "pronunciation": "tah-ta", "usage": "writing surface"},
+          {"turkish": "kalem", "english": "pen/pencil", "pronunciation": "ka-lem", "usage": "writing tool"},
+          {"turkish": "kitap", "english": "book", "pronunciation": "ki-tap", "usage": "reading material"},
+          {"turkish": "defter", "english": "notebook", "pronunciation": "def-ter", "usage": "writing pad"},
+          {"turkish": "silgi", "english": "eraser", "pronunciation": "sil-gi", "usage": "correction tool"}
+        ],
+        "professions": [
+          {"turkish": "öğretmen", "english": "teacher", "pronunciation": "öğ-ret-men", "usage": "educator"},
+          {"turkish": "öğrenci", "english": "student", "pronunciation": "öğ-ren-ci", "usage": "learner"},
+          {"turkish": "doktor", "english": "doctor", "pronunciation": "dok-tor", "usage": "medical professional"},
+          {"turkish": "mühendis", "english": "engineer", "pronunciation": "mü-hen-dis", "usage": "technical professional"},
+          {"turkish": "sekreter", "english": "secretary", "pronunciation": "sek-re-ter", "usage": "administrative assistant"},
+          {"turkish": "polis", "english": "police officer", "pronunciation": "po-lis", "usage": "law enforcement"}
+        ]
+      }
+    },
+    "unit_2": {
+      "theme": "Places and Numbers",
+      "categories": {
+        "school_places": [
+          {"turkish": "okul", "english": "school", "pronunciation": "o-kul", "usage": "educational institution"},
+          {"turkish": "kantin", "english": "cafeteria", "pronunciation": "kan-tin", "usage": "eating area"},
+          {"turkish": "kütüphane", "english": "library", "pronunciation": "kü-tüp-ha-ne", "usage": "book repository"},
+          {"turkish": "ofis", "english": "office", "pronunciation": "o-fis", "usage": "work space"},
+          {"turkish": "koridor", "english": "corridor", "pronunciation": "ko-ri-dor", "usage": "hallway"},
+          {"turkish": "merdiven", "english": "stairs", "pronunciation": "mer-di-ven", "usage": "steps"}
+        ],
+        "numbers": [
+          {"turkish": "bir", "english": "one", "pronunciation": "bir", "usage": "number 1"},
+          {"turkish": "iki", "english": "two", "pronunciation": "i-ki", "usage": "number 2"},
+          {"turkish": "üç", "english": "three", "pronunciation": "üç", "usage": "number 3"},
+          {"turkish": "dört", "english": "four", "pronunciation": "dört", "usage": "number 4"},
+          {"turkish": "beş", "english": "five", "pronunciation": "beş", "usage": "number 5"},
+          {"turkish": "altı", "english": "six", "pronunciation": "al-tı", "usage": "number 6"},
+          {"turkish": "yedi", "english": "seven", "pronunciation": "ye-di", "usage": "number 7"},
+          {"turkish": "sekiz", "english": "eight", "pronunciation": "se-kiz", "usage": "number 8"},
+          {"turkish": "dokuz", "english": "nine", "pronunciation": "do-kuz", "usage": "number 9"},
+          {"turkish": "on", "english": "ten", "pronunciation": "on", "usage": "number 10"}
+        ],
+        "city_places": [
+          {"turkish": "hastane", "english": "hospital", "pronunciation": "has-ta-ne", "usage": "medical facility"},
+          {"turkish": "market", "english": "market/store", "pronunciation": "mar-ket", "usage": "shopping place"},
+          {"turkish": "banka", "english": "bank", "pronunciation": "ban-ka", "usage": "financial institution"},
+          {"turkish": "park", "english": "park", "pronunciation": "park", "usage": "recreational area"},
+          {"turkish": "restoran", "english": "restaurant", "pronunciation": "res-to-ran", "usage": "dining place"},
+          {"turkish": "otel", "english": "hotel", "pronunciation": "o-tel", "usage": "accommodation"}
+        ],
+        "adjectives": [
+          {"turkish": "büyük", "english": "big/large", "pronunciation": "bü-yük", "usage": "size descriptor"},
+          {"turkish": "küçük", "english": "small", "pronunciation": "kü-çük", "usage": "size descriptor"},
+          {"turkish": "güzel", "english": "beautiful/nice", "pronunciation": "gü-zel", "usage": "positive quality"},
+          {"turkish": "kötü", "english": "bad", "pronunciation": "kö-tü", "usage": "negative quality"},
+          {"turkish": "yeni", "english": "new", "pronunciation": "ye-ni", "usage": "age/condition"},
+          {"turkish": "eski", "english": "old", "pronunciation": "es-ki", "usage": "age/condition"}
+        ]
+      }
+    },
+    "unit_3": {
+      "theme": "Daily Activities and Hobbies",
+      "categories": {
+        "daily_activities": [
+          {"turkish": "kalkmak", "english": "to get up", "pronunciation": "kalk-mak", "usage": "morning routine"},
+          {"turkish": "yemek yemek", "english": "to eat", "pronunciation": "ye-mek ye-mek", "usage": "eating action"},
+          {"turkish": "su içmek", "english": "to drink water", "pronunciation": "su iç-mek", "usage": "drinking action"},
+          {"turkish": "gitmek", "english": "to go", "pronunciation": "git-mek", "usage": "movement"},
+          {"turkish": "gelmek", "english": "to come", "pronunciation": "gel-mek", "usage": "movement"},
+          {"turkish": "çalışmak", "english": "to work/study", "pronunciation": "ça-lış-mak", "usage": "productive activity"},
+          {"turkish": "uyumak", "english": "to sleep", "pronunciation": "u-yu-mak", "usage": "rest activity"}
+        ],
+        "hobbies": [
+          {"turkish": "müzik dinlemek", "english": "to listen to music", "pronunciation": "mü-zik din-le-mek", "usage": "entertainment"},
+          {"turkish": "kitap okumak", "english": "to read books", "pronunciation": "ki-tap o-ku-mak", "usage": "learning activity"},
+          {"turkish": "film izlemek", "english": "to watch movies", "pronunciation": "film iz-le-mek", "usage": "entertainment"},
+          {"turkish": "spor yapmak", "english": "to do sports", "pronunciation": "spor yap-mak", "usage": "physical activity"},
+          {"turkish": "yemek pişirmek", "english": "to cook", "pronunciation": "ye-mek pi-şir-mek", "usage": "food preparation"},
+          {"turkish": "arkadaşlarla buluşmak", "english": "to meet friends", "pronunciation": "ar-ka-daş-lar-la bu-luş-mak", "usage": "social activity"}
+        ],
+        "shopping": [
+          {"turkish": "alışveriş", "english": "shopping", "pronunciation": "a-lış-ve-riş", "usage": "buying activity"},
+          {"turkish": "mağaza", "english": "store", "pronunciation": "ma-ğa-za", "usage": "retail place"},
+          {"turkish": "para", "english": "money", "pronunciation": "pa-ra", "usage": "currency"},
+          {"turkish": "almak", "english": "to buy", "pronunciation": "al-mak", "usage": "purchase action"},
+          {"turkish": "satmak", "english": "to sell", "pronunciation": "sat-mak", "usage": "selling action"},
+          {"turkish": "fiyat", "english": "price", "pronunciation": "fi-yat", "usage": "cost"}
+        ]
+      }
+    }
+  },
+  "grammar_inventory": {
+    "unit_1": {
+      "topics": [
+        {
+          "name": "Turkish Alphabet",
+          "description": "29 letters in Turkish alphabet",
+          "examples": ["A a", "B b", "C c", "Ç ç", "D d", "E e", "F f", "G g", "Ğ ğ", "H h", "I ı", "İ i", "J j", "K k", "L l", "M m", "N n", "O o", "Ö ö", "P p", "R r", "S s", "Ş ş", "T t", "U u", "Ü ü", "V v", "Y y", "Z z"],
+          "exercises": ["Letter recognition", "Pronunciation practice", "Writing practice"]
+        },
+        {
+          "name": "Demonstratives (Bu-Şu-O)",
+          "description": "This, that (near), that (far)",
+          "examples": [
+            "Bu kalem. (This is a pen.)",
+            "Şu masa. (That table.)",
+            "O kitap. (That book.)"
+          ],
+          "exercises": ["Pointing exercises", "Object identification", "Distance practice"]
+        },
+        {
+          "name": "Question Words (Kim-Ne)",
+          "description": "Who and What questions",
+          "examples": [
+            "O kim? (Who is that?)",
+            "Bu ne? (What is this?)",
+            "Kim öğretmen? (Who is the teacher?)"
+          ],
+          "exercises": ["Question formation", "Answer practice", "Dialogue creation"]
+        },
+        {
+          "name": "Plural Suffix (-lAr)",
+          "description": "Making nouns plural",
+          "examples": [
+            "kitap → kitaplar (book → books)",
+            "masa → masalar (table → tables)",
+            "öğrenci → öğrenciler (student → students)"
+          ],
+          "exercises": ["Plural formation", "Vowel harmony practice", "Exception rules"]
+        },
+        {
+          "name": "Question Particle (mI)",
+          "description": "Yes/no questions",
+          "examples": [
+            "Bu kitap mı? (Is this a book?)",
+            "O öğretmen mi? (Is he/she a teacher?)",
+            "Siz öğrenci misiniz? (Are you a student?)"
+          ],
+          "exercises": ["Question formation", "Vowel harmony", "Answer practice"]
+        }
+      ]
+    },
+    "unit_2": {
+      "topics": [
+        {
+          "name": "Locative Case (-DA)",
+          "description": "Expressing location (in, at, on)",
+          "examples": [
+            "okulda (at school)",
+            "evde (at home)",
+            "sınıfta (in the classroom)",
+            "parkta (in the park)"
+          ],
+          "exercises": ["Case suffix practice", "Voicing rules", "Location descriptions"]
+        },
+        {
+          "name": "Existence (Var/Yok)",
+          "description": "There is/There isn't",
+          "examples": [
+            "Sınıfta öğrenci var. (There are students in the classroom.)",
+            "Masada kitap yok. (There is no book on the table.)",
+            "Okulda kantin var mı? (Is there a cafeteria at school?)"
+          ],
+          "exercises": ["Existence statements", "Negative forms", "Question forms"]
+        },
+        {
+          "name": "Numbers (1-100)",
+          "description": "Cardinal and ordinal numbers",
+          "examples": [
+            "bir, iki, üç... (one, two, three...)",
+            "birinci, ikinci, üçüncü... (first, second, third...)",
+            "on beş (fifteen)", "yirmi (twenty)", "yüz (hundred)"
+          ],
+          "exercises": ["Number recognition", "Counting practice", "Ordinal formation"]
+        },
+        {
+          "name": "Nominal Sentences",
+          "description": "Sentences without verbs",
+          "examples": [
+            "Ben öğrenciyim. (I am a student.)",
+            "O doktor. (He/She is a doctor.)",
+            "Biz Türküz. (We are Turkish.)"
+          ],
+          "exercises": ["Identity statements", "Nationality expressions", "Profession descriptions"]
+        }
+      ]
+    },
+    "unit_3": {
+      "topics": [
+        {
+          "name": "Present Tense (-Iyor)",
+          "description": "Ongoing actions in present",
+          "examples": [
+            "Ben kitap okuyorum. (I am reading a book.)",
+            "O müzik dinliyor. (He/She is listening to music.)",
+            "Biz çalışıyoruz. (We are working.)"
+          ],
+          "exercises": ["Verb conjugation", "Vowel harmony", "Tense usage"]
+        },
+        {
+          "name": "Dative Case (-(y)A)",
+          "description": "Direction, indirect object",
+          "examples": [
+            "okula gitmek (to go to school)",
+            "eve gelmek (to come home)",
+            "arkadaşa mektup yazmak (to write a letter to a friend)"
+          ],
+          "exercises": ["Direction expressions", "Indirect objects", "Movement verbs"]
+        },
+        {
+          "name": "Ablative Case (-DAn)",
+          "description": "From, out of, source",
+          "examples": [
+            "okuldan gelmek (to come from school)",
+            "evden çıkmak (to leave home)",
+            "marketten alışveriş yapmak (to shop from the market)"
+          ],
+          "exercises": ["Source expressions", "Movement from", "Origin descriptions"]
+        },
+        {
+          "name": "Want/Desire (-mAk istemek)",
+          "description": "Expressing wants and desires",
+          "examples": [
+            "Kitap okumak istiyorum. (I want to read a book.)",
+            "Film izlemek istiyor. (He/She wants to watch a movie.)",
+            "Spor yapmak istiyoruz. (We want to do sports.)"
+          ],
+          "exercises": ["Desire expressions", "Infinitive forms", "Want statements"]
+        }
+      ]
+    }
+  },
+  "pronunciation_guide": {
+    "vowel_harmony": {
+      "description": "Turkish vowels follow harmony rules",
+      "front_vowels": ["e", "i", "ö", "ü"],
+      "back_vowels": ["a", "ı", "o", "u"],
+      "examples": [
+        "ev-ler (houses) - front harmony",
+        "okul-lar (schools) - back harmony"
+      ]
+    },
+    "consonant_changes": {
+      "description": "Some consonants change in certain positions",
+      "voicing_rules": {
+        "p → b": "kitap → kitabı",
+        "t → d": "saat → saati",
+        "k → ğ": "çocuk → çocuğu",
+        "ç → c": "ağaç → ağacı"
+      }
+    },
+    "stress_patterns": {
+      "description": "Turkish stress patterns",
+      "general_rule": "Stress usually falls on the last syllable",
+      "exceptions": [
+        "Place names: İstanbul, Ankara",
+        "Some borrowed words: müzik, doktor"
+      ]
+    }
+  }
+}

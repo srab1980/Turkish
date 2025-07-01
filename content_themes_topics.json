@@ -1,0 +1,268 @@
+{
+  "thematic_organization": {
+    "overview": "Content organized around 12 major life themes with cultural integration and real-world applications",
+    "approach": "Spiral curriculum - themes revisited with increasing complexity",
+    "cultural_integration": "Turkish cultural elements woven throughout all themes"
+  },
+  "theme_categories": {
+    "personal_identity": {
+      "units": [1, 4],
+      "themes": ["Self-introduction", "Family and relationships"],
+      "real_world_applications": [
+        "Meeting new people",
+        "Social gatherings",
+        "Family introductions",
+        "Personal information forms"
+      ],
+      "cultural_elements": [
+        "Turkish naming conventions",
+        "Family hierarchy and respect",
+        "Social greeting customs",
+        "Personal space and formality levels"
+      ]
+    },
+    "daily_life": {
+      "units": [2, 3, 7],
+      "themes": ["School and work", "Daily routines", "Transportation"],
+      "real_world_applications": [
+        "Navigating educational institutions",
+        "Workplace communication",
+        "Public transportation use",
+        "Daily scheduling and planning"
+      ],
+      "cultural_elements": [
+        "Turkish education system",
+        "Work-life balance in Turkey",
+        "Public transport etiquette",
+        "Time concepts and punctuality"
+      ]
+    },
+    "consumer_culture": {
+      "units": [5, 6],
+      "themes": ["Food and dining", "Shopping and commerce"],
+      "real_world_applications": [
+        "Restaurant ordering",
+        "Market shopping",
+        "Price negotiation",
+        "Food preparation and sharing"
+      ],
+      "cultural_elements": [
+        "Turkish cuisine traditions",
+        "Hospitality customs",
+        "Bazaar culture and bargaining",
+        "Tea culture and social eating"
+      ]
+    },
+    "health_and_wellbeing": {
+      "units": [8],
+      "themes": ["Health and medical care"],
+      "real_world_applications": [
+        "Medical appointments",
+        "Pharmacy visits",
+        "Health insurance navigation",
+        "Emergency situations"
+      ],
+      "cultural_elements": [
+        "Turkish healthcare system",
+        "Traditional remedies",
+        "Wellness practices",
+        "Health-related superstitions"
+      ]
+    },
+    "temporal_concepts": {
+      "units": [9, 10, 11],
+      "themes": ["Past experiences", "Future plans", "Weather and seasons"],
+      "real_world_applications": [
+        "Storytelling and sharing experiences",
+        "Goal setting and planning",
+        "Weather-based decision making",
+        "Seasonal activity planning"
+      ],
+      "cultural_elements": [
+        "Turkish historical consciousness",
+        "Future orientation in Turkish culture",
+        "Seasonal celebrations",
+        "Climate adaptation strategies"
+      ]
+    },
+    "cultural_identity": {
+      "units": [12],
+      "themes": ["Turkish culture and traditions"],
+      "real_world_applications": [
+        "Cultural event participation",
+        "Cross-cultural communication",
+        "Cultural comparison and appreciation",
+        "Integration into Turkish society"
+      ],
+      "cultural_elements": [
+        "National holidays and celebrations",
+        "Religious and secular traditions",
+        "Arts and literature",
+        "Modern Turkish identity"
+      ]
+    }
+  },
+  "detailed_topic_breakdown": {
+    "unit_1_topics": {
+      "primary_theme": "First Encounters",
+      "sub_topics": [
+        {
+          "topic": "Greetings and Farewells",
+          "contexts": ["Formal meetings", "Casual encounters", "Phone conversations", "Written communication"],
+          "vocabulary_focus": ["Time-specific greetings", "Formality levels", "Response patterns"],
+          "cultural_notes": ["When to use formal vs informal", "Regional greeting variations", "Non-verbal communication"]
+        },
+        {
+          "topic": "Personal Information",
+          "contexts": ["Job interviews", "School registration", "Social introductions", "Official forms"],
+          "vocabulary_focus": ["Names and titles", "Nationalities", "Professions", "Contact information"],
+          "cultural_notes": ["Turkish naming system", "Professional titles", "Privacy expectations"]
+        },
+        {
+          "topic": "Turkish Alphabet and Sounds",
+          "contexts": ["Spelling names", "Reading signs", "Pronunciation practice", "Writing practice"],
+          "vocabulary_focus": ["Letter names", "Sound-symbol correspondence", "Spelling patterns"],
+          "cultural_notes": ["Script history", "Regional pronunciation differences", "Literacy traditions"]
+        }
+      ]
+    },
+    "unit_2_topics": {
+      "primary_theme": "Navigating Spaces",
+      "sub_topics": [
+        {
+          "topic": "Educational Environments",
+          "contexts": ["University campus", "Language school", "Library", "Study groups"],
+          "vocabulary_focus": ["School facilities", "Academic terms", "Study materials", "Educational roles"],
+          "cultural_notes": ["Turkish education system", "Student-teacher relationships", "Academic culture"]
+        },
+        {
+          "topic": "Numbers and Counting",
+          "contexts": ["Shopping", "Addresses", "Phone numbers", "Prices", "Quantities"],
+          "vocabulary_focus": ["Cardinal numbers", "Ordinal numbers", "Mathematical operations", "Measurements"],
+          "cultural_notes": ["Number superstitions", "Counting systems", "Price expressions"]
+        },
+        {
+          "topic": "Urban Geography",
+          "contexts": ["City navigation", "Asking directions", "Public services", "Neighborhood description"],
+          "vocabulary_focus": ["City landmarks", "Public buildings", "Directions", "Location descriptions"],
+          "cultural_notes": ["Turkish city planning", "Historical districts", "Modern urban development"]
+        }
+      ]
+    },
+    "unit_3_topics": {
+      "primary_theme": "Daily Rhythms",
+      "sub_topics": [
+        {
+          "topic": "Time and Schedules",
+          "contexts": ["Work schedules", "Appointment making", "Event planning", "Daily routines"],
+          "vocabulary_focus": ["Time expressions", "Days and months", "Frequency adverbs", "Schedule vocabulary"],
+          "cultural_notes": ["Turkish time concepts", "Prayer times influence", "Business hours", "Social timing"]
+        },
+        {
+          "topic": "Activities and Hobbies",
+          "contexts": ["Leisure time", "Sports activities", "Cultural events", "Social gatherings"],
+          "vocabulary_focus": ["Activity verbs", "Sports terms", "Entertainment vocabulary", "Hobby descriptions"],
+          "cultural_notes": ["Popular Turkish pastimes", "Traditional games", "Modern entertainment", "Social activities"]
+        },
+        {
+          "topic": "Expressing Preferences",
+          "contexts": ["Making choices", "Expressing likes/dislikes", "Planning activities", "Giving opinions"],
+          "vocabulary_focus": ["Preference expressions", "Opinion markers", "Degree adverbs", "Comparison terms"],
+          "cultural_notes": ["Politeness in expressing preferences", "Cultural preferences", "Decision-making styles"]
+        }
+      ]
+    }
+  },
+  "cross_cutting_themes": {
+    "technology_integration": {
+      "description": "Modern technology use in Turkish context",
+      "units_covered": [2, 3, 6, 10],
+      "applications": ["Social media", "Online shopping", "Digital communication", "Navigation apps"],
+      "vocabulary": ["Technology terms", "Digital actions", "Online services", "Communication platforms"]
+    },
+    "environmental_awareness": {
+      "description": "Environmental consciousness in daily life",
+      "units_covered": [6, 7, 11],
+      "applications": ["Sustainable shopping", "Public transport use", "Weather adaptation", "Recycling"],
+      "vocabulary": ["Environmental terms", "Sustainability actions", "Weather vocabulary", "Conservation concepts"]
+    },
+    "social_responsibility": {
+      "description": "Community engagement and social awareness",
+      "units_covered": [4, 8, 12],
+      "applications": ["Family obligations", "Community health", "Cultural preservation", "Social participation"],
+      "vocabulary": ["Social roles", "Community terms", "Responsibility expressions", "Civic vocabulary"]
+    }
+  },
+  "real_world_application_scenarios": {
+    "survival_situations": [
+      {
+        "scenario": "Airport arrival in Turkey",
+        "units_involved": [1, 2, 7],
+        "skills_needed": ["Basic greetings", "Numbers for flight info", "Direction asking"],
+        "cultural_preparation": ["Customs procedures", "Transportation options", "Initial interactions"]
+      },
+      {
+        "scenario": "University enrollment",
+        "units_involved": [1, 2, 4],
+        "skills_needed": ["Personal information", "Academic vocabulary", "Family background"],
+        "cultural_preparation": ["Educational system", "Documentation requirements", "Academic relationships"]
+      },
+      {
+        "scenario": "Medical emergency",
+        "units_involved": [1, 8, 2],
+        "skills_needed": ["Personal identification", "Health vocabulary", "Location description"],
+        "cultural_preparation": ["Healthcare system", "Emergency procedures", "Insurance concepts"]
+      }
+    ],
+    "integration_scenarios": [
+      {
+        "scenario": "Neighborhood integration",
+        "units_involved": [1, 3, 4, 6],
+        "skills_needed": ["Introductions", "Daily routines", "Family talk", "Local shopping"],
+        "cultural_preparation": ["Neighbor relationships", "Community participation", "Local customs"]
+      },
+      {
+        "scenario": "Workplace communication",
+        "units_involved": [1, 3, 9, 10],
+        "skills_needed": ["Professional introductions", "Schedule discussion", "Experience sharing", "Future planning"],
+        "cultural_preparation": ["Work culture", "Professional hierarchy", "Communication styles"]
+      },
+      {
+        "scenario": "Social event participation",
+        "units_involved": [4, 5, 12],
+        "skills_needed": ["Family introductions", "Food discussions", "Cultural appreciation"],
+        "cultural_preparation": ["Social etiquette", "Gift-giving customs", "Conversation topics"]
+      }
+    ]
+  },
+  "cultural_integration_strategy": {
+    "authentic_materials": {
+      "sources": ["Turkish TV shows", "News articles", "Social media posts", "Official documents"],
+      "adaptation": "Simplified for A1 level while maintaining authenticity",
+      "integration": "Embedded in lessons as reading/listening materials"
+    },
+    "cultural_comparison": {
+      "approach": "Compare learner's culture with Turkish culture",
+      "activities": ["Cultural discussion prompts", "Comparison charts", "Reflection exercises"],
+      "outcomes": ["Increased cultural awareness", "Reduced culture shock", "Enhanced integration"]
+    },
+    "experiential_learning": {
+      "virtual_experiences": ["Virtual city tours", "Online cultural events", "Digital museum visits"],
+      "simulation_activities": ["Role-play scenarios", "Cultural situation practice", "Problem-solving tasks"],
+      "project_based": ["Cultural research projects", "Community interviews", "Cultural presentation preparation"]
+    }
+  },
+  "assessment_integration": {
+    "theme_based_assessment": {
+      "approach": "Assess language skills within thematic contexts",
+      "benefits": ["More authentic assessment", "Integrated skill evaluation", "Cultural competence measurement"],
+      "implementation": ["Scenario-based tests", "Project portfolios", "Performance tasks"]
+    },
+    "progressive_complexity": {
+      "early_units": "Simple, concrete themes with basic vocabulary",
+      "middle_units": "More complex themes with expanded vocabulary",
+      "later_units": "Abstract themes with sophisticated language use",
+      "assessment_adaptation": "Complexity increases with learner development"
+    }
+  }
+}

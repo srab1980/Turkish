@@ -16,13 +16,6 @@ class ContentType(str, Enum):
     DOCX = "docx"
     TXT = "txt"
 
-class ExerciseType(str, Enum):
-    MULTIPLE_CHOICE = "multiple_choice"
-    FILL_BLANK = "fill_blank"
-    MATCHING = "matching"
-    ORDERING = "ordering"
-    TRANSLATION = "translation"
-
 class ContentExtractionRequest(BaseModel):
     file_url: str
     file_type: ContentType
@@ -46,7 +39,7 @@ class GrammarRule(BaseModel):
     category: str
 
 class Exercise(BaseModel):
-    type: ExerciseType
+    type: str
     question: str
     options: Optional[List[str]] = None
     correct_answer: str

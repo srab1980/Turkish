@@ -73,8 +73,8 @@ export default function UserList({ onCreateUser, onEditUser, onViewUser }: UserL
     },
   });
 
-  const users = usersResponse?.data?.data?.items || [];
-  const totalUsers = usersResponse?.data?.data?.total || 0;
+  const users = usersResponse?.data?.items || [];
+  const totalUsers = usersResponse?.data?.total || 0;
 
   const handleDeleteUser = async (user: User) => {
     if (window.confirm(`Are you sure you want to delete "${user.fullName}"?`)) {

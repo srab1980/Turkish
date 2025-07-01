@@ -49,6 +49,7 @@ const config: Config = {
           primary: "#DC2626",
           secondary: "#FEF2F2",
         },
+        "turkish-red": "#E30A17",
       },
       borderRadius: {
         lg: "var(--radius)",

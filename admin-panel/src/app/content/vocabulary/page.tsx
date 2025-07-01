@@ -93,8 +93,7 @@ export default function VocabularyPage() {
 
   const playAudio = (audioUrl: string) => {
     // In a real app, this would play the audio file
-    console.log('Playing audio:', audioUrl);
-  };
+      };
 
   return (
     <Layout>

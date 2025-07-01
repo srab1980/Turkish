@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres:
@@ -38,7 +36,8 @@ services:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/turkish_learning_app
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - JWT_SECRET=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG940/bne2FE0VQUXRf3hJoU87vXA9SF3hb/l3zb1n6K srab1980@gmail.com
+
       - PORT=3001
     ports:
       - "3001:3001"
@@ -50,7 +49,7 @@ services:
       - redis
     networks:
       - turkish-app-network
-    command: npm run start:dev
+    command: npm run start:prod
 
   # Frontend Web App (Next.js)
   frontend:
@@ -59,19 +58,19 @@ services:
       dockerfile: Dockerfile
     container_name: turkish-app-frontend
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://localhost:3001
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     depends_on:
       - backend
     networks:
       - turkish-app-network
-    command: npm run dev
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # AI/NLP Microservices (Python)
   ai-service:
@@ -85,7 +84,7 @@ services:
       - REDIS_URL=redis://redis:6379
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     ports:
-      - "8000:8000"
+      - "8080:8000"
     volumes:
       - ./ai-service:/app
       - ./shared/uploads:/app/uploads
@@ -94,28 +93,28 @@ services:
       - redis
     networks:
       - turkish-app-network
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
 
   # Admin Panel (Next.js)
   admin:
     build:
-      context: ./admin
+      context: ./admin-panel
       dockerfile: Dockerfile
     container_name: turkish-app-admin
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://localhost:3001
     ports:
-      - "3002:3000"
-    volumes:
-      - ./admin:/app
-      - /app/node_modules
-      - /app/.next
+      - "3002:3003"
     depends_on:
       - backend
     networks:
       - turkish-app-network
-    command: npm run dev
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3002"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   postgres_data:

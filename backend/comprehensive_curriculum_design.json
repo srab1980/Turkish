@@ -1,0 +1,332 @@
+{
+  "curriculum_overview": {
+    "title": "Turkish A1 Complete Course - İstanbul Yabancılar İçin Türkçe",
+    "level": "A1 (CEFR)",
+    "total_duration": "120 hours",
+    "total_units": 12,
+    "lessons_per_unit": 3,
+    "total_lessons": 36,
+    "assessment_frequency": "Every 2 units",
+    "completion_criteria": {
+      "minimum_score": 70,
+      "vocabulary_mastery": 500,
+      "grammar_points_covered": 15,
+      "skills_assessed": ["reading", "writing", "listening", "speaking"]
+    }
+  },
+  "learning_progression": {
+    "beginner_phase": {
+      "units": [1, 2, 3, 4],
+      "focus": "Basic communication, alphabet, numbers, personal information",
+      "skills": "Survival Turkish, basic interactions",
+      "vocabulary_target": 150
+    },
+    "elementary_phase": {
+      "units": [5, 6, 7, 8],
+      "focus": "Daily activities, family, food, shopping",
+      "skills": "Routine conversations, simple descriptions",
+      "vocabulary_target": 200
+    },
+    "pre_intermediate_phase": {
+      "units": [9, 10, 11, 12],
+      "focus": "Past experiences, future plans, opinions",
+      "skills": "Extended conversations, basic storytelling",
+      "vocabulary_target": 150
+    }
+  },
+  "unit_structure_template": {
+    "sections": [
+      {
+        "name": "HAZIRLIK ÇALIŞMALARI",
+        "english": "Preparation Activities",
+        "duration": "10 minutes",
+        "purpose": "Activate prior knowledge and introduce topic"
+      },
+      {
+        "name": "OKUMA",
+        "english": "Reading",
+        "duration": "15 minutes",
+        "purpose": "Introduce new vocabulary and structures through context"
+      },
+      {
+        "name": "YA SİZ?",
+        "english": "What About You?",
+        "duration": "10 minutes",
+        "purpose": "Personalize content and practice new language"
+      },
+      {
+        "name": "DİLBİLGİSİ",
+        "english": "Grammar",
+        "duration": "20 minutes",
+        "purpose": "Explicit grammar instruction and practice"
+      },
+      {
+        "name": "DİNLEME",
+        "english": "Listening",
+        "duration": "15 minutes",
+        "purpose": "Develop listening skills and pronunciation"
+      },
+      {
+        "name": "KONUŞMA",
+        "english": "Speaking",
+        "duration": "15 minutes",
+        "purpose": "Practice oral communication and fluency"
+      },
+      {
+        "name": "YAZMA",
+        "english": "Writing",
+        "duration": "15 minutes",
+        "purpose": "Develop writing skills and consolidate learning"
+      },
+      {
+        "name": "KÜLTÜRDEN KÜLTÜRE",
+        "english": "Culture to Culture",
+        "duration": "10 minutes",
+        "purpose": "Cultural awareness and comparison"
+      },
+      {
+        "name": "ÖZ DEĞERLENDİRME",
+        "english": "Self-Assessment",
+        "duration": "10 minutes",
+        "purpose": "Reflection and progress monitoring"
+      }
+    ]
+  },
+  "detailed_units": [
+    {
+      "unit_number": 1,
+      "title": "MERHABA",
+      "english_title": "Hello",
+      "themes": ["Greetings", "Introductions", "Alphabet"],
+      "can_do_statements": [
+        "I can greet people appropriately in Turkish",
+        "I can introduce myself and others",
+        "I can spell my name in Turkish",
+        "I can ask and answer basic personal questions"
+      ],
+      "vocabulary_count": 40,
+      "grammar_points": ["Turkish alphabet", "Personal pronouns", "Bu/şu/o", "Question words"],
+      "cultural_focus": "Turkish greeting customs and social etiquette"
+    },
+    {
+      "unit_number": 2,
+      "title": "NEREDE?",
+      "english_title": "Where?",
+      "themes": ["School", "Numbers", "City places"],
+      "can_do_statements": [
+        "I can count from 1 to 100 in Turkish",
+        "I can describe locations using basic prepositions",
+        "I can ask for and give directions",
+        "I can identify common places in a city"
+      ],
+      "vocabulary_count": 45,
+      "grammar_points": ["Numbers", "Locative case (-DA)", "Var/yok", "Ordinal numbers"],
+      "cultural_focus": "Turkish cities and educational system"
+    },
+    {
+      "unit_number": 3,
+      "title": "GÜNLÜK HAYAT",
+      "english_title": "Daily Life",
+      "themes": ["Daily activities", "Time", "Hobbies"],
+      "can_do_statements": [
+        "I can describe my daily routine",
+        "I can tell time in Turkish",
+        "I can talk about my hobbies and interests",
+        "I can make simple plans"
+      ],
+      "vocabulary_count": 50,
+      "grammar_points": ["Present tense (-Iyor)", "Time expressions", "Dative case (-(y)A)", "Want (-mAk istemek)"],
+      "cultural_focus": "Turkish daily life and leisure activities"
+    },
+    {
+      "unit_number": 4,
+      "title": "AİLE",
+      "english_title": "Family",
+      "themes": ["Family members", "Relationships", "Descriptions"],
+      "can_do_statements": [
+        "I can introduce my family members",
+        "I can describe people's appearance and personality",
+        "I can talk about family relationships",
+        "I can ask about someone's family"
+      ],
+      "vocabulary_count": 40,
+      "grammar_points": ["Possessive suffixes", "Adjectives", "Family terms", "Physical descriptions"],
+      "cultural_focus": "Turkish family structure and values"
+    },
+    {
+      "unit_number": 5,
+      "title": "YEMEK",
+      "english_title": "Food",
+      "themes": ["Food and drinks", "Restaurants", "Cooking"],
+      "can_do_statements": [
+        "I can order food and drinks in a restaurant",
+        "I can talk about my food preferences",
+        "I can describe Turkish dishes",
+        "I can ask about ingredients and prices"
+      ],
+      "vocabulary_count": 55,
+      "grammar_points": ["Object case (-(y)I)", "Quantity expressions", "Like/dislike", "Imperative mood"],
+      "cultural_focus": "Turkish cuisine and dining customs"
+    },
+    {
+      "unit_number": 6,
+      "title": "ALIŞVERİŞ",
+      "english_title": "Shopping",
+      "themes": ["Shopping", "Clothes", "Money"],
+      "can_do_statements": [
+        "I can shop for clothes and everyday items",
+        "I can ask about prices and sizes",
+        "I can negotiate prices in markets",
+        "I can describe clothing and colors"
+      ],
+      "vocabulary_count": 45,
+      "grammar_points": ["Colors and adjectives", "Size and quantity", "Money expressions", "Comparison"],
+      "cultural_focus": "Turkish markets and shopping culture"
+    },
+    {
+      "unit_number": 7,
+      "title": "ULAŞIM",
+      "english_title": "Transportation",
+      "themes": ["Transportation", "Directions", "Travel"],
+      "can_do_statements": [
+        "I can ask for and give directions",
+        "I can use public transportation",
+        "I can talk about travel plans",
+        "I can describe locations and distances"
+      ],
+      "vocabulary_count": 40,
+      "grammar_points": ["Ablative case (-DAn)", "Direction expressions", "Transportation verbs", "Distance and time"],
+      "cultural_focus": "Turkish transportation system and travel"
+    },
+    {
+      "unit_number": 8,
+      "title": "SAĞLIK",
+      "english_title": "Health",
+      "themes": ["Body parts", "Health problems", "Doctor visits"],
+      "can_do_statements": [
+        "I can describe health problems",
+        "I can make a doctor's appointment",
+        "I can talk about body parts",
+        "I can give and understand health advice"
+      ],
+      "vocabulary_count": 35,
+      "grammar_points": ["Body parts", "Health expressions", "Modal verbs", "Advice giving"],
+      "cultural_focus": "Turkish healthcare system and wellness"
+    },
+    {
+      "unit_number": 9,
+      "title": "GEÇMİŞ",
+      "english_title": "Past",
+      "themes": ["Past experiences", "Childhood", "History"],
+      "can_do_statements": [
+        "I can talk about past experiences",
+        "I can describe my childhood",
+        "I can tell simple stories",
+        "I can ask about someone's past"
+      ],
+      "vocabulary_count": 45,
+      "grammar_points": ["Past tense (-DI)", "Time expressions (past)", "Childhood vocabulary", "Story telling"],
+      "cultural_focus": "Turkish history and traditions"
+    },
+    {
+      "unit_number": 10,
+      "title": "GELECEK",
+      "english_title": "Future",
+      "themes": ["Future plans", "Dreams", "Predictions"],
+      "can_do_statements": [
+        "I can talk about future plans",
+        "I can express hopes and dreams",
+        "I can make predictions",
+        "I can discuss career goals"
+      ],
+      "vocabulary_count": 40,
+      "grammar_points": ["Future tense (-(y)AcAk)", "Future time expressions", "Probability", "Plans and intentions"],
+      "cultural_focus": "Turkish aspirations and modern life"
+    },
+    {
+      "unit_number": 11,
+      "title": "HAVA DURUMU",
+      "english_title": "Weather",
+      "themes": ["Weather", "Seasons", "Climate"],
+      "can_do_statements": [
+        "I can describe weather conditions",
+        "I can talk about seasons and climate",
+        "I can make weather-related plans",
+        "I can understand weather forecasts"
+      ],
+      "vocabulary_count": 35,
+      "grammar_points": ["Weather expressions", "Seasonal vocabulary", "Conditional sentences", "Weather verbs"],
+      "cultural_focus": "Turkish climate and seasonal activities"
+    },
+    {
+      "unit_number": 12,
+      "title": "KÜLTÜR",
+      "english_title": "Culture",
+      "themes": ["Turkish culture", "Festivals", "Traditions"],
+      "can_do_statements": [
+        "I can describe Turkish cultural practices",
+        "I can talk about festivals and celebrations",
+        "I can compare cultures",
+        "I can express cultural preferences"
+      ],
+      "vocabulary_count": 40,
+      "grammar_points": ["Cultural expressions", "Festival vocabulary", "Comparison structures", "Opinion expressions"],
+      "cultural_focus": "Turkish cultural heritage and modern culture"
+    }
+  ],
+  "assessment_framework": {
+    "formative_assessment": {
+      "frequency": "Every lesson",
+      "types": ["Self-check exercises", "Peer activities", "Quick quizzes"],
+      "purpose": "Monitor progress and provide feedback"
+    },
+    "summative_assessment": {
+      "frequency": "Every 2 units",
+      "types": ["Unit tests", "Speaking assessments", "Portfolio reviews"],
+      "purpose": "Evaluate achievement of learning objectives"
+    },
+    "final_assessment": {
+      "frequency": "End of course",
+      "types": ["Comprehensive exam", "Oral interview", "Project presentation"],
+      "purpose": "Certify A1 level achievement"
+    }
+  },
+  "skill_development_pathway": {
+    "listening": {
+      "progression": [
+        "Single words and phrases",
+        "Simple dialogues",
+        "Short conversations",
+        "Extended interactions"
+      ],
+      "assessment_criteria": ["Comprehension accuracy", "Response appropriateness", "Detail recognition"]
+    },
+    "speaking": {
+      "progression": [
+        "Individual words",
+        "Simple sentences",
+        "Connected speech",
+        "Spontaneous conversation"
+      ],
+      "assessment_criteria": ["Pronunciation", "Fluency", "Accuracy", "Interaction"]
+    },
+    "reading": {
+      "progression": [
+        "Single words and signs",
+        "Simple texts",
+        "Structured passages",
+        "Authentic materials"
+      ],
+      "assessment_criteria": ["Comprehension", "Speed", "Strategy use", "Critical thinking"]
+    },
+    "writing": {
+      "progression": [
+        "Individual words",
+        "Simple sentences",
+        "Connected paragraphs",
+        "Structured texts"
+      ],
+      "assessment_criteria": ["Accuracy", "Organization", "Vocabulary use", "Grammar"]
+    }
+  }
+}

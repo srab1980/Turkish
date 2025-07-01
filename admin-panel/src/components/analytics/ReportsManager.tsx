@@ -5,10 +5,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   DocumentTextIcon,
-  CalendarIcon,
   ArrowDownTrayIcon,
   PlusIcon,
-  EyeIcon,
   TrashIcon,
   ClockIcon,
   CheckCircleIcon,

@@ -5,7 +5,7 @@ from typing import List, Dict, Any, Tuple
 import re
 import random
 from collections import Counter
-from app.models.content import CEFRLevel, VocabularyItem, GrammarRule, Exercise, ExerciseType
+from app.models.content import CEFRLevel, VocabularyItem, GrammarRule, Exercise
 from app.core.config import settings
 from app.services.cefr_analyzer import CEFRAnalyzer
 
@@ -197,7 +197,7 @@ class NLPProcessor:
                 distractors.append(f"wrong answer {len(distractors) + 1}")
 
             exercises.append(Exercise(
-                type=ExerciseType.MULTIPLE_CHOICE,
+                type="MULTIPLE_CHOICE",
                 question=f"What does '{vocab_item.turkish}' mean in English?",
                 options=[vocab_item.english] + distractors[:3],
                 correct_answer="A",
@@ -236,7 +236,7 @@ class NLPProcessor:
                     blank_sentence = ' '.join(words[:i] + ['_____'] + words[i+1:])
 
                     exercises.append(Exercise(
-                        type=ExerciseType.FILL_BLANK,
+                        type="FILL_BLANK",
                         question=f"Complete the sentence: {blank_sentence}",
                         options=[],
                         correct_answer=clean_word,
@@ -263,7 +263,7 @@ class NLPProcessor:
             random.shuffle(shuffled_english)
 
             exercises.append(Exercise(
-                type=ExerciseType.MATCHING,
+                type="MATCHING",
                 question="Match the Turkish words with their English translations:",
                 options=turkish_words + shuffled_english,
                 correct_answer="1-A,2-B,3-C,4-D",  # This would need proper mapping
@@ -281,7 +281,7 @@ class NLPProcessor:
         # Simple comprehension questions based on text content
         if "merhaba" in text.lower():
             exercises.append(Exercise(
-                type=ExerciseType.MULTIPLE_CHOICE,
+                type="MULTIPLE_CHOICE",
                 question="What greeting is mentioned in the text?",
                 options=["Merhaba", "Günaydın", "İyi akşamlar", "Hoşça kal"],
                 correct_answer="A",
@@ -291,7 +291,7 @@ class NLPProcessor:
 
         if "türkçe" in text.lower():
             exercises.append(Exercise(
-                type=ExerciseType.MULTIPLE_CHOICE,
+                type="MULTIPLE_CHOICE",
                 question="What language is mentioned in the text?",
                 options=["Turkish", "English", "German", "French"],
                 correct_answer="A",
@@ -393,11 +393,11 @@ class NLPProcessor:
         
         return rules
     
-    def _create_exercise_prompt(self, exercise_type: ExerciseType, text: str, 
+    def _create_exercise_prompt(self, exercise_type: str, text: str,
                               vocab_words: List[str], target_level: CEFRLevel) -> str:
         """Create prompt for exercise generation"""
-        
-        if exercise_type == ExerciseType.MULTIPLE_CHOICE:
+
+        if exercise_type == "MULTIPLE_CHOICE":
             return f"""
             Create a multiple choice question for {target_level.value} level Turkish learners.
             Use one of these vocabulary words: {', '.join(vocab_words)}
@@ -412,7 +412,7 @@ class NLPProcessor:
             EXPLANATION: [brief explanation]
             """
         
-        elif exercise_type == ExerciseType.FILL_BLANK:
+        elif exercise_type == "FILL_BLANK":
             return f"""
             Create a fill-in-the-blank exercise for {target_level.value} level Turkish learners.
             Use content from this text: {text[:200]}...
@@ -423,7 +423,7 @@ class NLPProcessor:
             EXPLANATION: [brief explanation]
             """
         
-        elif exercise_type == ExerciseType.TRANSLATION:
+        elif exercise_type == "TRANSLATION":
             return f"""
             Create a translation exercise for {target_level.value} level Turkish learners.
             Use one of these words: {', '.join(vocab_words)}
@@ -436,7 +436,7 @@ class NLPProcessor:
         
         return ""
     
-    def _parse_exercise(self, response: str, exercise_type: ExerciseType,
+    def _parse_exercise(self, response: str, exercise_type: str,
                        target_level: CEFRLevel) -> Exercise:
         """Parse exercise from OpenAI response - simplified version"""
 

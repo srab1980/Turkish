@@ -6,6 +6,7 @@ import { UserPreferences } from '../users/entities/user-preferences.entity';
 import { Course } from '../courses/entities/course.entity';
 import { Unit } from '../courses/entities/unit.entity';
 import { Lesson } from '../lessons/entities/lesson.entity';
+import { SubLesson } from '../lessons/entities/sub-lesson.entity';
 import { Exercise } from '../lessons/entities/exercise.entity';
 import { VocabularyItem } from '../lessons/entities/vocabulary-item.entity';
 import { GrammarRule } from '../lessons/entities/grammar-rule.entity';
@@ -13,6 +14,8 @@ import { UserProgress } from '../progress/entities/user-progress.entity';
 import { ExerciseAttempt } from '../progress/entities/exercise-attempt.entity';
 import { Achievement } from '../gamification/entities/achievement.entity';
 import { UserAchievement } from '../gamification/entities/user-achievement.entity';
+import { Badge } from '../gamification/entities/badge.entity';
+import { UserBadge } from '../gamification/entities/user-badge.entity';
 import { ReviewItem } from '../progress/entities/review-item.entity';
 import { FileUpload } from '../common/entities/file-upload.entity';
 import { Notification } from '../common/entities/notification.entity';
@@ -31,6 +34,7 @@ import { UserSession } from '../auth/entities/user-session.entity';
           Course,
           Unit,
           Lesson,
+          SubLesson,
           Exercise,
           VocabularyItem,
           GrammarRule,
@@ -38,6 +42,8 @@ import { UserSession } from '../auth/entities/user-session.entity';
           ExerciseAttempt,
           Achievement,
           UserAchievement,
+          Badge,
+          UserBadge,
           ReviewItem,
           FileUpload,
           Notification,

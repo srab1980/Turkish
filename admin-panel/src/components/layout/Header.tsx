@@ -10,6 +10,10 @@ import {
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   ChevronDownIcon,
+  EyeIcon,
+  ArrowsRightLeftIcon,
+  AcademicCapIcon,
+  ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/outline';
 import { clsx } from 'clsx';
 import { toast } from 'react-hot-toast';
@@ -21,11 +25,20 @@ interface HeaderProps {
   onUserUpdate?: (user: User) => void;
 }
 
+interface InterfaceMode {
+  mode: 'admin' | 'user';
+  label: string;
+  icon: React.ComponentType<any>;
+  description: string;
+}
+
 export default function Header({ user, onUserUpdate }: HeaderProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showInterfaceMenu, setShowInterfaceMenu] = useState(false);
+  const [currentInterface, setCurrentInterface] = useState<'admin' | 'user'>('admin');
   const [notifications] = useState([
     {
       id: '1',
@@ -52,6 +65,7 @@ export default function Header({ user, onUserUpdate }: HeaderProps) {
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const interfaceMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -60,6 +74,9 @@ export default function Header({ user, onUserUpdate }: HeaderProps) {
       }
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotifications(false);
+      }
+      if (interfaceMenuRef.current && !interfaceMenuRef.current.contains(event.target as Node)) {
+        setShowInterfaceMenu(false);
       }
     };
 
@@ -74,6 +91,33 @@ export default function Header({ user, onUserUpdate }: HeaderProps) {
       router.push('/login');
     } catch (error) {
       toast.error('Error logging out');
+    }
+  };
+
+  const interfaceModes: InterfaceMode[] = [
+    {
+      mode: 'admin',
+      label: 'Admin Interface',
+      icon: Cog6ToothIcon,
+      description: 'Manage content, users, and system settings'
+    },
+    {
+      mode: 'user',
+      label: 'Student Interface',
+      icon: AcademicCapIcon,
+      description: 'Experience the app as a student'
+    }
+  ];
+
+  const handleInterfaceSwitch = (mode: 'admin' | 'user') => {
+    setCurrentInterface(mode);
+    setShowInterfaceMenu(false);
+
+    if (mode === 'user') {
+      // Navigate directly to student interface
+      window.location.href = 'http://localhost:3001';
+    } else {
+      toast.success('Switched to admin interface');
     }
   };
 
@@ -109,6 +153,104 @@ export default function Header({ user, onUserUpdate }: HeaderProps) {
 
         {/* Actions */}
         <div className="flex items-center space-x-4">
+          {/* Interface Switcher */}
+          <div className="relative" ref={interfaceMenuRef}>
+            <button
+              onClick={() => setShowInterfaceMenu(!showInterfaceMenu)}
+              className="flex items-center space-x-2 rounded-lg px-3 py-2 text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 transition-colors border border-secondary-200 hover:border-secondary-300"
+              title="Switch Interface"
+            >
+              <ArrowsRightLeftIcon className="h-5 w-5 text-primary-600" />
+              <span className="text-sm font-medium">
+                {currentInterface === 'admin' ? 'Admin View' : 'Student View'}
+              </span>
+              <ChevronDownIcon className="h-4 w-4" />
+            </button>
+
+            <AnimatePresence>
+              {showInterfaceMenu && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                  className="absolute right-0 z-50 mt-2 w-80 rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-10 border border-secondary-200"
+                >
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-semibold text-secondary-900">Switch Interface</h3>
+                      <div className="flex items-center text-xs text-secondary-500 bg-secondary-100 px-2 py-1 rounded-full">
+                        <EyeIcon className="h-3 w-3 mr-1" />
+                        Preview Mode
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {interfaceModes.map((mode) => {
+                        const Icon = mode.icon;
+                        const isActive = currentInterface === mode.mode;
+
+                        return (
+                          <button
+                            key={mode.mode}
+                            onClick={() => handleInterfaceSwitch(mode.mode)}
+                            className={clsx(
+                              'w-full flex items-start space-x-3 rounded-lg p-4 text-left transition-all duration-200 group',
+                              isActive
+                                ? 'bg-primary-50 border border-primary-200 text-primary-700 shadow-sm'
+                                : 'hover:bg-secondary-50 border border-secondary-200 hover:border-primary-200 hover:shadow-sm'
+                            )}
+                          >
+                            <Icon className={clsx(
+                              'h-5 w-5 mt-0.5',
+                              isActive ? 'text-primary-600' : 'text-secondary-400'
+                            )} />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <div className={clsx(
+                                  'text-sm font-medium',
+                                  isActive ? 'text-primary-900' : 'text-secondary-900'
+                                )}>
+                                  {mode.label}
+                                  {isActive && (
+                                    <span className="ml-2 text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">
+                                      Current
+                                    </span>
+                                  )}
+                                </div>
+                                {mode.mode === 'user' && (
+                                  <ArrowTopRightOnSquareIcon className="h-4 w-4 text-secondary-400 group-hover:text-primary-500" />
+                                )}
+                              </div>
+                              <div className={clsx(
+                                'text-xs mt-1',
+                                isActive ? 'text-primary-600' : 'text-secondary-500'
+                              )}>
+                                {mode.description}
+                                {mode.mode === 'user' && (
+                                  <span className="block mt-1 text-xs text-secondary-400">
+                                    Switches to student interface
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-secondary-100">
+                      <div className="text-xs text-secondary-500">
+                        <div className="flex items-center space-x-1">
+                          <span>💡</span>
+                          <span>Switch between interfaces to test different user experiences</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {/* Notifications */}
           <div className="relative" ref={notificationRef}>
             <button

@@ -37,7 +37,7 @@ export class LessonsService {
     return this.lessonRepository.find({
       where: { unit: { id: unitId } },
       relations: ['exercises', 'vocabularyItems', 'grammarRules'],
-      order: { order: 'ASC' },
+      order: { orderIndex: 'ASC' },
     });
   }
 
@@ -65,6 +65,19 @@ export class LessonsService {
     await this.lessonRepository.remove(lesson);
   }
 
+  async duplicateLesson(id: string): Promise<Lesson> {
+    const originalLesson = await this.findLessonById(id);
+    const duplicatedLesson = this.lessonRepository.create({
+      ...originalLesson,
+      id: undefined,
+      title: `${originalLesson.title} (Copy)`,
+      isPublished: false,
+      createdAt: undefined,
+      updatedAt: undefined
+    });
+    return await this.lessonRepository.save(duplicatedLesson);
+  }
+
   // Exercise CRUD operations
   async createExercise(createExerciseDto: CreateExerciseDto): Promise<Exercise> {
     const lesson = await this.lessonRepository.findOne({
@@ -86,7 +99,7 @@ export class LessonsService {
   async findExercisesByLesson(lessonId: string): Promise<Exercise[]> {
     return this.exerciseRepository.find({
       where: { lesson: { id: lessonId } },
-      order: { order: 'ASC' },
+      order: { orderIndex: 'ASC' },
     });
   }
 
@@ -135,7 +148,7 @@ export class LessonsService {
   async findVocabularyByLesson(lessonId: string): Promise<VocabularyItem[]> {
     return this.vocabularyRepository.find({
       where: { lesson: { id: lessonId } },
-      order: { turkish: 'ASC' },
+      order: { turkishWord: 'ASC' },
     });
   }
 
@@ -221,8 +234,8 @@ export class LessonsService {
       lesson: {
         id: lesson.id,
         title: lesson.title,
-        type: lesson.type,
-        estimatedMinutes: lesson.estimatedMinutes,
+        type: lesson.lessonType,
+        estimatedMinutes: lesson.estimatedDuration,
       },
       stats: {
         totalExercises,
@@ -236,13 +249,13 @@ export class LessonsService {
 
   async reorderLessons(lessonOrders: { id: string; order: number }[]): Promise<void> {
     for (const { id, order } of lessonOrders) {
-      await this.lessonRepository.update(id, { order });
+      await this.lessonRepository.update(id, { orderIndex: order });
     }
   }
 
   async reorderExercises(exerciseOrders: { id: string; order: number }[]): Promise<void> {
     for (const { id, order } of exerciseOrders) {
-      await this.exerciseRepository.update(id, { order });
+      await this.exerciseRepository.update(id, { orderIndex: order });
     }
   }
 }

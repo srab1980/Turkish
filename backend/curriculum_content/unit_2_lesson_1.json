@@ -1,0 +1,327 @@
+{
+  "lesson": {
+    "id": "lesson-2-1-school",
+    "unitId": "unit-2-nerede",
+    "title": "Okul ve Eğitim (School and Education)",
+    "lessonNumber": 1,
+    "lessonType": "vocabulary",
+    "estimatedDuration": 50,
+    "difficultyLevel": 2,
+    "learningObjectives": [
+      "Learn school-related vocabulary",
+      "Describe educational environments",
+      "Ask about locations in school",
+      "Use 'var/yok' (there is/there isn't)"
+    ],
+    "prerequisites": ["lesson-1-1-greetings", "lesson-1-2-alphabet", "lesson-1-3-numbers"],
+    "content": {
+      "sections": [
+        {
+          "type": "warmup",
+          "title": "HAZIRLIK ÇALIŞMALARI (Preparation Activities)",
+          "duration": 5,
+          "content": {
+            "activity": "Think about your school experience",
+            "instructions": "What places do you remember from your school? What did you like most about school?",
+            "images": [
+              {
+                "url": "/images/school-building.jpg",
+                "alt": "Modern school building",
+                "caption": "Okul - School"
+              },
+              {
+                "url": "/images/classroom.jpg",
+                "alt": "Classroom with students",
+                "caption": "Sınıf - Classroom"
+              }
+            ]
+          }
+        },
+        {
+          "type": "vocabulary_introduction",
+          "title": "Okul Kelimeleri (School Vocabulary)",
+          "duration": 20,
+          "content": {
+            "vocabulary": [
+              {
+                "id": "vocab-okul",
+                "turkish": "okul",
+                "english": "school",
+                "pronunciation": "o-kul",
+                "audioUrl": "/audio/school/okul.mp3",
+                "usage": "Educational institution",
+                "example": "Ben okula gidiyorum.",
+                "imageUrl": "/images/vocab/school.jpg"
+              },
+              {
+                "id": "vocab-sinif",
+                "turkish": "sınıf",
+                "english": "classroom",
+                "pronunciation": "sı-nıf",
+                "audioUrl": "/audio/school/sinif.mp3",
+                "usage": "Room where lessons take place",
+                "example": "Sınıf çok büyük.",
+                "imageUrl": "/images/vocab/classroom.jpg"
+              },
+              {
+                "id": "vocab-ogretmen",
+                "turkish": "öğretmen",
+                "english": "teacher",
+                "pronunciation": "öğ-ret-men",
+                "audioUrl": "/audio/school/ogretmen.mp3",
+                "usage": "Person who teaches",
+                "example": "Öğretmen çok iyi.",
+                "imageUrl": "/images/vocab/teacher.jpg"
+              },
+              {
+                "id": "vocab-ogrenci",
+                "turkish": "öğrenci",
+                "english": "student",
+                "pronunciation": "öğ-ren-ci",
+                "audioUrl": "/audio/school/ogrenci.mp3",
+                "usage": "Person who learns",
+                "example": "Ben öğrenciyim.",
+                "imageUrl": "/images/vocab/student.jpg"
+              },
+              {
+                "id": "vocab-kitap",
+                "turkish": "kitap",
+                "english": "book",
+                "pronunciation": "ki-tap",
+                "audioUrl": "/audio/school/kitap.mp3",
+                "usage": "Reading material",
+                "example": "Kitap masada.",
+                "imageUrl": "/images/vocab/book.jpg"
+              },
+              {
+                "id": "vocab-defter",
+                "turkish": "defter",
+                "english": "notebook",
+                "pronunciation": "def-ter",
+                "audioUrl": "/audio/school/defter.mp3",
+                "usage": "For writing notes",
+                "example": "Defter yeni.",
+                "imageUrl": "/images/vocab/notebook.jpg"
+              },
+              {
+                "id": "vocab-kalem",
+                "turkish": "kalem",
+                "english": "pen/pencil",
+                "pronunciation": "ka-lem",
+                "audioUrl": "/audio/school/kalem.mp3",
+                "usage": "Writing instrument",
+                "example": "Kalem mavi.",
+                "imageUrl": "/images/vocab/pen.jpg"
+              },
+              {
+                "id": "vocab-masa",
+                "turkish": "masa",
+                "english": "table/desk",
+                "pronunciation": "ma-sa",
+                "audioUrl": "/audio/school/masa.mp3",
+                "usage": "Furniture for working",
+                "example": "Masa temiz.",
+                "imageUrl": "/images/vocab/desk.jpg"
+              },
+              {
+                "id": "vocab-sandalye",
+                "turkish": "sandalye",
+                "english": "chair",
+                "pronunciation": "san-dal-ye",
+                "audioUrl": "/audio/school/sandalye.mp3",
+                "usage": "Furniture for sitting",
+                "example": "Sandalye rahat.",
+                "imageUrl": "/images/vocab/chair.jpg"
+              },
+              {
+                "id": "vocab-tahta",
+                "turkish": "tahta",
+                "english": "blackboard/whiteboard",
+                "pronunciation": "tah-ta",
+                "audioUrl": "/audio/school/tahta.mp3",
+                "usage": "For writing/drawing in class",
+                "example": "Tahta büyük.",
+                "imageUrl": "/images/vocab/board.jpg"
+              },
+              {
+                "id": "vocab-kutuphane",
+                "turkish": "kütüphane",
+                "english": "library",
+                "pronunciation": "kü-tüp-ha-ne",
+                "audioUrl": "/audio/school/kutuphane.mp3",
+                "usage": "Place with many books",
+                "example": "Kütüphane sessiz.",
+                "imageUrl": "/images/vocab/library.jpg"
+              },
+              {
+                "id": "vocab-kantin",
+                "turkish": "kantin",
+                "english": "cafeteria",
+                "pronunciation": "kan-tin",
+                "audioUrl": "/audio/school/kantin.mp3",
+                "usage": "Place to eat at school",
+                "example": "Kantin büyük.",
+                "imageUrl": "/images/vocab/cafeteria.jpg"
+              }
+            ]
+          }
+        },
+        {
+          "type": "grammar",
+          "title": "DİLBİLGİSİ (Grammar)",
+          "duration": 15,
+          "content": {
+            "topic": "Var/Yok (There is/There isn't) and Location",
+            "explanation": "Turkish uses 'var' (there is/exists) and 'yok' (there isn't/doesn't exist) to indicate presence or absence. The locative case (-DA) shows location.",
+            "grammarPoints": [
+              {
+                "point": "Var/Yok Usage",
+                "explanation": "Var = there is/exists, Yok = there isn't/doesn't exist",
+                "examples": [
+                  {
+                    "turkish": "Sınıfta öğrenci var.",
+                    "english": "There are students in the classroom.",
+                    "breakdown": "Sınıfta (in classroom) + öğrenci (student) + var (there is)",
+                    "audioUrl": "/audio/grammar-var-1.mp3"
+                  },
+                  {
+                    "turkish": "Masada kitap yok.",
+                    "english": "There is no book on the table.",
+                    "breakdown": "Masada (on table) + kitap (book) + yok (there isn't)",
+                    "audioUrl": "/audio/grammar-yok-1.mp3"
+                  }
+                ]
+              },
+              {
+                "point": "Locative Case (-DA)",
+                "explanation": "Shows location 'in/on/at'. Changes based on vowel harmony.",
+                "examples": [
+                  {
+                    "turkish": "okul + da = okulda",
+                    "english": "at school",
+                    "rule": "After back vowels (a, ı, o, u) use -da",
+                    "audioUrl": "/audio/grammar-locative-1.mp3"
+                  },
+                  {
+                    "turkish": "sınıf + ta = sınıfta",
+                    "english": "in the classroom",
+                    "rule": "After voiceless consonants, -da becomes -ta",
+                    "audioUrl": "/audio/grammar-locative-2.mp3"
+                  },
+                  {
+                    "turkish": "ev + de = evde",
+                    "english": "at home",
+                    "rule": "After front vowels (e, i, ö, ü) use -de",
+                    "audioUrl": "/audio/grammar-locative-3.mp3"
+                  }
+                ]
+              }
+            ],
+            "vowelHarmony": {
+              "explanation": "Turkish vowel harmony affects the locative case",
+              "rules": [
+                "Back vowels (a, ı, o, u) → -da/-ta",
+                "Front vowels (e, i, ö, ü) → -de/-te"
+              ],
+              "examples": [
+                "okul → okulda (back vowels)",
+                "ev → evde (front vowels)",
+                "kitap → kitapta (voiceless p → -ta)"
+              ]
+            }
+          }
+        },
+        {
+          "type": "dialogue",
+          "title": "OKUMA (Reading)",
+          "duration": 10,
+          "content": {
+            "dialogue": {
+              "title": "Okulda Tanışma (Meeting at School)",
+              "setting": "Two students meeting at university",
+              "participants": [
+                {
+                  "name": "Zeynep",
+                  "role": "Turkish university student",
+                  "avatar": "/images/avatars/zeynep.jpg"
+                },
+                {
+                  "name": "Alex",
+                  "role": "Exchange student",
+                  "avatar": "/images/avatars/alex.jpg"
+                }
+              ],
+              "lines": [
+                {
+                  "speaker": "Zeynep",
+                  "text": "Merhaba! Sen yeni öğrenci misin?",
+                  "translation": "Hello! Are you a new student?",
+                  "audioUrl": "/audio/dialogue-2-1-line1.mp3",
+                  "notes": "Polite way to ask if someone is new"
+                },
+                {
+                  "speaker": "Alex",
+                  "text": "Evet, ben Alex. Türkçe öğreniyorum.",
+                  "translation": "Yes, I'm Alex. I'm learning Turkish.",
+                  "audioUrl": "/audio/dialogue-2-1-line2.mp3",
+                  "notes": "Self-introduction and stating purpose"
+                },
+                {
+                  "speaker": "Zeynep",
+                  "text": "Çok güzel! Kütüphane nerede biliyor musun?",
+                  "translation": "Very nice! Do you know where the library is?",
+                  "audioUrl": "/audio/dialogue-2-1-line3.mp3",
+                  "notes": "Asking about location"
+                },
+                {
+                  "speaker": "Alex",
+                  "text": "Hayır, bilmiyorum. Kütüphane büyük mü?",
+                  "translation": "No, I don't know. Is the library big?",
+                  "audioUrl": "/audio/dialogue-2-1-line4.mp3",
+                  "notes": "Admitting lack of knowledge and asking for information"
+                },
+                {
+                  "speaker": "Zeynep",
+                  "text": "Evet, çok büyük. İkinci katta var.",
+                  "translation": "Yes, very big. It's on the second floor.",
+                  "audioUrl": "/audio/dialogue-2-1-line5.mp3",
+                  "notes": "Providing information about location"
+                }
+              ],
+              "audioUrl": "/audio/dialogue-2-1-complete.mp3"
+            },
+            "comprehensionQuestions": [
+              {
+                "question": "Alex ne yapıyor?",
+                "questionEn": "What is Alex doing?",
+                "options": ["Türkçe öğretiyor", "Türkçe öğreniyor", "İngilizce öğreniyor", "Çalışıyor"],
+                "optionsEn": ["Teaching Turkish", "Learning Turkish", "Learning English", "Working"],
+                "correctAnswer": 1,
+                "explanation": "Alex 'Türkçe öğreniyorum' diyor - Alex says 'I'm learning Turkish'"
+              },
+              {
+                "question": "Kütüphane nerede?",
+                "questionEn": "Where is the library?",
+                "options": ["Birinci katta", "İkinci katta", "Üçüncü katta", "Dışarıda"],
+                "optionsEn": ["First floor", "Second floor", "Third floor", "Outside"],
+                "correctAnswer": 1,
+                "explanation": "Zeynep 'İkinci katta var' diyor - Zeynep says 'It's on the second floor'"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "vocabularyFocus": [
+      "okul", "sınıf", "öğretmen", "öğrenci", "kitap", "defter", "kalem", 
+      "masa", "sandalye", "tahta", "kütüphane", "kantin"
+    ],
+    "grammarFocus": ["var_yok", "locative_case", "vowel_harmony", "question_formation"],
+    "culturalNotes": [
+      "Turkish education system values respect for teachers",
+      "Universities in Turkey often have large campuses",
+      "Students typically address teachers formally",
+      "School supplies are important for Turkish students"
+    ]
+  }
+}

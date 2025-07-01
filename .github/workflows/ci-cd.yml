@@ -248,7 +248,6 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
-    environment: staging
 
     steps:
     - uses: actions/checkout@v4
@@ -264,7 +263,6 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    environment: production
 
     steps:
     - uses: actions/checkout@v4
@@ -275,6 +273,7 @@ jobs:
         version: 'latest'
 
     - name: Configure kubectl
+      if: ${{ secrets.KUBE_CONFIG != '' }}
       run: |
         echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
         export KUBECONFIG=kubeconfig
@@ -294,18 +293,3 @@ jobs:
         curl -f https://api.turkishlearning.com/health
         curl -f https://ai.turkishlearning.com/health
         curl -f https://admin.turkishlearning.com/api/health
-
-  # Notify on deployment
-  notify:
-    needs: [deploy-production]
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-    - name: Notify Slack
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        channel: '#deployments'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow

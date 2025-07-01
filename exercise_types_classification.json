@@ -1,0 +1,337 @@
+{
+  "exercise_classification_overview": {
+    "total_exercise_types": 24,
+    "skill_categories": ["vocabulary", "grammar", "reading", "listening", "writing", "speaking"],
+    "interaction_types": ["multiple_choice", "drag_drop", "fill_blank", "matching", "ordering", "audio_response"],
+    "difficulty_levels": [1, 2, 3, 4, 5],
+    "digital_adaptation_priority": "High - all exercises designed for interactive digital implementation"
+  },
+  "vocabulary_exercises": {
+    "category": "vocabulary",
+    "total_types": 6,
+    "exercises": [
+      {
+        "type_id": "vocab_matching",
+        "name": "Word-Picture Matching",
+        "description": "Match Turkish words with corresponding images",
+        "interaction": "drag_drop",
+        "difficulty_range": [1, 2],
+        "digital_features": ["Image gallery", "Drag and drop interface", "Audio pronunciation"],
+        "assessment_criteria": ["Accuracy", "Speed", "Attempts"],
+        "example": "Match 'elma' with apple image",
+        "variations": ["Word-translation matching", "Audio-image matching", "Category grouping"]
+      },
+      {
+        "type_id": "vocab_fill_blank",
+        "name": "Vocabulary Fill-in-the-Blank",
+        "description": "Complete sentences with appropriate vocabulary",
+        "interaction": "fill_blank",
+        "difficulty_range": [2, 3],
+        "digital_features": ["Auto-complete suggestions", "Hint system", "Context highlighting"],
+        "assessment_criteria": ["Correctness", "Context appropriateness", "Spelling accuracy"],
+        "example": "Ben her sabah _____ içerim. (çay/kahve)",
+        "variations": ["Multiple choice blanks", "Open-ended blanks", "Picture-prompted blanks"]
+      },
+      {
+        "type_id": "vocab_categorization",
+        "name": "Word Categorization",
+        "description": "Sort words into appropriate categories",
+        "interaction": "drag_drop",
+        "difficulty_range": [2, 4],
+        "digital_features": ["Category containers", "Visual feedback", "Scoring system"],
+        "assessment_criteria": ["Category accuracy", "Completion time", "Error patterns"],
+        "example": "Sort foods into 'meyve' and 'sebze' categories",
+        "variations": ["Semantic categories", "Grammatical categories", "Thematic grouping"]
+      },
+      {
+        "type_id": "vocab_definition",
+        "name": "Definition Matching",
+        "description": "Match words with their definitions or explanations",
+        "interaction": "matching",
+        "difficulty_range": [3, 4],
+        "digital_features": ["Definition cards", "Flip animations", "Progress tracking"],
+        "assessment_criteria": ["Comprehension accuracy", "Reasoning ability", "Vocabulary depth"],
+        "example": "Match 'öğretmen' with 'okullarda ders veren kişi'",
+        "variations": ["Synonym matching", "Antonym matching", "Context definition"]
+      },
+      {
+        "type_id": "vocab_crossword",
+        "name": "Interactive Crossword",
+        "description": "Complete crossword puzzles with vocabulary clues",
+        "interaction": "fill_blank",
+        "difficulty_range": [3, 5],
+        "digital_features": ["Interactive grid", "Clue highlighting", "Letter hints"],
+        "assessment_criteria": ["Completion rate", "Clue comprehension", "Spelling accuracy"],
+        "example": "5 across: 'Sabah içilen sıcak içecek' (çay)",
+        "variations": ["Picture clues", "Audio clues", "Themed puzzles"]
+      },
+      {
+        "type_id": "vocab_spaced_repetition",
+        "name": "Spaced Repetition Cards",
+        "description": "Review vocabulary using spaced repetition algorithm",
+        "interaction": "multiple_choice",
+        "difficulty_range": [1, 5],
+        "digital_features": ["Adaptive scheduling", "Performance tracking", "Mastery indicators"],
+        "assessment_criteria": ["Retention rate", "Response time", "Long-term memory"],
+        "example": "Show 'kitap' - choose correct translation",
+        "variations": ["Audio cards", "Image cards", "Sentence context cards"]
+      }
+    ]
+  },
+  "grammar_exercises": {
+    "category": "grammar",
+    "total_types": 5,
+    "exercises": [
+      {
+        "type_id": "grammar_conjugation",
+        "name": "Verb Conjugation Practice",
+        "description": "Practice conjugating verbs in different tenses and persons",
+        "interaction": "fill_blank",
+        "difficulty_range": [2, 4],
+        "digital_features": ["Conjugation tables", "Pattern highlighting", "Error analysis"],
+        "assessment_criteria": ["Accuracy", "Pattern recognition", "Rule application"],
+        "example": "Ben okul___ gidiyorum. (a/e)",
+        "variations": ["Tense practice", "Person practice", "Irregular verbs"]
+      },
+      {
+        "type_id": "grammar_case_suffix",
+        "name": "Case Suffix Application",
+        "description": "Apply correct case suffixes to nouns",
+        "interaction": "multiple_choice",
+        "difficulty_range": [2, 4],
+        "digital_features": ["Suffix options", "Rule explanations", "Context examples"],
+        "assessment_criteria": ["Suffix accuracy", "Context understanding", "Rule knowledge"],
+        "example": "Okul___ gidiyorum. (-a/-e/-da/-de)",
+        "variations": ["Locative case", "Dative case", "Ablative case", "Mixed cases"]
+      },
+      {
+        "type_id": "grammar_sentence_building",
+        "name": "Sentence Construction",
+        "description": "Build grammatically correct sentences from given elements",
+        "interaction": "drag_drop",
+        "difficulty_range": [3, 5],
+        "digital_features": ["Word bank", "Sentence slots", "Grammar checking"],
+        "assessment_criteria": ["Word order", "Grammar accuracy", "Meaning coherence"],
+        "example": "Arrange: [ben, okula, gidiyorum, her, gün]",
+        "variations": ["Question formation", "Negative sentences", "Complex sentences"]
+      },
+      {
+        "type_id": "grammar_error_correction",
+        "name": "Error Identification and Correction",
+        "description": "Find and correct grammatical errors in sentences",
+        "interaction": "click_select",
+        "difficulty_range": [3, 5],
+        "digital_features": ["Error highlighting", "Correction suggestions", "Explanation pop-ups"],
+        "assessment_criteria": ["Error detection", "Correction accuracy", "Rule understanding"],
+        "example": "Ben okula gidiyorum. (Find the error)",
+        "variations": ["Single error", "Multiple errors", "Error type focus"]
+      },
+      {
+        "type_id": "grammar_transformation",
+        "name": "Sentence Transformation",
+        "description": "Transform sentences according to given instructions",
+        "interaction": "fill_blank",
+        "difficulty_range": [4, 5],
+        "digital_features": ["Transformation rules", "Step-by-step guidance", "Pattern examples"],
+        "assessment_criteria": ["Transformation accuracy", "Rule application", "Structural understanding"],
+        "example": "Make negative: 'Ben okula gidiyorum.'",
+        "variations": ["Positive to negative", "Statement to question", "Tense changes"]
+      }
+    ]
+  },
+  "reading_exercises": {
+    "category": "reading",
+    "total_types": 4,
+    "exercises": [
+      {
+        "type_id": "reading_comprehension",
+        "name": "Reading Comprehension Questions",
+        "description": "Answer questions based on reading passages",
+        "interaction": "multiple_choice",
+        "difficulty_range": [2, 5],
+        "digital_features": ["Text highlighting", "Question navigation", "Answer review"],
+        "assessment_criteria": ["Comprehension accuracy", "Detail recognition", "Inference ability"],
+        "example": "Read text about daily routine, answer 'What time does Ali wake up?'",
+        "variations": ["Factual questions", "Inference questions", "Opinion questions"]
+      },
+      {
+        "type_id": "reading_true_false",
+        "name": "True/False Statements",
+        "description": "Determine if statements about the text are true or false",
+        "interaction": "multiple_choice",
+        "difficulty_range": [1, 3],
+        "digital_features": ["Statement cards", "Text reference", "Explanation feedback"],
+        "assessment_criteria": ["Accuracy", "Text reference ability", "Detail attention"],
+        "example": "Ali sabah 7'de kalkıyor. (True/False)",
+        "variations": ["Simple facts", "Implied information", "Detailed comprehension"]
+      },
+      {
+        "type_id": "reading_ordering",
+        "name": "Text Ordering",
+        "description": "Arrange sentences or paragraphs in logical order",
+        "interaction": "drag_drop",
+        "difficulty_range": [3, 4],
+        "digital_features": ["Draggable text blocks", "Sequence indicators", "Logic checking"],
+        "assessment_criteria": ["Logical sequence", "Coherence understanding", "Text structure"],
+        "example": "Order sentences to create a coherent story",
+        "variations": ["Sentence ordering", "Paragraph ordering", "Event sequencing"]
+      },
+      {
+        "type_id": "reading_gap_fill",
+        "name": "Text Gap Filling",
+        "description": "Fill gaps in text with appropriate words or phrases",
+        "interaction": "fill_blank",
+        "difficulty_range": [3, 5],
+        "digital_features": ["Context clues", "Word bank", "Grammar hints"],
+        "assessment_criteria": ["Context understanding", "Vocabulary knowledge", "Grammar accuracy"],
+        "example": "Ali her sabah _____ kalkıyor ve _____ gidiyor.",
+        "variations": ["Single word gaps", "Phrase gaps", "Sentence completion"]
+      }
+    ]
+  },
+  "listening_exercises": {
+    "category": "listening",
+    "total_types": 4,
+    "exercises": [
+      {
+        "type_id": "listening_comprehension",
+        "name": "Audio Comprehension Questions",
+        "description": "Answer questions based on audio recordings",
+        "interaction": "multiple_choice",
+        "difficulty_range": [2, 5],
+        "digital_features": ["Audio player controls", "Replay options", "Transcript toggle"],
+        "assessment_criteria": ["Listening accuracy", "Detail recognition", "Inference ability"],
+        "example": "Listen to dialogue, answer 'Where is the conversation taking place?'",
+        "variations": ["Dialogue comprehension", "Monologue comprehension", "News/announcement comprehension"]
+      },
+      {
+        "type_id": "listening_dictation",
+        "name": "Dictation Exercise",
+        "description": "Write down what you hear in the audio",
+        "interaction": "fill_blank",
+        "difficulty_range": [3, 5],
+        "digital_features": ["Audio segments", "Playback speed control", "Spelling checker"],
+        "assessment_criteria": ["Listening accuracy", "Spelling accuracy", "Sound discrimination"],
+        "example": "Listen and write: 'Ben her gün okula gidiyorum.'",
+        "variations": ["Word dictation", "Sentence dictation", "Partial dictation"]
+      },
+      {
+        "type_id": "listening_matching",
+        "name": "Audio-Visual Matching",
+        "description": "Match audio clips with corresponding images or text",
+        "interaction": "matching",
+        "difficulty_range": [1, 3],
+        "digital_features": ["Audio clips", "Visual options", "Matching interface"],
+        "assessment_criteria": ["Audio recognition", "Visual association", "Comprehension speed"],
+        "example": "Match audio of 'elma' with apple image",
+        "variations": ["Word-image matching", "Dialogue-situation matching", "Sound-symbol matching"]
+      },
+      {
+        "type_id": "listening_pronunciation",
+        "name": "Pronunciation Practice",
+        "description": "Listen and repeat words or phrases for pronunciation practice",
+        "interaction": "audio_response",
+        "difficulty_range": [1, 4],
+        "digital_features": ["Speech recognition", "Pronunciation scoring", "Waveform comparison"],
+        "assessment_criteria": ["Pronunciation accuracy", "Intonation", "Fluency"],
+        "example": "Listen to 'merhaba' and repeat with correct pronunciation",
+        "variations": ["Individual words", "Phrases", "Sentences", "Tongue twisters"]
+      }
+    ]
+  },
+  "writing_exercises": {
+    "category": "writing",
+    "total_types": 3,
+    "exercises": [
+      {
+        "type_id": "writing_guided",
+        "name": "Guided Writing",
+        "description": "Write sentences or paragraphs with guided prompts",
+        "interaction": "text_input",
+        "difficulty_range": [2, 4],
+        "digital_features": ["Writing prompts", "Word suggestions", "Grammar checking"],
+        "assessment_criteria": ["Content accuracy", "Grammar correctness", "Vocabulary use"],
+        "example": "Write about your daily routine using given time expressions",
+        "variations": ["Sentence completion", "Paragraph writing", "Story continuation"]
+      },
+      {
+        "type_id": "writing_form_filling",
+        "name": "Form Filling",
+        "description": "Complete forms with personal or fictional information",
+        "interaction": "fill_blank",
+        "difficulty_range": [1, 3],
+        "digital_features": ["Interactive forms", "Field validation", "Auto-save"],
+        "assessment_criteria": ["Information accuracy", "Format compliance", "Language correctness"],
+        "example": "Fill out a school registration form",
+        "variations": ["Personal information forms", "Application forms", "Survey forms"]
+      },
+      {
+        "type_id": "writing_creative",
+        "name": "Creative Writing",
+        "description": "Write creative texts based on prompts or images",
+        "interaction": "text_input",
+        "difficulty_range": [3, 5],
+        "digital_features": ["Writing tools", "Word count", "Peer review options"],
+        "assessment_criteria": ["Creativity", "Language use", "Organization", "Content development"],
+        "example": "Write a short story about a day in Istanbul",
+        "variations": ["Story writing", "Description writing", "Opinion writing"]
+      }
+    ]
+  },
+  "speaking_exercises": {
+    "category": "speaking",
+    "total_types": 2,
+    "exercises": [
+      {
+        "type_id": "speaking_dialogue",
+        "name": "Interactive Dialogue",
+        "description": "Participate in simulated conversations",
+        "interaction": "audio_response",
+        "difficulty_range": [2, 5],
+        "digital_features": ["AI conversation partner", "Response evaluation", "Dialogue branching"],
+        "assessment_criteria": ["Fluency", "Accuracy", "Appropriateness", "Interaction"],
+        "example": "Role-play ordering food in a restaurant",
+        "variations": ["Structured dialogues", "Free conversation", "Situational role-plays"]
+      },
+      {
+        "type_id": "speaking_presentation",
+        "name": "Mini Presentations",
+        "description": "Give short presentations on given topics",
+        "interaction": "audio_response",
+        "difficulty_range": [3, 5],
+        "digital_features": ["Recording tools", "Presentation prompts", "Peer feedback"],
+        "assessment_criteria": ["Organization", "Fluency", "Content", "Pronunciation"],
+        "example": "Present your family to the class",
+        "variations": ["Self-introduction", "Topic presentation", "Picture description"]
+      }
+    ]
+  },
+  "digital_adaptation_framework": {
+    "technical_requirements": {
+      "audio_support": "High-quality audio playback and recording",
+      "visual_interface": "Responsive design with touch-friendly interactions",
+      "progress_tracking": "Real-time progress monitoring and analytics",
+      "feedback_system": "Immediate feedback with explanations",
+      "accessibility": "Screen reader support and keyboard navigation"
+    },
+    "gamification_elements": {
+      "points_system": "Points awarded for correct answers and completion",
+      "badges": "Achievement badges for milestones and perfect scores",
+      "leaderboards": "Class or global leaderboards for motivation",
+      "streaks": "Daily practice streaks and consistency rewards",
+      "levels": "Progressive difficulty levels with unlockable content"
+    },
+    "adaptive_features": {
+      "difficulty_adjustment": "Automatic difficulty adjustment based on performance",
+      "personalized_practice": "Customized exercise selection based on weak areas",
+      "spaced_repetition": "Intelligent review scheduling for long-term retention",
+      "learning_paths": "Multiple pathways through content based on learning style"
+    },
+    "assessment_integration": {
+      "formative_assessment": "Continuous assessment through exercise performance",
+      "diagnostic_feedback": "Detailed analysis of errors and improvement suggestions",
+      "portfolio_building": "Collection of student work for progress demonstration",
+      "competency_tracking": "Skill-based progress tracking aligned with CEFR standards"
+    }
+  }
+}
