@@ -148,6 +148,7 @@ export default function InteractiveLessonRouter({
             items={currentExercise.data.items}
             gameTitle={currentExercise.data.title}
             onComplete={handleExerciseComplete}
+            lessonId={lesson.id}
           />
         );
 

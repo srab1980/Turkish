@@ -208,29 +208,7 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
     setImages(shuffledImages);
   };
 
-  if (gameComplete) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="text-center p-8 bg-green-50 rounded-lg border-2 border-green-200"
-      >
-        <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold text-green-800 mb-4">Tebrikler! (Congratulations!)</h2>
-        <div className="text-lg text-green-700 mb-6">
-          <p>Score: {score} points</p>
-          <p>Attempts: {attempts}</p>
-          <p>Accuracy: {Math.round((score / (attempts * 10)) * 100)}%</p>
-        </div>
-        <button
-          onClick={resetGame}
-          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-        >
-          Play Again
-        </button>
-      </motion.div>
-    );
-  }
+  // Remove this early return - let the game complete message show in the main UI
 
   return (
     <div className="max-w-6xl mx-auto p-4">
