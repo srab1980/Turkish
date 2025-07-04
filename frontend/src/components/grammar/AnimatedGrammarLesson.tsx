@@ -395,16 +395,6 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
     }
   };
 
-  const nextExample = () => {
-    if (currentExample < rule.examples.length - 1) {
-      setCurrentExample(currentExample + 1);
-      setCurrentStep(0);
-      setAnimationPhase('intro');
-    } else {
-      setAnimationPhase('complete');
-    }
-  };
-
   const previousExample = () => {
     if (currentExample > 0) {
       setCurrentExample(currentExample - 1);
