@@ -50,6 +50,10 @@
   "author": "Turkish Learning App Team",
   "license": "MIT",
   "devDependencies": {
+    "@types/estree": "^1.0.8",
+    "@types/hammerjs": "^2.0.46",
+    "@types/node": "^24.0.10",
+    "@types/oauth": "^0.9.6",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3"
   },

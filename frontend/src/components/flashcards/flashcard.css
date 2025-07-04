@@ -1,0 +1,199 @@
+/* 3D Flip Card Styles */
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Swipe indicators */
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.swipe-indicator.left {
+  left: 20px;
+  color: #ef4444;
+}
+
+.swipe-indicator.right {
+  right: 20px;
+  color: #10b981;
+}
+
+.swipe-indicator.visible {
+  opacity: 1;
+}
+
+/* Card animations */
+.flashcard-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.flashcard-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.flashcard-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.flashcard-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Progress animations */
+.progress-bar {
+  transition: width 0.5s ease-in-out;
+}
+
+/* Button hover effects */
+.difficulty-button {
+  transition: all 0.2s ease;
+  transform: scale(1);
+}
+
+.difficulty-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.difficulty-button:active {
+  transform: scale(0.95);
+}
+
+/* Audio button pulse effect */
+.audio-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.audio-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.audio-button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Card shadow effects */
+.flashcard {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.flashcard:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .flashcard-container {
+    padding: 1rem;
+  }
+  
+  .difficulty-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .difficulty-button {
+    width: 100%;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .flashcard {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+  }
+  
+  .flashcard-back {
+    background-color: #065f46;
+    border-color: #059669;
+  }
+}
+
+/* Accessibility */
+.flashcard:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.difficulty-button:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Loading animation */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Success animation */
+.success-checkmark {
+  animation: checkmark 0.6s ease-in-out;
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Streak indicator */
+.streak-indicator {
+  background: linear-gradient(45deg, #f59e0b, #d97706);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}

@@ -1,103 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MainLayout } from "@/components/layout/main-layout"
 import { LessonCard } from "@/components/lessons/lesson-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Search, Filter, BookOpen, Clock, Users, Star } from "lucide-react"
+import { curriculumService, type Lesson } from "@/lib/curriculum-service"
+// import { useUserProgress } from "@/contexts/UserProgressContext" // Temporarily disabled
+import { Search, Filter, BookOpen, Clock, Users, Star, RefreshCw } from "lucide-react"
 
-// Mock lessons data
-const mockLessons = [
-  {
-    id: "1",
-    title: "Basic Greetings",
-    description: "Learn how to say hello, goodbye, and introduce yourself in Turkish",
-    duration: 15,
-    difficulty: "A1" as const,
-    progress: 100,
-    isCompleted: true,
-    isLocked: false,
-    rating: 4.8,
-    enrolledCount: 1250,
-    topics: ["Greetings", "Introductions", "Basic Phrases"],
-    category: "Basics"
-  },
-  {
-    id: "2",
-    title: "Numbers and Counting",
-    description: "Master Turkish numbers from 1 to 100 and basic counting",
-    duration: 20,
-    difficulty: "A1" as const,
-    progress: 60,
-    isCompleted: false,
-    isLocked: false,
-    rating: 4.6,
-    enrolledCount: 980,
-    topics: ["Numbers", "Counting", "Mathematics"],
-    category: "Basics"
-  },
-  {
-    id: "3",
-    title: "Family and Relationships",
-    description: "Vocabulary for family members and describing relationships",
-    duration: 25,
-    difficulty: "A1" as const,
-    progress: 0,
-    isCompleted: false,
-    isLocked: false,
-    rating: 4.7,
-    enrolledCount: 850,
-    topics: ["Family", "Relationships", "Vocabulary"],
-    category: "Vocabulary"
-  },
-  {
-    id: "4",
-    title: "Colors and Shapes",
-    description: "Learn colors, shapes, and basic descriptive vocabulary",
-    duration: 18,
-    difficulty: "A1" as const,
-    progress: 0,
-    isCompleted: false,
-    isLocked: false,
-    rating: 4.5,
-    enrolledCount: 720,
-    topics: ["Colors", "Shapes", "Descriptions"],
-    category: "Vocabulary"
-  },
-  {
-    id: "5",
-    title: "Present Tense Verbs",
-    description: "Master the present tense conjugation in Turkish",
-    duration: 30,
-    difficulty: "A2" as const,
-    progress: 0,
-    isCompleted: false,
-    isLocked: false,
-    rating: 4.4,
-    enrolledCount: 650,
-    topics: ["Grammar", "Verbs", "Present Tense"],
-    category: "Grammar"
-  },
-  {
-    id: "6",
-    title: "Shopping and Money",
-    description: "Learn vocabulary for shopping, prices, and transactions",
-    duration: 22,
-    difficulty: "A2" as const,
-    progress: 0,
-    isCompleted: false,
-    isLocked: false,
-    rating: 4.6,
-    enrolledCount: 580,
-    topics: ["Shopping", "Money", "Transactions"],
-    category: "Practical"
-  }
-]
+// Enhanced lesson interface for UI
+interface EnhancedLesson extends Lesson {
+  progress: number;
+  isCompleted: boolean;
+  isLocked: boolean;
+  rating: number;
+  enrolledCount: number;
+  topics: string[];
+  category: string;
+}
 
-const categories = ["All", "Basics", "Vocabulary", "Grammar", "Practical"]
+const categories = ["All", "Basics", "Vocabulary", "Grammar", "Practical", "Culture", "Reading", "Speaking"]
 const difficulties = ["All", "A1", "A2", "B1", "B2", "C1", "C2"]
 
 export default function LessonsPage() {
@@ -105,20 +30,85 @@ export default function LessonsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [selectedDifficulty, setSelectedDifficulty] = useState("All")
   const [sortBy, setSortBy] = useState("progress") // progress, rating, duration, title
+  const [lessons, setLessons] = useState<EnhancedLesson[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Temporarily use mock user progress until context issue is resolved
+  const userProgress = {
+    completedLessons: ['1', '2'] // Mock completed lessons
+  }
+
+  // Load curriculum data on component mount
+  useEffect(() => {
+    const loadLessons = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const curriculumData = await curriculumService.getCurriculumData()
+
+        // Transform curriculum lessons to enhanced lessons with UI data
+        const enhancedLessons: EnhancedLesson[] = curriculumData.lessons.map((lesson, index) => {
+          const isCompleted = userProgress?.completedLessons?.includes(lesson.id) || false
+          const progress = isCompleted ? 100 : Math.floor(Math.random() * 60) // Random progress for demo
+
+          // Determine category based on lesson content
+          let category = "Basics"
+          if (lesson.title.toLowerCase().includes("grammar") || lesson.title.toLowerCase().includes("verb")) {
+            category = "Grammar"
+          } else if (lesson.title.toLowerCase().includes("vocabulary") || lesson.title.toLowerCase().includes("word")) {
+            category = "Vocabulary"
+          } else if (lesson.title.toLowerCase().includes("culture") || lesson.title.toLowerCase().includes("turkish")) {
+            category = "Culture"
+          } else if (lesson.title.toLowerCase().includes("reading")) {
+            category = "Reading"
+          } else if (lesson.title.toLowerCase().includes("speaking") || lesson.title.toLowerCase().includes("pronunciation")) {
+            category = "Speaking"
+          } else if (lesson.title.toLowerCase().includes("practical") || lesson.title.toLowerCase().includes("shopping")) {
+            category = "Practical"
+          }
+
+          // Extract topics from exercises
+          const topics = lesson.exercises.map(ex => ex.type.replace('_', ' ')).slice(0, 3)
+
+          return {
+            ...lesson,
+            progress,
+            isCompleted,
+            isLocked: false, // For now, no lessons are locked
+            rating: 4.2 + Math.random() * 0.8, // Random rating between 4.2-5.0
+            enrolledCount: 500 + Math.floor(Math.random() * 1000), // Random enrollment
+            topics: topics.length > 0 ? topics : ['Turkish', 'Language Learning'],
+            category
+          }
+        })
+
+        setLessons(enhancedLessons)
+      } catch (err) {
+        console.error('Failed to load lessons:', err)
+        setError('Failed to load lessons. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadLessons()
+  }, [])
 
   const handleStartLesson = (lessonId: string) => {
     window.location.href = `/lesson/${lessonId}`
   }
 
-  const filteredLessons = mockLessons
+  const filteredLessons = lessons
     .filter(lesson => {
       const matchesSearch = lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            lesson.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            lesson.topics.some(topic => topic.toLowerCase().includes(searchQuery.toLowerCase()))
-      
+
       const matchesCategory = selectedCategory === "All" || lesson.category === selectedCategory
       const matchesDifficulty = selectedDifficulty === "All" || lesson.difficulty === selectedDifficulty
-      
+
       return matchesSearch && matchesCategory && matchesDifficulty
     })
     .sort((a, b) => {
@@ -137,10 +127,58 @@ export default function LessonsPage() {
     })
 
   const stats = {
-    totalLessons: mockLessons.length,
-    completedLessons: mockLessons.filter(l => l.isCompleted).length,
-    inProgressLessons: mockLessons.filter(l => l.progress > 0 && !l.isCompleted).length,
-    averageRating: (mockLessons.reduce((sum, l) => sum + l.rating, 0) / mockLessons.length).toFixed(1)
+    totalLessons: lessons.length,
+    completedLessons: lessons.filter(l => l.isCompleted).length,
+    inProgressLessons: lessons.filter(l => l.progress > 0 && !l.isCompleted).length,
+    averageRating: lessons.length > 0 ? (lessons.reduce((sum, l) => sum + l.rating, 0) / lessons.length).toFixed(1) : "0.0"
+  }
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="space-y-6">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Turkish Lessons
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Loading lessons from curriculum...
+            </p>
+          </div>
+          <div className="flex items-center justify-center py-12">
+            <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
+            <span className="ml-3 text-lg text-gray-600">Loading lessons...</span>
+          </div>
+        </div>
+      </MainLayout>
+    )
+  }
+
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="space-y-6">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Turkish Lessons
+            </h1>
+          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center py-8">
+                <div className="text-6xl mb-4">😕</div>
+                <h3 className="text-lg font-semibold mb-2">Failed to Load Lessons</h3>
+                <p className="text-muted-foreground mb-4">{error}</p>
+                <Button onClick={() => window.location.reload()}>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Try Again
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </MainLayout>
+    )
   }
 
   return (
@@ -148,11 +186,11 @@ export default function LessonsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-turkish-red to-red-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Turkish Lessons
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Explore our comprehensive collection of Turkish language lessons
+            Explore our comprehensive collection of Turkish language lessons from real curriculum
           </p>
         </div>
 
