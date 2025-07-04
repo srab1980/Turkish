@@ -221,6 +221,7 @@ export default function InteractiveLessonRouter({
           <EglenelimOgrenelimGames
             games={currentExercise.data.games}
             onComplete={handleExerciseComplete}
+            lessonId={lesson.id}
           />
         );
 

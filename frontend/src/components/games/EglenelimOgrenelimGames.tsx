@@ -521,7 +521,8 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
     );
   }
 
-  if (gameComplete) {
+  // Only show early return completion for non-memory games
+  if (gameComplete && currentGame.type !== 'memory_match') {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -686,7 +687,7 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
             <button
               onClick={() => {
                 const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
-                onComplete(score, timeSpent);
+                onComplete(currentGame.id, score, timeSpent);
               }}
               className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
             >
