@@ -455,49 +455,6 @@ export default function SentenceBuilder({
     }
   }, [sentenceSlots, autoCheckEnabled]);
 
-  // Enhanced drag and drop functions
-  const handleDragStart = (e: React.DragEvent, tile: WordTile) => {
-    e.dataTransfer.setData('text/plain', JSON.stringify(tile));
-    e.dataTransfer.effectAllowed = 'move';
-    setDraggedTile(tile);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleDragEnd = () => {
-    setDraggedTile(null);
-  };
-
-  const handleDrop = (e: React.DragEvent, slotIndex: number) => {
-    e.preventDefault();
-    const tileData = e.dataTransfer.getData('text/plain');
-
-    if (!tileData) return;
-
-    try {
-      const tile: WordTile = JSON.parse(tileData);
-
-      const newSlots = [...sentenceSlots];
-
-      // If slot is occupied, return the tile to available tiles
-      if (newSlots[slotIndex]) {
-        setAvailableTiles([...availableTiles, newSlots[slotIndex]!]);
-      }
-
-      newSlots[slotIndex] = tile;
-      setSentenceSlots(newSlots);
-
-      // Remove tile from available tiles
-      setAvailableTiles(availableTiles.filter(t => t.id !== tile.id));
-      setDraggedTile(null);
-    } catch (error) {
-      console.error('Error parsing drag data:', error);
-    }
-  };
-
   const getWordTypeColor = (type: string) => {
     const colors = {
       subject: 'bg-blue-100 border-blue-300 text-blue-800',
