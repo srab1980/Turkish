@@ -227,12 +227,20 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
     ];
 
     const batchIndex = (batchNumber - 1) % allBatches.length;
+    console.log(`🎯 generateFreshMemoryPairs: batchNumber=${batchNumber}, batchIndex=${batchIndex}`);
+    console.log(`📦 Returning batch:`, allBatches[batchIndex]);
     return allBatches[batchIndex];
   };
 
   const loadMoreMemoryCards = () => {
+    console.log('🔧 loadMoreMemoryCards called');
+    console.log('Current state:', { currentBatch, maxBatches, gameComplete });
+
     if (currentBatch < maxBatches) {
+      console.log('✅ Condition passed, loading new batch...');
+
       const newPairs = generateFreshMemoryPairs(lessonId || 'default', currentBatch + 1);
+      console.log('📦 Generated new pairs:', newPairs);
 
       // Create cards from new pairs (6 Turkish + 6 English = 12 cards)
       const turkishCards = newPairs.map((item, index) => ({
@@ -254,6 +262,8 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
       }));
 
       const cards = [...turkishCards, ...englishCards].sort(() => Math.random() - 0.5);
+      console.log('🎴 Created cards:', cards.length, 'cards');
+      console.log('🎴 Sample cards:', cards.slice(0, 4));
 
       // Update game state with new cards
       setGameState({
@@ -263,11 +273,15 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
         totalPairs: newPairs.length
       });
 
-      setCurrentBatch(currentBatch + 1);
+      const newBatchNumber = currentBatch + 1;
+      setCurrentBatch(newBatchNumber);
       setGameComplete(false); // Reset completion state for new batch
       setScore(0); // Reset score for new batch
 
-      console.log(`Memory Game: Loaded batch ${currentBatch + 1}, maxBatches: ${maxBatches}`);
+      console.log(`✅ Memory Game: Loaded batch ${newBatchNumber}, maxBatches: ${maxBatches}`);
+      console.log('🎯 New game state should be set');
+    } else {
+      console.log('❌ Condition failed: currentBatch >= maxBatches');
     }
   };
 
@@ -409,8 +423,13 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
     const { cards = [], flippedCards = [], matches = 0 } = gameState;
     const data = currentGame.data as MemoryMatchData;
 
+    console.log('🎮 renderMemoryMatch called');
+    console.log('🎴 Cards state:', { cardsLength: cards.length, matches, currentBatch });
+    console.log('🎴 Sample cards:', cards.slice(0, 4));
+
     // Safety check - if cards are not initialized yet, return loading state
     if (!cards || cards.length === 0) {
+      console.log('⚠️ No cards found, showing loading state');
       return (
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
@@ -710,6 +729,17 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
             <div className="text-xs text-gray-400 mt-2">
               Debug: currentBatch={currentBatch}, maxBatches={maxBatches}, showLoadMore={currentBatch < maxBatches ? 'YES' : 'NO'}
             </div>
+
+            {/* Force Load Button for Testing */}
+            <button
+              onClick={() => {
+                console.log('🔧 Force load button clicked');
+                loadMoreMemoryCards();
+              }}
+              className="bg-red-600 text-white px-4 py-2 rounded text-sm mt-2"
+            >
+              🔧 Force Load Next Batch (Debug)
+            </button>
           </div>
         </motion.div>
       )}
