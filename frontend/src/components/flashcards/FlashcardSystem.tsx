@@ -9,6 +9,7 @@ interface FlashcardSystemProps {
   onComplete: (results: FlashcardResult[]) => void;
   unitId: string;
   lessonId?: string;
+  onExerciseChange?: (exerciseType: string) => void;
 }
 
 interface FlashcardResult {
@@ -26,7 +27,7 @@ interface FlashcardState extends VocabularyItem {
   interval: number;
 }
 
-export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, lessonId }: FlashcardSystemProps) {
+export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, lessonId, onExerciseChange }: FlashcardSystemProps) {
   const [cards, setCards] = useState<FlashcardState[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -314,6 +315,33 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
 
   return (
     <div className="max-w-md mx-auto p-4">
+      {/* Exercise Navigation */}
+      {onExerciseChange && (
+        <div className="mb-4 flex justify-center">
+          <div className="bg-gray-100 rounded-lg p-2 flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Exercises:</span>
+            {[
+              { id: 'flashcards', name: '1. Flashcards', icon: '📚' },
+              { id: 'sentence-builder', name: '2. Sentences', icon: '🧩' },
+              { id: 'personalization', name: '3. Personal', icon: '💭' },
+              { id: 'mini-games', name: '4. Games', icon: '🎮' }
+            ].map((exercise) => (
+              <button
+                key={exercise.id}
+                onClick={() => onExerciseChange(exercise.id)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                  exercise.id === 'flashcards'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                }`}
+              >
+                {exercise.icon} {exercise.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Audio Settings */}
       <div className="mb-4 flex justify-center">
         <div className="bg-gray-100 rounded-lg p-2 flex items-center space-x-3">
@@ -345,7 +373,7 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
         </div>
         <div className="text-center mt-2">
           <span className="text-xs text-gray-500">
-            Batch {currentBatch + 1} of {maxBatches + 1} | {completedBatches.length} batches completed
+            Patch {currentBatch + 1} of 6 | {completedBatches.length + 1} patches completed | 5 patches available
           </span>
         </div>
       </div>
@@ -374,16 +402,44 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
               onClick={flipCard}
               style={{ transformStyle: 'preserve-3d' }}
             >
-              {/* Front of card */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200 flex flex-col items-center justify-center p-6 backface-hidden">
+              {/* Front of card - English */}
+              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border-2 border-green-200 flex flex-col items-center justify-center p-6 backface-hidden">
                 <div className="text-center mb-6">
-                  <div className="text-sm font-medium text-blue-600 mb-2">TURKISH WORD</div>
+                  <div className="text-sm font-medium text-green-600 mb-2">ENGLISH WORD</div>
+                  <div className="text-4xl font-bold text-green-900 mb-4">
+                    {currentCard.english}
+                  </div>
+                  <div className="text-lg text-green-700 mb-4">
+                    Category: <span className="font-semibold capitalize">{currentCard.category}</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 text-sm text-green-600 text-center font-medium">
+                  👆 Tap card to see Turkish translation
+                </div>
+              </div>
+
+              {/* Back of card - Turkish */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200 flex flex-col items-center justify-center p-6 rotate-y-180 backface-hidden">
+                <div className="text-center mb-6">
+                  <div className="text-sm font-medium text-blue-600 mb-2">TURKISH TRANSLATION</div>
                   <div className="text-4xl font-bold text-blue-900 mb-2">
                     {currentCard.turkish}
                   </div>
+
                   {currentCard.pronunciation && (
-                    <div className="text-lg text-blue-700 italic">
+                    <div className="text-lg text-blue-700 italic mb-4">
                       ({currentCard.pronunciation})
+                    </div>
+                  )}
+
+                  <div className="text-lg text-blue-700 mb-4">
+                    English: <span className="font-semibold">{currentCard.english}</span>
+                  </div>
+
+                  {currentCard.example && (
+                    <div className="text-sm text-blue-600 text-center italic bg-blue-50 p-3 rounded-lg">
+                      Example: "{currentCard.example}"
                     </div>
                   )}
                 </div>
@@ -396,41 +452,7 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
                   className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-colors shadow-lg flex items-center space-x-2"
                 >
                   <span className="text-xl">🔊</span>
-                  <span className="font-medium">Hear Pronunciation</span>
-                </button>
-
-                <div className="mt-4 text-sm text-blue-600 text-center font-medium">
-                  👆 Tap card to see English meaning
-                </div>
-              </div>
-
-              {/* Back of card */}
-              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border-2 border-green-200 flex flex-col items-center justify-center p-6 rotate-y-180 backface-hidden">
-                <div className="text-center mb-6">
-                  <div className="text-sm font-medium text-green-600 mb-2">ENGLISH MEANING</div>
-                  <div className="text-4xl font-bold text-green-900 mb-4">
-                    {currentCard.english}
-                  </div>
-
-                  <div className="text-lg text-green-700 mb-4">
-                    Turkish: <span className="font-semibold">{currentCard.turkish}</span>
-                  </div>
-
-                  {currentCard.example && (
-                    <div className="text-sm text-green-600 text-center italic bg-green-50 p-3 rounded-lg">
-                      Example: "{currentCard.example}"
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playAudio();
-                  }}
-                  className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-colors"
-                >
-                  🔊 Hear Turkish Again
+                  <span className="font-medium">Hear Turkish</span>
                 </button>
               </div>
             </div>
@@ -476,15 +498,13 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
           className="text-center mt-8 p-6 bg-green-50 rounded-lg border-2 border-green-200"
         >
           <div className="text-4xl mb-4">🎉</div>
-          <h2 className="text-2xl font-bold text-green-800 mb-2">Batch Complete!</h2>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">Patch Complete!</h2>
           <p className="text-green-700 mb-4">
-            You've completed {cards.length} flashcards in Batch {currentBatch + 1}!
+            You've completed 10 flashcards in Patch {currentBatch + 1}!
           </p>
-          {completedBatches.length > 0 && (
-            <p className="text-sm text-green-600 mb-4">
-              Total completed: {completedBatches.length + 1} vocabulary batches
-            </p>
-          )}
+          <p className="text-sm text-green-600 mb-4">
+            Total completed: {completedBatches.length + 1} patches | {(completedBatches.length + 1) * 10} total cards
+          </p>
 
           <div className="flex flex-col space-y-3">
             {/* Load More Button */}
@@ -493,9 +513,20 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
                 onClick={loadMoreVocabulary}
                 className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
               >
-                📚 Load Next Batch ({currentBatch + 2}/{maxBatches + 1})
+                📚 Load Patch {currentBatch + 2} (10 cards)
               </button>
             )}
+
+            {/* Batch Progress */}
+            <div className="mt-3 text-sm text-gray-600">
+              <div className="flex justify-center space-x-4">
+                <span>Current: Patch {currentBatch + 1}/6</span>
+                <span>•</span>
+                <span>Completed: {completedBatches.length + 1} patches</span>
+                <span>•</span>
+                <span>Available: {maxBatches - currentBatch} more patches</span>
+              </div>
+            </div>
 
             {/* Continue to Other Exercises */}
             <button
@@ -525,11 +556,12 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
 
       {/* Instructions */}
       <div className="mt-6 text-center text-sm text-gray-500">
-        <p>🔊 {autoPlayAudio ? 'Audio plays automatically' : 'Click audio button to hear pronunciation'}</p>
+        <p>📖 Front: English word → Back: Turkish translation</p>
+        <p>🔊 {autoPlayAudio ? 'Audio plays automatically' : 'Click audio button to hear Turkish pronunciation'}</p>
         <p>Swipe right for easy, left for hard, or use buttons</p>
-        <p>Your progress is saved automatically</p>
+        <p>📚 5 patches available, 10 cards each (60 total cards)</p>
         {currentBatch > 0 && (
-          <p className="text-purple-600 font-medium">Batch {currentBatch + 1} - Fresh vocabulary!</p>
+          <p className="text-purple-600 font-medium">Patch {currentBatch + 1} - Fresh {['Nature', 'Animals', 'Food', 'Colors', 'Family'][currentBatch]} vocabulary!</p>
         )}
       </div>
     </div>
