@@ -26,9 +26,172 @@ interface SentenceExercise {
 interface SentenceBuilderProps {
   exercises: SentenceExercise[];
   onComplete: (score: number, timeSpent: number) => void;
+  lessonId?: string; // To vary content by lesson
+  additionalBatches?: SentenceExercise[][]; // Additional practice batches
 }
 
-export default function SentenceBuilder({ exercises, onComplete }: SentenceBuilderProps) {
+// Helper function to generate sentence variations based on lesson
+const generateSentenceVariation = (baseExercise: SentenceExercise, index: number, lessonId?: string): SentenceExercise => {
+  const variations = getSentenceVariations(lessonId || 'default');
+  const variation = variations[index % variations.length];
+
+  return {
+    id: `${baseExercise.id}-var-${index}`,
+    instruction: variation.instruction,
+    correctSentence: variation.correctSentence,
+    translation: variation.translation,
+    wordTiles: variation.wordTiles,
+    grammarFocus: variation.grammarFocus,
+    difficulty: baseExercise.difficulty,
+    hints: variation.hints
+  };
+};
+
+// Get sentence variations based on lesson ID
+const getSentenceVariations = (lessonId: string): SentenceExercise[] => {
+  const variationsByLesson: Record<string, SentenceExercise[]> = {
+    'lesson-1': [
+      {
+        id: 'sb1',
+        instruction: 'Build a sentence about introducing yourself',
+        correctSentence: 'Benim adım Ali',
+        translation: 'My name is Ali',
+        grammarFocus: 'Possessive pronouns',
+        difficulty: 1,
+        hints: ['Start with "Benim"', 'Use "adım" for "my name"'],
+        wordTiles: [
+          { id: 'w1', word: 'Benim', type: 'subject', correctPosition: 0, translation: 'My' },
+          { id: 'w2', word: 'adım', type: 'object', correctPosition: 1, translation: 'name' },
+          { id: 'w3', word: 'Ali', type: 'object', correctPosition: 2, translation: 'Ali' }
+        ]
+      },
+      {
+        id: 'sb2',
+        instruction: 'Build a sentence about your age',
+        correctSentence: 'Ben yirmi yaşındayım',
+        translation: 'I am twenty years old',
+        grammarFocus: 'Age expressions',
+        difficulty: 2,
+        hints: ['Start with "Ben"', 'Use "yaşındayım" for age'],
+        wordTiles: [
+          { id: 'w4', word: 'Ben', type: 'subject', correctPosition: 0, translation: 'I' },
+          { id: 'w5', word: 'yirmi', type: 'adjective', correctPosition: 1, translation: 'twenty' },
+          { id: 'w6', word: 'yaşındayım', type: 'verb', correctPosition: 2, translation: 'years old am' }
+        ]
+      },
+      {
+        id: 'sb3',
+        instruction: 'Build a sentence about where you live',
+        correctSentence: 'İstanbul da yaşıyorum',
+        translation: 'I live in Istanbul',
+        grammarFocus: 'Location and present tense',
+        difficulty: 2,
+        hints: ['Start with location', 'Use "yaşıyorum" for "I live"'],
+        wordTiles: [
+          { id: 'w7', word: 'İstanbul', type: 'object', correctPosition: 0, translation: 'Istanbul' },
+          { id: 'w8', word: 'da', type: 'preposition', correctPosition: 1, translation: 'in' },
+          { id: 'w9', word: 'yaşıyorum', type: 'verb', correctPosition: 2, translation: 'I live' }
+        ]
+      },
+      {
+        id: 'sb4',
+        instruction: 'Build a sentence about your profession',
+        correctSentence: 'Ben öğretmenim',
+        translation: 'I am a teacher',
+        grammarFocus: 'Profession expressions',
+        difficulty: 1,
+        hints: ['Start with "Ben"', 'Add profession with suffix'],
+        wordTiles: [
+          { id: 'w10', word: 'Ben', type: 'subject', correctPosition: 0, translation: 'I' },
+          { id: 'w11', word: 'öğretmenim', type: 'verb', correctPosition: 1, translation: 'am a teacher' }
+        ]
+      },
+      {
+        id: 'sb5',
+        instruction: 'Build a sentence about family',
+        correctSentence: 'Benim ailem büyük',
+        translation: 'My family is big',
+        grammarFocus: 'Family and adjectives',
+        difficulty: 2,
+        hints: ['Start with "Benim"', 'Use "büyük" for "big"'],
+        wordTiles: [
+          { id: 'w12', word: 'Benim', type: 'subject', correctPosition: 0, translation: 'My' },
+          { id: 'w13', word: 'ailem', type: 'object', correctPosition: 1, translation: 'family' },
+          { id: 'w14', word: 'büyük', type: 'adjective', correctPosition: 2, translation: 'big' }
+        ]
+      }
+    ],
+    'lesson-2': [
+      {
+        id: 'sb6',
+        instruction: 'Build a sentence about daily activities',
+        correctSentence: 'Her gün okula gidiyorum',
+        translation: 'I go to school every day',
+        grammarFocus: 'Daily routines',
+        difficulty: 3,
+        hints: ['Start with "Her gün"', 'Use "gidiyorum" for "I go"'],
+        wordTiles: [
+          { id: 'w15', word: 'Her', type: 'adjective', correctPosition: 0, translation: 'Every' },
+          { id: 'w16', word: 'gün', type: 'object', correctPosition: 1, translation: 'day' },
+          { id: 'w17', word: 'okula', type: 'object', correctPosition: 2, translation: 'to school' },
+          { id: 'w18', word: 'gidiyorum', type: 'verb', correctPosition: 3, translation: 'I go' }
+        ]
+      },
+      {
+        id: 'sb7',
+        instruction: 'Build a sentence about food preferences',
+        correctSentence: 'Türk yemeği seviyorum',
+        translation: 'I love Turkish food',
+        grammarFocus: 'Food and preferences',
+        difficulty: 2,
+        hints: ['Start with food type', 'Use "seviyorum" for "I love"'],
+        wordTiles: [
+          { id: 'w19', word: 'Türk', type: 'adjective', correctPosition: 0, translation: 'Turkish' },
+          { id: 'w20', word: 'yemeği', type: 'object', correctPosition: 1, translation: 'food' },
+          { id: 'w21', word: 'seviyorum', type: 'verb', correctPosition: 2, translation: 'I love' }
+        ]
+      }
+    ],
+    'default': [
+      {
+        id: 'sb8',
+        instruction: 'Build a simple greeting',
+        correctSentence: 'Merhaba nasılsın',
+        translation: 'Hello, how are you?',
+        grammarFocus: 'Greetings',
+        difficulty: 1,
+        hints: ['Start with "Merhaba"', 'Add question about condition'],
+        wordTiles: [
+          { id: 'w22', word: 'Merhaba', type: 'verb', correctPosition: 0, translation: 'Hello' },
+          { id: 'w23', word: 'nasılsın', type: 'verb', correctPosition: 1, translation: 'how are you' }
+        ]
+      },
+      {
+        id: 'sb9',
+        instruction: 'Build a sentence about weather',
+        correctSentence: 'Bugün hava güzel',
+        translation: 'Today the weather is nice',
+        grammarFocus: 'Weather expressions',
+        difficulty: 2,
+        hints: ['Start with "Bugün"', 'Use "güzel" for "nice"'],
+        wordTiles: [
+          { id: 'w24', word: 'Bugün', type: 'adjective', correctPosition: 0, translation: 'Today' },
+          { id: 'w25', word: 'hava', type: 'subject', correctPosition: 1, translation: 'weather' },
+          { id: 'w26', word: 'güzel', type: 'adjective', correctPosition: 2, translation: 'nice' }
+        ]
+      }
+    ]
+  };
+
+  return variationsByLesson[lessonId] || variationsByLesson['default'];
+};
+
+export default function SentenceBuilder({
+  exercises,
+  onComplete,
+  lessonId,
+  additionalBatches
+}: SentenceBuilderProps) {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [availableTiles, setAvailableTiles] = useState<WordTile[]>([]);
   const [sentenceSlots, setSentenceSlots] = useState<(WordTile | null)[]>([]);
@@ -40,8 +203,35 @@ export default function SentenceBuilder({ exercises, onComplete }: SentenceBuild
   const [gameStartTime] = useState(new Date());
   const [exerciseStartTime, setExerciseStartTime] = useState(new Date());
   const [gameComplete, setGameComplete] = useState(false);
+  const [currentBatch, setCurrentBatch] = useState(0);
+  const [currentExercises, setCurrentExercises] = useState<SentenceExercise[]>(exercises);
+  const [showLoadMore, setShowLoadMore] = useState(false);
+  const [completedBatches, setCompletedBatches] = useState<number[]>([]);
 
-  const currentExercise = exercises[currentExerciseIndex];
+  const currentExercise = currentExercises[currentExerciseIndex];
+
+  // Initialize with at least 5 exercises
+  useEffect(() => {
+    const initializeExercises = () => {
+      let exerciseList = [...exercises];
+
+      // Ensure we have at least 5 exercises by generating variations if needed
+      while (exerciseList.length < 5) {
+        const baseExercise = exerciseList[exerciseList.length % exerciseList.length];
+        const variation = generateSentenceVariation(baseExercise, exerciseList.length, lessonId);
+        exerciseList.push(variation);
+      }
+
+      setCurrentExercises(exerciseList);
+
+      // Show load more button if we have additional batches
+      if (additionalBatches && additionalBatches.length > 0) {
+        setShowLoadMore(true);
+      }
+    };
+
+    initializeExercises();
+  }, [exercises, lessonId, additionalBatches]);
 
   useEffect(() => {
     if (currentExercise) {
@@ -155,6 +345,20 @@ export default function SentenceBuilder({ exercises, onComplete }: SentenceBuild
     }
   };
 
+  const loadMoreExercises = () => {
+    if (additionalBatches && currentBatch < additionalBatches.length) {
+      const nextBatch = additionalBatches[currentBatch];
+      setCurrentExercises([...currentExercises, ...nextBatch]);
+      setCurrentBatch(currentBatch + 1);
+      setCompletedBatches([...completedBatches, currentBatch]);
+
+      // Hide load more if no more batches
+      if (currentBatch + 1 >= additionalBatches.length) {
+        setShowLoadMore(false);
+      }
+    }
+  };
+
   const getWordTypeColor = (type: string) => {
     const colors = {
       subject: 'bg-blue-100 border-blue-300 text-blue-800',
@@ -178,7 +382,10 @@ export default function SentenceBuilder({ exercises, onComplete }: SentenceBuild
         <h2 className="text-2xl font-bold text-green-800 mb-4">Tebrikler! (Congratulations!)</h2>
         <div className="text-lg text-green-700 mb-6">
           <p>Final Score: {score} points</p>
-          <p>Exercises Completed: {exercises.length}</p>
+          <p>Exercises Completed: {currentExercises.length}</p>
+          {completedBatches.length > 0 && (
+            <p>Batches Completed: {completedBatches.length + 1}</p>
+          )}
           <p>Total Attempts: {attempts}</p>
           <p>Accuracy: {Math.round((score / (attempts * 10)) * 100)}%</p>
         </div>
@@ -194,18 +401,19 @@ export default function SentenceBuilder({ exercises, onComplete }: SentenceBuild
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Sentence Builder</h1>
         <div className="flex justify-center space-x-6 text-sm text-gray-600">
-          <span>Exercise {currentExerciseIndex + 1}/{exercises.length}</span>
+          <span>Exercise {currentExerciseIndex + 1}/{currentExercises.length}</span>
           <span>Score: {score}</span>
           <span>Grammar: {currentExercise.grammarFocus}</span>
+          {currentBatch > 0 && <span>Batch {currentBatch + 1}</span>}
         </div>
       </div>
 
       {/* Progress Bar */}
       <div className="mb-6">
         <div className="w-full bg-gray-200 rounded-full h-3">
-          <div 
+          <div
             className="bg-blue-600 h-3 rounded-full transition-all duration-500"
-            style={{ width: `${((currentExerciseIndex + 1) / exercises.length) * 100}%` }}
+            style={{ width: `${((currentExerciseIndex + 1) / currentExercises.length) * 100}%` }}
           />
         </div>
       </div>
@@ -366,6 +574,21 @@ export default function SentenceBuilder({ exercises, onComplete }: SentenceBuild
           💡 Hint (-5 pts)
         </button>
       </div>
+
+      {/* Load More Exercises Button */}
+      {showLoadMore && !gameComplete && (
+        <div className="text-center mt-6">
+          <button
+            onClick={loadMoreExercises}
+            className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+          >
+            📝 Load More Exercises (Batch {currentBatch + 2})
+          </button>
+          <p className="text-sm text-gray-600 mt-2">
+            Get {additionalBatches?.[currentBatch]?.length || 5} more sentence building exercises
+          </p>
+        </div>
+      )}
     </div>
   );
 }

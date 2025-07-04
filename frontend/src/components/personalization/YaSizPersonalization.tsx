@@ -26,13 +26,184 @@ interface YaSizPersonalizationProps {
   onComplete: (responses: UserResponse[]) => void;
   allowAudio?: boolean;
   maxQuestions?: number;
+  lessonId?: string; // To vary content by lesson
+  additionalBatches?: PersonalQuestion[][]; // Additional practice batches
 }
 
-export default function YaSizPersonalization({ 
-  questions, 
-  onComplete, 
+// Helper function to generate question variations based on lesson
+const generateQuestionVariation = (baseQuestion: PersonalQuestion, index: number, lessonId?: string): PersonalQuestion => {
+  const variations = getPersonalizationQuestions(lessonId || 'default');
+  const variation = variations[index % variations.length];
+
+  return {
+    id: `${baseQuestion.id}-var-${index}`,
+    question: variation.question,
+    questionTurkish: variation.questionTurkish,
+    category: variation.category,
+    difficulty: baseQuestion.difficulty,
+    suggestedAnswers: variation.suggestedAnswers,
+    grammarFocus: variation.grammarFocus
+  };
+};
+
+// Get personalization questions based on lesson ID
+const getPersonalizationQuestions = (lessonId: string): PersonalQuestion[] => {
+  const questionsByLesson: Record<string, PersonalQuestion[]> = {
+    'lesson-1': [
+      {
+        id: 'pq1',
+        question: 'What is your name?',
+        questionTurkish: 'Adınız nedir?',
+        category: 'personal',
+        difficulty: 1,
+        suggestedAnswers: ['Benim adım...', 'Ben...', 'Adım...'],
+        grammarFocus: 'Personal pronouns and introduction'
+      },
+      {
+        id: 'pq2',
+        question: 'How old are you?',
+        questionTurkish: 'Kaç yaşındasınız?',
+        category: 'personal',
+        difficulty: 1,
+        suggestedAnswers: ['Ben ... yaşındayım', '... yaşındayım', 'Yaşım ...'],
+        grammarFocus: 'Age expressions'
+      },
+      {
+        id: 'pq3',
+        question: 'Where are you from?',
+        questionTurkish: 'Nerelisiniz?',
+        category: 'personal',
+        difficulty: 2,
+        suggestedAnswers: ['Ben ... liyim', '... dan geliyorum', '... da yaşıyorum'],
+        grammarFocus: 'Origin and location'
+      },
+      {
+        id: 'pq4',
+        question: 'What do you do for work?',
+        questionTurkish: 'Ne iş yapıyorsunuz?',
+        category: 'work',
+        difficulty: 2,
+        suggestedAnswers: ['Ben ... im', '... olarak çalışıyorum', 'Mesleğim ...'],
+        grammarFocus: 'Profession expressions'
+      },
+      {
+        id: 'pq5',
+        question: 'Do you have any siblings?',
+        questionTurkish: 'Kardeşiniz var mı?',
+        category: 'family',
+        difficulty: 2,
+        suggestedAnswers: ['Evet, ... kardeşim var', 'Hayır, tek çocuğum', 'Bir ... im var'],
+        grammarFocus: 'Family relationships and existence'
+      }
+    ],
+    'lesson-2': [
+      {
+        id: 'pq6',
+        question: 'What are your hobbies?',
+        questionTurkish: 'Hobileriniz nelerdir?',
+        category: 'hobbies',
+        difficulty: 3,
+        suggestedAnswers: ['... yapmayı seviyorum', 'Hobim ...', 'Boş zamanımda ...'],
+        grammarFocus: 'Hobby expressions and preferences'
+      },
+      {
+        id: 'pq7',
+        question: 'What is your favorite food?',
+        questionTurkish: 'En sevdiğiniz yemek nedir?',
+        category: 'food',
+        difficulty: 2,
+        suggestedAnswers: ['En sevdiğim yemek ...', '... çok seviyorum', 'Favori yemeğim ...'],
+        grammarFocus: 'Food preferences and superlatives'
+      },
+      {
+        id: 'pq8',
+        question: 'Have you traveled to Turkey before?',
+        questionTurkish: 'Daha önce Türkiye ye geldiniz mi?',
+        category: 'travel',
+        difficulty: 3,
+        suggestedAnswers: ['Evet, ... kez geldim', 'Hayır, ilk kez', 'Birkaç kez ...'],
+        grammarFocus: 'Past tense and travel experiences'
+      },
+      {
+        id: 'pq9',
+        question: 'What languages do you speak?',
+        questionTurkish: 'Hangi dilleri konuşuyorsunuz?',
+        category: 'personal',
+        difficulty: 2,
+        suggestedAnswers: ['... konuşuyorum', 'Ana dilim ...', 'İki dil biliyorum: ...'],
+        grammarFocus: 'Language abilities'
+      },
+      {
+        id: 'pq10',
+        question: 'Why are you learning Turkish?',
+        questionTurkish: 'Neden Türkçe öğreniyorsunuz?',
+        category: 'personal',
+        difficulty: 3,
+        suggestedAnswers: ['Çünkü ...', '... için öğreniyorum', 'Amacım ...'],
+        grammarFocus: 'Reasons and purposes'
+      }
+    ],
+    'lesson-3': [
+      {
+        id: 'pq11',
+        question: 'What is your daily routine?',
+        questionTurkish: 'Günlük rutininiz nasıl?',
+        category: 'personal',
+        difficulty: 3,
+        suggestedAnswers: ['Sabah ...', 'Her gün ...', 'Genellikle ...'],
+        grammarFocus: 'Daily routines and time expressions'
+      },
+      {
+        id: 'pq12',
+        question: 'What are your future plans?',
+        questionTurkish: 'Gelecek planlarınız neler?',
+        category: 'personal',
+        difficulty: 4,
+        suggestedAnswers: ['Gelecekte ...', 'Planım ...', '... yapmayı planlıyorum'],
+        grammarFocus: 'Future tense and planning'
+      }
+    ],
+    'default': [
+      {
+        id: 'pq13',
+        question: 'Tell me about yourself',
+        questionTurkish: 'Kendinizden bahsedin',
+        category: 'personal',
+        difficulty: 2,
+        suggestedAnswers: ['Ben ...', 'Kendim hakkında ...', 'Kişiliğim ...'],
+        grammarFocus: 'Self-description'
+      },
+      {
+        id: 'pq14',
+        question: 'What makes you happy?',
+        questionTurkish: 'Sizi ne mutlu eder?',
+        category: 'personal',
+        difficulty: 3,
+        suggestedAnswers: ['... beni mutlu eder', 'Mutlu olduğum zaman ...', 'Sevdiğim şeyler ...'],
+        grammarFocus: 'Emotions and preferences'
+      },
+      {
+        id: 'pq15',
+        question: 'Describe your hometown',
+        questionTurkish: 'Memleketinizi tarif edin',
+        category: 'personal',
+        difficulty: 3,
+        suggestedAnswers: ['Memleketim ...', 'Doğduğum yer ...', 'Şehrim ...'],
+        grammarFocus: 'Place descriptions'
+      }
+    ]
+  };
+
+  return questionsByLesson[lessonId] || questionsByLesson['default'];
+};
+
+export default function YaSizPersonalization({
+  questions,
+  onComplete,
   allowAudio = true,
-  maxQuestions = 5 
+  maxQuestions = 5,
+  lessonId,
+  additionalBatches
 }: YaSizPersonalizationProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<UserResponse[]>([]);
@@ -43,12 +214,53 @@ export default function YaSizPersonalization({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<'turkish' | 'english' | 'mixed'>('turkish');
   const [sessionComplete, setSessionComplete] = useState(false);
+  const [currentBatch, setCurrentBatch] = useState(0);
+  const [currentQuestions, setCurrentQuestions] = useState<PersonalQuestion[]>(questions);
+  const [showLoadMore, setShowLoadMore] = useState(false);
+  const [completedBatches, setCompletedBatches] = useState<number[]>([]);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const questionsToShow = questions.slice(0, maxQuestions);
+  const currentQuestion = currentQuestions[currentQuestionIndex];
+  const questionsToShow = currentQuestions.slice(0, maxQuestions);
+
+  // Initialize with at least 5 questions
+  useEffect(() => {
+    const initializeQuestions = () => {
+      let questionList = [...questions];
+
+      // Ensure we have at least 5 questions by generating variations if needed
+      while (questionList.length < 5) {
+        const baseQuestion = questionList[questionList.length % questionList.length];
+        const variation = generateQuestionVariation(baseQuestion, questionList.length, lessonId);
+        questionList.push(variation);
+      }
+
+      setCurrentQuestions(questionList);
+
+      // Show load more button if we have additional batches
+      if (additionalBatches && additionalBatches.length > 0) {
+        setShowLoadMore(true);
+      }
+    };
+
+    initializeQuestions();
+  }, [questions, lessonId, additionalBatches]);
+
+  const loadMoreQuestions = () => {
+    if (additionalBatches && currentBatch < additionalBatches.length) {
+      const nextBatch = additionalBatches[currentBatch];
+      setCurrentQuestions([...currentQuestions, ...nextBatch]);
+      setCurrentBatch(currentBatch + 1);
+      setCompletedBatches([...completedBatches, currentBatch]);
+
+      // Hide load more if no more batches
+      if (currentBatch + 1 >= additionalBatches.length) {
+        setShowLoadMore(false);
+      }
+    }
+  };
 
   const startRecording = async () => {
     try {
@@ -212,18 +424,19 @@ export default function YaSizPersonalization({
           Share your personal experiences to make learning more relevant
         </p>
         <div className="flex justify-center space-x-6 text-sm text-gray-500">
-          <span>Question {currentQuestionIndex + 1} of {questionsToShow.length}</span>
+          <span>Question {currentQuestionIndex + 1} of {Math.min(currentQuestions.length, maxQuestions)}</span>
           <span>Category: {currentQuestion.category}</span>
           <span>Difficulty: {'⭐'.repeat(currentQuestion.difficulty)}</span>
+          {currentBatch > 0 && <span>Batch {currentBatch + 1}</span>}
         </div>
       </div>
 
       {/* Progress Bar */}
       <div className="mb-8">
         <div className="w-full bg-gray-200 rounded-full h-3">
-          <div 
+          <div
             className="bg-blue-600 h-3 rounded-full transition-all duration-500"
-            style={{ width: `${((currentQuestionIndex + 1) / questionsToShow.length) * 100}%` }}
+            style={{ width: `${((currentQuestionIndex + 1) / Math.min(currentQuestions.length, maxQuestions)) * 100}%` }}
           />
         </div>
       </div>
@@ -404,8 +617,26 @@ export default function YaSizPersonalization({
       </div>
 
       {/* Response Counter */}
+      {/* Load More Questions Button */}
+      {showLoadMore && !sessionComplete && (
+        <div className="text-center mt-6">
+          <button
+            onClick={loadMoreQuestions}
+            className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+          >
+            💭 Load More Questions (Batch {currentBatch + 2})
+          </button>
+          <p className="text-sm text-gray-600 mt-2">
+            Get {additionalBatches?.[currentBatch]?.length || 5} more personalization questions
+          </p>
+        </div>
+      )}
+
       <div className="mt-6 text-center text-sm text-gray-500">
-        Responses given: {responses.length} | Remaining: {questionsToShow.length - currentQuestionIndex - 1}
+        Responses given: {responses.length} | Remaining: {Math.min(currentQuestions.length, maxQuestions) - currentQuestionIndex - 1}
+        {completedBatches.length > 0 && (
+          <span> | Batches completed: {completedBatches.length + 1}</span>
+        )}
       </div>
     </div>
   );

@@ -10,6 +10,8 @@ interface GrammarRule {
   examples: GrammarExample[];
   animation: AnimationType;
   difficulty: number;
+  lessonId?: string; // To vary content by lesson
+  additionalBatches?: GrammarExample[][]; // Additional practice batches
 }
 
 interface GrammarExample {
@@ -28,13 +30,106 @@ interface AnimatedGrammarLessonProps {
   onNext?: () => void;
 }
 
+// Helper function to get grammar variations based on lesson and animation type
+const getGrammarVariations = (animationType: AnimationType, lessonId: string): GrammarExample[] => {
+  const baseVariations: Record<AnimationType, Record<string, GrammarExample[]>> = {
+    vowel_harmony: {
+      'lesson-1': [
+        { id: 'vh1', base: 'ev', suffix: 'ler', result: 'evler', translation: 'houses', explanation: 'Front vowel + front vowel suffix' },
+        { id: 'vh2', base: 'kız', suffix: 'lar', result: 'kızlar', translation: 'girls', explanation: 'Back vowel + back vowel suffix' },
+        { id: 'vh3', base: 'göz', suffix: 'ler', result: 'gözler', translation: 'eyes', explanation: 'Front rounded vowel + front suffix' },
+        { id: 'vh4', base: 'top', suffix: 'lar', result: 'toplar', translation: 'balls', explanation: 'Back rounded vowel + back suffix' },
+        { id: 'vh5', base: 'kitap', suffix: 'lar', result: 'kitaplar', translation: 'books', explanation: 'Back vowel + back vowel suffix' }
+      ],
+      'lesson-2': [
+        { id: 'vh6', base: 'çiçek', suffix: 'ler', result: 'çiçekler', translation: 'flowers', explanation: 'Front vowel + front vowel suffix' },
+        { id: 'vh7', base: 'masa', suffix: 'lar', result: 'masalar', translation: 'tables', explanation: 'Back vowel + back vowel suffix' },
+        { id: 'vh8', base: 'pencere', suffix: 'ler', result: 'pencereler', translation: 'windows', explanation: 'Front vowel + front vowel suffix' },
+        { id: 'vh9', base: 'kapı', suffix: 'lar', result: 'kapılar', translation: 'doors', explanation: 'Back vowel + back vowel suffix' },
+        { id: 'vh10', base: 'öğretmen', suffix: 'ler', result: 'öğretmenler', translation: 'teachers', explanation: 'Front vowel + front vowel suffix' }
+      ],
+      'default': [
+        { id: 'vh11', base: 'araba', suffix: 'lar', result: 'arabalar', translation: 'cars', explanation: 'Back vowel + back vowel suffix' },
+        { id: 'vh12', base: 'elma', suffix: 'lar', result: 'elmalar', translation: 'apples', explanation: 'Front vowel + front vowel suffix' },
+        { id: 'vh13', base: 'okul', suffix: 'lar', result: 'okullar', translation: 'schools', explanation: 'Back vowel + back vowel suffix' },
+        { id: 'vh14', base: 'şehir', suffix: 'ler', result: 'şehirler', translation: 'cities', explanation: 'Front vowel + front vowel suffix' },
+        { id: 'vh15', base: 'hayvan', suffix: 'lar', result: 'hayvanlar', translation: 'animals', explanation: 'Back vowel + back vowel suffix' }
+      ]
+    },
+    plural_suffix: {
+      'lesson-1': [
+        { id: 'ps1', base: 'çocuk', suffix: 'lar', result: 'çocuklar', translation: 'children', explanation: 'Plural suffix for back vowel words' },
+        { id: 'ps2', base: 'kedi', suffix: 'ler', result: 'kediler', translation: 'cats', explanation: 'Plural suffix for front vowel words' },
+        { id: 'ps3', base: 'köpek', suffix: 'ler', result: 'köpekler', translation: 'dogs', explanation: 'Plural suffix for front vowel words' },
+        { id: 'ps4', base: 'kuş', suffix: 'lar', result: 'kuşlar', translation: 'birds', explanation: 'Plural suffix for back vowel words' },
+        { id: 'ps5', base: 'balık', suffix: 'lar', result: 'balıklar', translation: 'fish', explanation: 'Plural suffix for back vowel words' }
+      ],
+      'default': [
+        { id: 'ps6', base: 'ağaç', suffix: 'lar', result: 'ağaçlar', translation: 'trees', explanation: 'Plural suffix for back vowel words' },
+        { id: 'ps7', base: 'çiçek', suffix: 'ler', result: 'çiçekler', translation: 'flowers', explanation: 'Plural suffix for front vowel words' },
+        { id: 'ps8', base: 'meyve', suffix: 'ler', result: 'meyveler', translation: 'fruits', explanation: 'Plural suffix for front vowel words' },
+        { id: 'ps9', base: 'sebze', suffix: 'ler', result: 'sebzeler', translation: 'vegetables', explanation: 'Plural suffix for front vowel words' },
+        { id: 'ps10', base: 'yemek', suffix: 'ler', result: 'yemekler', translation: 'foods', explanation: 'Plural suffix for front vowel words' }
+      ]
+    },
+    possessive_suffix: {
+      'default': [
+        { id: 'pos1', base: 'ev', suffix: 'im', result: 'evim', translation: 'my house', explanation: 'First person possessive suffix' },
+        { id: 'pos2', base: 'araba', suffix: 'n', result: 'araban', translation: 'your car', explanation: 'Second person possessive suffix' },
+        { id: 'pos3', base: 'kitap', suffix: 'ı', result: 'kitabı', translation: 'his/her book', explanation: 'Third person possessive suffix' },
+        { id: 'pos4', base: 'okul', suffix: 'umuz', result: 'okulumuz', translation: 'our school', explanation: 'First person plural possessive' },
+        { id: 'pos5', base: 'öğretmen', suffix: 'iniz', result: 'öğretmeniniz', translation: 'your teacher', explanation: 'Second person plural possessive' }
+      ]
+    },
+    case_suffix: {
+      'default': [
+        { id: 'cs1', base: 'ev', suffix: 'e', result: 'eve', translation: 'to the house', explanation: 'Dative case suffix' },
+        { id: 'cs2', base: 'okul', suffix: 'da', result: 'okulda', translation: 'at school', explanation: 'Locative case suffix' },
+        { id: 'cs3', base: 'kitap', suffix: 'ı', result: 'kitabı', translation: 'the book (object)', explanation: 'Accusative case suffix' },
+        { id: 'cs4', base: 'çanta', suffix: 'dan', result: 'çantadan', translation: 'from the bag', explanation: 'Ablative case suffix' },
+        { id: 'cs5', base: 'masa', suffix: 'nın', result: 'masanın', translation: 'of the table', explanation: 'Genitive case suffix' }
+      ]
+    }
+  };
+
+  const lessonVariations = baseVariations[animationType][lessonId] || baseVariations[animationType]['default'];
+  return lessonVariations;
+};
+
 export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: AnimatedGrammarLessonProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentExample, setCurrentExample] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
   const [animationPhase, setAnimationPhase] = useState<'intro' | 'demonstration' | 'practice' | 'complete'>('intro');
+  const [currentBatch, setCurrentBatch] = useState(0); // 0 = main, 1 = batch 1, 2 = batch 2
+  const [currentExamples, setCurrentExamples] = useState<GrammarExample[]>(rule.examples);
+  const [showLoadMore, setShowLoadMore] = useState(false);
+  const [completedBatches, setCompletedBatches] = useState<number[]>([]);
 
-  const example = rule.examples[currentExample];
+  const example = currentExamples[currentExample];
+
+  // Initialize with at least 5 examples
+  useEffect(() => {
+    const initializeExamples = () => {
+      let examples = [...rule.examples];
+
+      // Ensure we have at least 5 examples by generating variations if needed
+      while (examples.length < 5) {
+        const baseExample = examples[examples.length % examples.length];
+        const variation = generateExampleVariation(baseExample, examples.length, rule.lessonId);
+        examples.push(variation);
+      }
+
+      setCurrentExamples(examples);
+
+      // Show load more button if we have additional batches
+      if (rule.additionalBatches && rule.additionalBatches.length > 0) {
+        setShowLoadMore(true);
+      }
+    };
+
+    initializeExamples();
+  }, [rule]);
 
   useEffect(() => {
     // Auto-advance through animation phases
@@ -48,6 +143,45 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
 
     return () => clearTimeout(timer);
   }, [animationPhase, currentStep]);
+
+  // Generate example variations based on lesson ID and grammar rule
+  const generateExampleVariation = (baseExample: GrammarExample, index: number, lessonId?: string): GrammarExample => {
+    const variations = getGrammarVariations(rule.animation, lessonId || 'default');
+    const variation = variations[index % variations.length];
+
+    return {
+      id: `${baseExample.id}-var-${index}`,
+      base: variation.base,
+      suffix: variation.suffix,
+      result: variation.result,
+      translation: variation.translation,
+      explanation: variation.explanation
+    };
+  };
+
+  const loadMoreExamples = () => {
+    if (rule.additionalBatches && currentBatch < rule.additionalBatches.length) {
+      const nextBatch = rule.additionalBatches[currentBatch];
+      setCurrentExamples([...currentExamples, ...nextBatch]);
+      setCurrentBatch(currentBatch + 1);
+      setCompletedBatches([...completedBatches, currentBatch]);
+
+      // Hide load more if no more batches
+      if (currentBatch + 1 >= rule.additionalBatches.length) {
+        setShowLoadMore(false);
+      }
+    }
+  };
+
+  const nextExample = () => {
+    if (currentExample < currentExamples.length - 1) {
+      setCurrentExample(currentExample + 1);
+      setCurrentStep(0);
+      setAnimationPhase('demonstration');
+    } else {
+      setAnimationPhase('complete');
+    }
+  };
 
   const renderVowelHarmonyAnimation = () => {
     return (
@@ -286,17 +420,18 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
         <h1 className="text-3xl font-bold text-gray-800 mb-2">{rule.title}</h1>
         <p className="text-lg text-gray-600 mb-4">{rule.description}</p>
         <div className="flex justify-center space-x-4 text-sm text-gray-500">
-          <span>Example {currentExample + 1} of {rule.examples.length}</span>
+          <span>Example {currentExample + 1} of {currentExamples.length}</span>
           <span>Difficulty: {'⭐'.repeat(rule.difficulty)}</span>
+          {currentBatch > 0 && <span>Batch {currentBatch + 1}</span>}
         </div>
       </div>
 
       {/* Progress Bar */}
       <div className="mb-8">
         <div className="w-full bg-gray-200 rounded-full h-3">
-          <div 
+          <div
             className="bg-blue-600 h-3 rounded-full transition-all duration-500"
-            style={{ width: `${((currentExample + 1) / rule.examples.length) * 100}%` }}
+            style={{ width: `${((currentExample + 1) / currentExamples.length) * 100}%` }}
           />
         </div>
       </div>
@@ -392,7 +527,7 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
           </button>
 
           <div className="flex space-x-2">
-            {rule.examples.map((_, index) => (
+            {currentExamples.map((_, index) => (
               <button
                 key={index}
                 onClick={() => {
@@ -411,9 +546,50 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
             onClick={nextExample}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            {currentExample === rule.examples.length - 1 ? 'Complete' : 'Next →'}
+            {currentExample === currentExamples.length - 1 ? 'Complete' : 'Next →'}
           </button>
         </div>
+      )}
+
+      {/* Load More Examples Button */}
+      {showLoadMore && animationPhase !== 'complete' && (
+        <div className="text-center mt-6">
+          <button
+            onClick={loadMoreExamples}
+            className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+          >
+            📚 Load More Examples (Batch {currentBatch + 2})
+          </button>
+          <p className="text-sm text-gray-600 mt-2">
+            Get {rule.additionalBatches?.[currentBatch]?.length || 5} more practice examples
+          </p>
+        </div>
+      )}
+
+      {/* Completion Message */}
+      {animationPhase === 'complete' && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center mt-8 p-6 bg-green-50 rounded-lg border-2 border-green-200"
+        >
+          <div className="text-4xl mb-4">🎉</div>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">Excellent Work!</h2>
+          <p className="text-green-700 mb-4">
+            You've completed {currentExamples.length} grammar examples!
+          </p>
+          {completedBatches.length > 0 && (
+            <p className="text-sm text-green-600 mb-4">
+              Completed {completedBatches.length + 1} batches of examples
+            </p>
+          )}
+          <button
+            onClick={onComplete}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Continue Learning
+          </button>
+        </motion.div>
       )}
     </div>
   );
