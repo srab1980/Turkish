@@ -47,10 +47,23 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
   const [gameComplete, setGameComplete] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
   const [currentBatch, setCurrentBatch] = useState(0);
-  const [maxBatches] = useState(5);
+  const [maxBatches] = useState(5); // 5 additional batches (total 6: 0,1,2,3,4,5)
   const [showLoadMore, setShowLoadMore] = useState(false);
 
   const currentGame = games[currentGameIndex];
+
+  // Audio pronunciation function
+  const playAudio = (text: string) => {
+    try {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'tr-TR'; // Turkish language
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.log('Speech synthesis not available:', error);
+    }
+  };
 
   useEffect(() => {
     if (currentGame?.timeLimit) {
@@ -135,28 +148,86 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
   };
 
   // Generate fresh memory pairs for additional batches
-  const generateFreshMemoryPairs = (lessonId: string, startIndex: number) => {
-    const freshPairs = [
-      { id: `fresh-${startIndex + 1}`, turkish: 'güneş', english: 'sun' },
-      { id: `fresh-${startIndex + 2}`, turkish: 'ay', english: 'moon' },
-      { id: `fresh-${startIndex + 3}`, turkish: 'yıldız', english: 'star' },
-      { id: `fresh-${startIndex + 4}`, turkish: 'bulut', english: 'cloud' },
-      { id: `fresh-${startIndex + 5}`, turkish: 'rüzgar', english: 'wind' },
-      { id: `fresh-${startIndex + 6}`, turkish: 'yağmur', english: 'rain' }
+  const generateFreshMemoryPairs = (lessonId: string, batchNumber: number) => {
+    const allBatches = [
+      // Batch 1 - Weather
+      [
+        { id: `batch1-1`, turkish: 'güneş', english: 'sun' },
+        { id: `batch1-2`, turkish: 'ay', english: 'moon' },
+        { id: `batch1-3`, turkish: 'yıldız', english: 'star' },
+        { id: `batch1-4`, turkish: 'bulut', english: 'cloud' },
+        { id: `batch1-5`, turkish: 'rüzgar', english: 'wind' },
+        { id: `batch1-6`, turkish: 'yağmur', english: 'rain' }
+      ],
+      // Batch 2 - Animals
+      [
+        { id: `batch2-1`, turkish: 'kedi', english: 'cat' },
+        { id: `batch2-2`, turkish: 'köpek', english: 'dog' },
+        { id: `batch2-3`, turkish: 'kuş', english: 'bird' },
+        { id: `batch2-4`, turkish: 'balık', english: 'fish' },
+        { id: `batch2-5`, turkish: 'at', english: 'horse' },
+        { id: `batch2-6`, turkish: 'tavuk', english: 'chicken' }
+      ],
+      // Batch 3 - Food
+      [
+        { id: `batch3-1`, turkish: 'ekmek', english: 'bread' },
+        { id: `batch3-2`, turkish: 'su', english: 'water' },
+        { id: `batch3-3`, turkish: 'çay', english: 'tea' },
+        { id: `batch3-4`, turkish: 'kahve', english: 'coffee' },
+        { id: `batch3-5`, turkish: 'elma', english: 'apple' },
+        { id: `batch3-6`, turkish: 'muz', english: 'banana' }
+      ],
+      // Batch 4 - Colors
+      [
+        { id: `batch4-1`, turkish: 'kırmızı', english: 'red' },
+        { id: `batch4-2`, turkish: 'mavi', english: 'blue' },
+        { id: `batch4-3`, turkish: 'yeşil', english: 'green' },
+        { id: `batch4-4`, turkish: 'sarı', english: 'yellow' },
+        { id: `batch4-5`, turkish: 'beyaz', english: 'white' },
+        { id: `batch4-6`, turkish: 'siyah', english: 'black' }
+      ],
+      // Batch 5 - Family
+      [
+        { id: `batch5-1`, turkish: 'anne', english: 'mother' },
+        { id: `batch5-2`, turkish: 'baba', english: 'father' },
+        { id: `batch5-3`, turkish: 'kardeş', english: 'sibling' },
+        { id: `batch5-4`, turkish: 'çocuk', english: 'child' },
+        { id: `batch5-5`, turkish: 'dede', english: 'grandfather' },
+        { id: `batch5-6`, turkish: 'nine', english: 'grandmother' }
+      ]
     ];
 
-    return freshPairs;
+    const batchIndex = (batchNumber - 1) % allBatches.length;
+    return allBatches[batchIndex];
   };
 
   const loadMoreMemoryCards = () => {
     if (currentBatch < maxBatches) {
-      const newPairs = generateFreshMemoryPairs(lessonId || 'default', (currentBatch + 1) * 6);
-      initializeMemoryMatch();
-      setCurrentBatch(currentBatch + 1);
+      const newPairs = generateFreshMemoryPairs(lessonId || 'default', currentBatch + 1);
 
-      if (currentBatch + 1 >= maxBatches) {
-        setShowLoadMore(false);
-      }
+      // Create cards from new pairs
+      const cards = [...newPairs, ...newPairs].map((item, index) => ({
+        id: `${item.id}-${index}`,
+        content: index < newPairs.length ? item.turkish : item.english,
+        type: index < newPairs.length ? 'turkish' : 'english',
+        pairId: item.id,
+        flipped: false,
+        matched: false,
+      })).sort(() => Math.random() - 0.5);
+
+      // Update game state with new cards
+      setGameState({
+        cards,
+        flippedCards: [],
+        matches: 0,
+        totalPairs: newPairs.length
+      });
+
+      setCurrentBatch(currentBatch + 1);
+      setGameComplete(false); // Reset completion state for new batch
+      setScore(0); // Reset score for new batch
+
+      console.log(`Memory Game: Loaded batch ${currentBatch + 1}, maxBatches: ${maxBatches}`);
     }
   };
 
@@ -317,6 +388,12 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
       newCards[cardIndex].flipped = true;
       const newFlippedCards = [...flippedCards, cardIndex];
 
+      // Pronounce the card content when flipped
+      const card = newCards[cardIndex];
+      if (card.type === 'turkish') {
+        playAudio(card.content); // Pronounce Turkish word
+      }
+
       if (newFlippedCards.length === 2) {
         const [first, second] = newFlippedCards;
         if (newCards[first].pairId === newCards[second].pairId) {
@@ -326,11 +403,15 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
           const newMatches = matches + 1;
           setGameState({ cards: newCards, flippedCards: [], matches: newMatches });
           setScore(score + 10);
-          
+
+          // Play success sound for correct match
+          playAudio('Doğru! Harika!'); // "Correct! Great!"
+
           // Check if all 6 pairs (12 cards) are matched
           if (newMatches === 6) {
             setTimeout(() => {
               setGameComplete(true);
+              playAudio('Tebrikler! Tüm kartları eşleştirdin!'); // "Congratulations! You matched all cards!"
             }, 1000);
           }
         } else {
@@ -417,6 +498,15 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
             <p className="text-gray-600">{currentGame.title}</p>
           </div>
         </div>
+
+        {/* Debug Info for Memory Game */}
+        {currentGame.type === 'memory_match' && (
+          <div className="mt-2 text-xs text-blue-600 bg-blue-50 p-2 rounded">
+            🔍 Debug: Batch {currentBatch + 1}/6 | Complete: {gameComplete ? 'YES' : 'NO'} |
+            LoadMore: {currentBatch < maxBatches ? 'AVAILABLE' : 'HIDDEN'} |
+            Score: {score}
+          </div>
+        )}
         <div className="flex justify-center space-x-6 text-sm text-gray-500 mt-2">
           <span>Game {currentGameIndex + 1}/{games.length}</span>
           <span>Score: {score}</span>
@@ -488,21 +578,6 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
         </div>
       </div>
 
-      {/* Memory Match Load More Button */}
-      {currentGame.type === 'memory_match' && gameComplete && showLoadMore && currentBatch < maxBatches && (
-        <div className="text-center mt-6">
-          <button
-            onClick={loadMoreMemoryCards}
-            className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
-          >
-            🧠 Load More Memory Cards (Batch {currentBatch + 1}/{maxBatches})
-          </button>
-          <p className="text-sm text-gray-600 mt-2">
-            Get 12 more cards with fresh vocabulary to practice
-          </p>
-        </div>
-      )}
-
       {/* Memory Match Game Complete */}
       {currentGame.type === 'memory_match' && gameComplete && (
         <motion.div
@@ -518,14 +593,62 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
           <p className="text-sm text-green-600 mb-4">
             Score: {score} points | Batch {currentBatch + 1}
           </p>
-          {!showLoadMore || currentBatch >= maxBatches ? (
+
+          <div className="flex flex-col space-y-3">
+            {/* Load More Batch Button */}
+            {currentBatch < maxBatches && (
+              <button
+                onClick={loadMoreMemoryCards}
+                className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+              >
+                🧠 Load Batch {currentBatch + 2} (12 cards)
+              </button>
+            )}
+
+            {/* Continue Learning Button */}
             <button
-              onClick={completeGame}
+              onClick={() => {
+                const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+                onComplete(score, timeSpent);
+              }}
               className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
             >
-              Continue Learning
+              ✅ Continue Learning
             </button>
-          ) : null}
+
+            {/* Play Again Button */}
+            <button
+              onClick={() => {
+                setGameComplete(false);
+                setScore(0);
+                const data = currentGame.data as MemoryMatchData;
+                const pairs = [...data.pairs];
+                const cards = [...pairs, ...pairs].map((item, index) => ({
+                  id: `${item.id}-${index}`,
+                  content: index < pairs.length ? item.turkish : item.english,
+                  type: index < pairs.length ? 'turkish' : 'english',
+                  pairId: item.id,
+                  flipped: false,
+                  matched: false,
+                })).sort(() => Math.random() - 0.5);
+
+                setGameState({
+                  cards,
+                  flippedCards: [],
+                  matches: 0,
+                  totalPairs: pairs.length
+                });
+              }}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              🔄 Play Again
+            </button>
+
+            {/* Debug Info */}
+            <div className="text-xs text-gray-400 mt-2">
+              Debug: currentBatch={currentBatch}, maxBatches={maxBatches}, showLoadMore={currentBatch < maxBatches ? 'YES' : 'NO'}
+            </div>
+          </div>
         </motion.div>
       )}
     </div>
