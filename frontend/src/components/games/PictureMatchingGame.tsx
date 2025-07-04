@@ -334,16 +334,35 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
                       onClick={() => handleImageClick(image)}
                     >
                       <div className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
-                        <img
-                          src={image.imageUrl}
-                          alt={image.english}
-                          className="w-full h-3/4 object-cover rounded-md mb-2"
-                          onError={(e) => {
-                            // Fallback to placeholder if image fails to load
-                            (e.target as HTMLImageElement).src = '/images/placeholder.svg';
-                          }}
-                        />
+                        {/* Check if imageUrl is an emoji or actual image URL */}
+                        {image.imageUrl.length <= 4 ? (
+                          // Display emoji as text with enhanced styling
+                          <div className={`text-6xl mb-2 transition-all duration-300 ${
+                            completedMatches.has(image.id)
+                              ? 'scale-110 opacity-75'
+                              : 'hover:scale-105'
+                          }`}>
+                            {image.imageUrl}
+                          </div>
+                        ) : (
+                          // Display actual image
+                          <img
+                            src={image.imageUrl}
+                            alt={image.english}
+                            className="w-full h-3/4 object-cover rounded-md mb-2"
+                            onError={(e) => {
+                              // Fallback to placeholder if image fails to load
+                              (e.target as HTMLImageElement).src = '/images/placeholder.svg';
+                            }}
+                          />
+                        )}
                         <div className="text-xs text-gray-600 text-center">
+                          {/* Show English word for emoji images */}
+                          {image.imageUrl.length <= 4 && (
+                            <div className="text-sm font-medium text-gray-700 mb-1">
+                              {image.english}
+                            </div>
+                          )}
                           {completedMatches.has(image.id) && '✅'}
                         </div>
                       </div>
