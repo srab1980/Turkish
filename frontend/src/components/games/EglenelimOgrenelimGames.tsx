@@ -234,6 +234,7 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
 
   const loadMoreMemoryCards = () => {
     console.log('🔧 loadMoreMemoryCards called');
+    alert('🔧 loadMoreMemoryCards function called!'); // Temporary alert for debugging
     console.log('Current state:', { currentBatch, maxBatches, gameComplete });
 
     if (currentBatch < maxBatches) {
@@ -639,6 +640,12 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
         </div>
       </div>
 
+      {/* Debug Game State */}
+      <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded mb-4">
+        🔍 Game Debug: type="{currentGame.type}", gameComplete={gameComplete ? 'true' : 'false'},
+        showCompletion={currentGame.type === 'memory_match' && gameComplete ? 'YES' : 'NO'}
+      </div>
+
       {/* Memory Match Game Complete */}
       {currentGame.type === 'memory_match' && gameComplete && (
         <motion.div
@@ -659,12 +666,21 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
             {/* Load More Batch Button */}
             {currentBatch < maxBatches && (
               <button
-                onClick={loadMoreMemoryCards}
+                onClick={() => {
+                  console.log('🔥 Load Batch button clicked!');
+                  console.log('🔥 Button state:', { currentBatch, maxBatches, condition: currentBatch < maxBatches });
+                  loadMoreMemoryCards();
+                }}
                 className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
               >
                 🧠 Load Batch {currentBatch + 2} (12 cards)
               </button>
             )}
+
+            {/* Show condition debug */}
+            <div className="text-xs text-red-600 bg-red-50 p-2 rounded">
+              🔍 Button condition: currentBatch={currentBatch}, maxBatches={maxBatches}, show={currentBatch < maxBatches ? 'YES' : 'NO'}
+            </div>
 
             {/* Continue Learning Button */}
             <button
