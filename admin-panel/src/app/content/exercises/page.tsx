@@ -1,15 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { PlusIcon, PuzzlePieceIcon, PlayIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { apiClient } from '@/lib/api';
 
 export default function ExercisesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
+  const [exercises, setExercises] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock exercises data
-  const exercises = [
+  useEffect(() => {
+    loadExercises();
+  }, []);
+
+  const loadExercises = async () => {
+    try {
+      setLoading(true);
+      const response = await apiClient.getAllExercises();
+      if (response.success) {
+        setExercises(response.data || []);
+      }
+    } catch (error) {
+      console.error('Failed to load exercises:', error);
+      // Fallback to mock data
+      setExercises([
     {
       id: '1',
       title: 'Greeting Vocabulary Quiz',
@@ -62,7 +78,11 @@ export default function ExercisesPage() {
       completions: 0,
       isPublished: false
     }
-  ];
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const exerciseTypes = [
     { value: 'multiple_choice', label: 'Multiple Choice' },

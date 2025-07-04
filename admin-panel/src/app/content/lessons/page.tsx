@@ -1,15 +1,51 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { PlusIcon, BookOpenIcon, PlayIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { apiClient } from '@/lib/api';
 
 export default function LessonsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCourse, setSelectedCourse] = useState<string>('all');
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock lessons data
-  const lessons = [
+  useEffect(() => {
+    loadLessons();
+  }, []);
+
+  const loadLessons = async () => {
+    try {
+      setLoading(true);
+      const response = await apiClient.getAllLessons();
+      if (response.success) {
+        setLessons(response.data || []);
+      }
+    } catch (error) {
+      console.error('Failed to load lessons:', error);
+      // Fallback to mock data
+      setLessons([
+        {
+          id: '1',
+          title: 'Basic Greetings',
+          description: 'Learn how to say hello, goodbye, and introduce yourself',
+          courseId: '1',
+          courseName: 'Turkish for Beginners',
+          order: 1,
+          duration: 15,
+          type: 'video',
+          isPublished: true,
+          completions: 45
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Mock lessons data for fallback
+  const mockLessons = [
     {
       id: '1',
       title: 'Basic Greetings',

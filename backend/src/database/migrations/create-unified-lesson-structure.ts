@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, Index, ForeignKey } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
 
 export class CreateUnifiedLessonStructure1703000000000 implements MigrationInterface {
   name = 'CreateUnifiedLessonStructure1703000000000';
@@ -128,37 +128,37 @@ export class CreateUnifiedLessonStructure1703000000000 implements MigrationInter
     // Add foreign key constraint
     await queryRunner.createForeignKey(
       'sub_lessons',
-      {
+      new TableForeignKey({
         columnNames: ['lesson_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'lessons',
         onDelete: 'CASCADE',
-      }
+      })
     );
 
     // Add index for better performance
     await queryRunner.createIndex(
       'sub_lessons',
-      {
+      new TableIndex({
         name: 'IDX_sub_lessons_lesson_id',
         columnNames: ['lesson_id'],
-      }
+      })
     );
 
     await queryRunner.createIndex(
       'sub_lessons',
-      {
+      new TableIndex({
         name: 'IDX_sub_lessons_type',
         columnNames: ['type'],
-      }
+      })
     );
 
     await queryRunner.createIndex(
       'sub_lessons',
-      {
+      new TableIndex({
         name: 'IDX_sub_lessons_order',
         columnNames: ['lesson_id', 'order_index'],
-      }
+      })
     );
 
     // Add sub_lesson_id column to exercises table
@@ -170,46 +170,46 @@ export class CreateUnifiedLessonStructure1703000000000 implements MigrationInter
     // Add foreign key for exercises -> sub_lessons
     await queryRunner.createForeignKey(
       'exercises',
-      {
+      new TableForeignKey({
         columnNames: ['sub_lesson_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'sub_lessons',
         onDelete: 'CASCADE',
-      }
+      })
     );
 
     // Add sub_lesson_id column to vocabulary_items table
     await queryRunner.query(`
-      ALTER TABLE vocabulary_items 
+      ALTER TABLE vocabulary_items
       ADD COLUMN sub_lesson_id uuid NULL
     `);
 
     // Add foreign key for vocabulary_items -> sub_lessons
     await queryRunner.createForeignKey(
       'vocabulary_items',
-      {
+      new TableForeignKey({
         columnNames: ['sub_lesson_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'sub_lessons',
         onDelete: 'CASCADE',
-      }
+      })
     );
 
     // Add sub_lesson_id column to grammar_rules table
     await queryRunner.query(`
-      ALTER TABLE grammar_rules 
+      ALTER TABLE grammar_rules
       ADD COLUMN sub_lesson_id uuid NULL
     `);
 
     // Add foreign key for grammar_rules -> sub_lessons
     await queryRunner.createForeignKey(
       'grammar_rules',
-      {
+      new TableForeignKey({
         columnNames: ['sub_lesson_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'sub_lessons',
         onDelete: 'CASCADE',
-      }
+      })
     );
 
     // Create standard sub-lessons for existing lessons

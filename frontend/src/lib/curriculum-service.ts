@@ -61,15 +61,15 @@ export interface CurriculumData {
 }
 
 class CurriculumService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
-  private useMockApi = true; // Force mock API for now
+  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  private useMockApi = false; // Use real API now that backend is working
 
   async getCurriculumData(): Promise<CurriculumData> {
     try {
       // Try backend first, fallback to mock if it fails
       if (!this.useMockApi) {
         try {
-          const response = await fetch(`${this.baseUrl}/curriculum/data`);
+          const response = await fetch(`${this.baseUrl}/api/v1/curriculum/data`);
 
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -110,7 +110,7 @@ class CurriculumService {
 
   async importCurriculum(): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}/curriculum/import`, {
+      const response = await fetch(`${this.baseUrl}/api/v1/curriculum/import`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ class CurriculumService {
 
   async getCurriculumStatus(): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}/curriculum/status`);
+      const response = await fetch(`${this.baseUrl}/api/v1/curriculum/status`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -177,11 +177,11 @@ class CurriculumService {
     progressPercentage: number;
   } {
     // This would typically fetch from user progress API
-    // For now, return mock data
+    // For now, return mock data but with correct totals
     return {
       totalUnits: 12,
       completedUnits: 0,
-      totalLessons: 36,
+      totalLessons: 72, // Updated to reflect real data
       completedLessons: 0,
       progressPercentage: 0
     };

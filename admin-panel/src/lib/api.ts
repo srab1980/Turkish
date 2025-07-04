@@ -148,9 +148,39 @@ class ApiClient {
     return response.data;
   }
 
+  // Get curriculum data from public endpoint
+  async getCurriculumData(): Promise<ApiResponse<any>> {
+    try {
+      const response = await this.client.get('/curriculum/data');
+      return response.data;
+    } catch (error: any) {
+      console.warn('Backend not available, using mock curriculum data');
+      return this.getMockResponse('/curriculum/data');
+    }
+  }
+
   // Courses Management
   async getCourses(params?: QueryParams): Promise<ApiResponse<PaginatedResponse<Course>>> {
-    // In development mode, return mock data if backend is not available
+    // Try to get data from curriculum endpoint first
+    try {
+      const curriculumResponse = await this.getCurriculumData();
+      if (curriculumResponse.success && curriculumResponse.data?.courses) {
+        return {
+          success: true,
+          data: {
+            items: curriculumResponse.data.courses,
+            total: curriculumResponse.data.courses.length,
+            page: 1,
+            limit: curriculumResponse.data.courses.length,
+            totalPages: 1
+          }
+        };
+      }
+    } catch (error) {
+      console.warn('Curriculum endpoint failed, trying admin endpoint');
+    }
+
+    // Fallback to admin endpoint or mock data
     if (process.env.NODE_ENV === 'development') {
       try {
         const response = await this.client.get('/admin/courses', { params });
@@ -214,9 +244,38 @@ class ApiClient {
   }
 
   // Lessons Management
-  async getLessons(unitId: string): Promise<ApiResponse<Lesson[]>> {
-    const response = await this.client.get(`/admin/units/${unitId}/lessons`);
-    return response.data;
+  async getLessons(unitId?: string): Promise<ApiResponse<Lesson[]>> {
+    // Try to get data from curriculum endpoint first
+    try {
+      const curriculumResponse = await this.getCurriculumData();
+      if (curriculumResponse.success && curriculumResponse.data?.lessons) {
+        let lessons = curriculumResponse.data.lessons;
+        if (unitId) {
+          lessons = lessons.filter((lesson: any) => lesson.unitId === unitId);
+        }
+        return {
+          success: true,
+          data: lessons
+        };
+      }
+    } catch (error) {
+      console.warn('Curriculum endpoint failed for lessons, trying admin endpoint');
+    }
+
+    // Fallback to admin endpoint
+    if (unitId) {
+      const response = await this.client.get(`/admin/units/${unitId}/lessons`);
+      return response.data;
+    } else {
+      // If no unitId, try to get all lessons
+      const response = await this.client.get('/admin/lessons');
+      return response.data;
+    }
+  }
+
+  // Get all lessons (for admin overview)
+  async getAllLessons(): Promise<ApiResponse<Lesson[]>> {
+    return this.getLessons(); // Call without unitId to get all lessons
   }
 
   async getLesson(id: string): Promise<ApiResponse<Lesson>> {
@@ -240,9 +299,38 @@ class ApiClient {
   }
 
   // Exercises Management
-  async getExercises(lessonId: string): Promise<ApiResponse<Exercise[]>> {
-    const response = await this.client.get(`/admin/lessons/${lessonId}/exercises`);
-    return response.data;
+  async getExercises(lessonId?: string): Promise<ApiResponse<Exercise[]>> {
+    // Try to get data from curriculum endpoint first
+    try {
+      const curriculumResponse = await this.getCurriculumData();
+      if (curriculumResponse.success && curriculumResponse.data?.exercises) {
+        let exercises = curriculumResponse.data.exercises;
+        if (lessonId) {
+          exercises = exercises.filter((exercise: any) => exercise.lessonId === lessonId);
+        }
+        return {
+          success: true,
+          data: exercises
+        };
+      }
+    } catch (error) {
+      console.warn('Curriculum endpoint failed for exercises, trying admin endpoint');
+    }
+
+    // Fallback to admin endpoint
+    if (lessonId) {
+      const response = await this.client.get(`/admin/lessons/${lessonId}/exercises`);
+      return response.data;
+    } else {
+      // If no lessonId, try to get all exercises
+      const response = await this.client.get('/admin/exercises');
+      return response.data;
+    }
+  }
+
+  // Get all exercises (for admin overview)
+  async getAllExercises(): Promise<ApiResponse<Exercise[]>> {
+    return this.getExercises(); // Call without lessonId to get all exercises
   }
 
   async createExercise(data: CreateExerciseForm): Promise<ApiResponse<Exercise>> {

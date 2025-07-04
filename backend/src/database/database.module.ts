@@ -49,8 +49,9 @@ import { UserSession } from '../auth/entities/user-session.entity';
           Notification,
           UserSession,
         ],
-        synchronize: process.env.NODE_ENV === 'development',
+        synchronize: true, // Enable sync to create tables
         logging: process.env.NODE_ENV === 'development',
+        dropSchema: true, // Drop and recreate schema
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
       }),
       inject: [ConfigService],

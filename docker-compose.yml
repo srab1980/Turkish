@@ -31,13 +31,14 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: dev
     container_name: turkish-app-backend
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/turkish_learning_app
       - REDIS_URL=redis://redis:6379
       - JWT_SECRET=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG940/bne2FE0VQUXRf3hJoU87vXA9SF3hb/l3zb1n6K srab1980@gmail.com
-
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - PORT=3001
     ports:
       - "3001:3001"
@@ -49,13 +50,15 @@ services:
       - redis
     networks:
       - turkish-app-network
-    command: npm run start:prod
+    command: npm run start:dev
 
   # Frontend Web App (Next.js)
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:3001
     container_name: turkish-app-frontend
     environment:
       - NODE_ENV=production

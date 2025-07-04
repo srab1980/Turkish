@@ -11,8 +11,9 @@ export interface ApiResponse<T> {
 }
 
 class ApiService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   private useMockApi = false;
+  private curriculumCache: any = null;
 
   private async makeRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
     try {
@@ -29,24 +30,38 @@ class ApiService {
       }
 
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message || 'API request failed');
       }
 
       return result.data;
     } catch (error) {
-      console.warn(`API request failed for ${endpoint}, using mock data:`, error);
-      this.useMockApi = true;
+      console.warn(`API request failed for ${endpoint}:`, error);
       throw error;
     }
+  }
+
+  // Get curriculum data and cache it
+  private async getCurriculumCache() {
+    if (!this.curriculumCache) {
+      try {
+        this.curriculumCache = await this.makeRequest('/api/v1/curriculum/data');
+      } catch (error) {
+        console.warn('Failed to load curriculum data, using mock data:', error);
+        this.useMockApi = true;
+        throw error;
+      }
+    }
+    return this.curriculumCache;
   }
 
   // Courses
   async getCourses() {
     try {
       if (!this.useMockApi) {
-        return await this.makeRequest('/api/courses');
+        const curriculum = await this.getCurriculumCache();
+        return curriculum.courses;
       }
     } catch (error) {
       // Fallback to mock
@@ -57,7 +72,8 @@ class ApiService {
   async getCourse(id: string) {
     try {
       if (!this.useMockApi) {
-        return await this.makeRequest(`/api/courses/${id}`);
+        const curriculum = await this.getCurriculumCache();
+        return curriculum.courses.find((course: any) => course.id === id);
       }
     } catch (error) {
       // Fallback to mock
@@ -69,8 +85,11 @@ class ApiService {
   async getUnits(courseId?: string) {
     try {
       if (!this.useMockApi) {
-        const endpoint = courseId ? `/api/courses/${courseId}/units` : '/api/units';
-        return await this.makeRequest(endpoint);
+        const curriculum = await this.getCurriculumCache();
+        if (courseId) {
+          return curriculum.units.filter((unit: any) => unit.courseId === courseId);
+        }
+        return curriculum.units;
       }
     } catch (error) {
       // Fallback to mock
@@ -82,8 +101,11 @@ class ApiService {
   async getLessons(unitId?: string) {
     try {
       if (!this.useMockApi) {
-        const endpoint = unitId ? `/api/units/${unitId}/lessons` : '/api/lessons';
-        return await this.makeRequest(endpoint);
+        const curriculum = await this.getCurriculumCache();
+        if (unitId) {
+          return curriculum.lessons.filter((lesson: any) => lesson.unitId === unitId);
+        }
+        return curriculum.lessons;
       }
     } catch (error) {
       // Fallback to mock
@@ -94,7 +116,8 @@ class ApiService {
   async getLesson(id: string) {
     try {
       if (!this.useMockApi) {
-        return await this.makeRequest(`/api/lessons/${id}`);
+        const curriculum = await this.getCurriculumCache();
+        return curriculum.lessons.find((lesson: any) => lesson.id === id);
       }
     } catch (error) {
       // Fallback to mock
@@ -105,7 +128,17 @@ class ApiService {
   async getLessonContent(id: string) {
     try {
       if (!this.useMockApi) {
-        return await this.makeRequest(`/api/lessons/${id}/content`);
+        const curriculum = await this.getCurriculumCache();
+        const lesson = curriculum.lessons.find((lesson: any) => lesson.id === id);
+        if (lesson) {
+          // Get exercises for this lesson
+          const exercises = curriculum.exercises.filter((exercise: any) => exercise.lessonId === id);
+          return {
+            ...lesson,
+            exercises
+          };
+        }
+        return null;
       }
     } catch (error) {
       // Fallback to mock
@@ -113,16 +146,54 @@ class ApiService {
     return await mockApiService.getLessonContent(id);
   }
 
+  // Exercises
+  async getExercises(lessonId?: string) {
+    try {
+      if (!this.useMockApi) {
+        const curriculum = await this.getCurriculumCache();
+        if (lessonId) {
+          return curriculum.exercises.filter((exercise: any) => exercise.lessonId === lessonId);
+        }
+        return curriculum.exercises;
+      }
+    } catch (error) {
+      // Fallback to mock
+    }
+    return await mockApiService.getExercises(lessonId);
+  }
+
+  async getExercise(id: string) {
+    try {
+      if (!this.useMockApi) {
+        const curriculum = await this.getCurriculumCache();
+        return curriculum.exercises.find((exercise: any) => exercise.id === id);
+      }
+    } catch (error) {
+      // Fallback to mock
+    }
+    return await mockApiService.getExercise(id);
+  }
+
   // User Progress
   async getUserProgress(userId: string) {
     try {
       if (!this.useMockApi) {
-        return await this.makeRequest(`/api/users/${userId}/progress`);
+        return await this.makeRequest(`/api/v1/users/${userId}/progress`);
       }
     } catch (error) {
       // Fallback to mock
     }
     return await mockApiService.getUserProgress(userId);
+  }
+
+  // Curriculum Data (Public endpoint)
+  async getCurriculumData() {
+    try {
+      return await this.makeRequest('/api/v1/curriculum/data');
+    } catch (error) {
+      console.error('Failed to fetch curriculum data:', error);
+      throw error;
+    }
   }
 
   // Health check
