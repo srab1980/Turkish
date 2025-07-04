@@ -340,20 +340,7 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
         </div>
       </DragDropContext>
 
-      {/* Load More Items Button */}
-      {showLoadMore && gameComplete && currentBatch < maxBatches && (
-        <div className="text-center mt-6">
-          <button
-            onClick={loadMoreItems}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-          >
-            🖼️ Load More Pictures (Batch {currentBatch + 1}/{maxBatches})
-          </button>
-          <p className="text-sm text-gray-600 mt-2">
-            Get 4 more picture matching pairs to practice
-          </p>
-        </div>
-      )}
+
 
       {/* Game Complete Message */}
       {gameComplete && (
@@ -370,17 +357,35 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
           <p className="text-sm text-green-600 mb-4">
             Score: {score} points | Batch {currentBatch + 1}
           </p>
-          {!showLoadMore || currentBatch >= maxBatches ? (
+          <div className="flex justify-center space-x-4">
+            {currentBatch < maxBatches && showLoadMore && (
+              <button
+                onClick={loadMoreItems}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                🖼️ Next Batch
+              </button>
+            )}
             <button
               onClick={() => {
-                const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
-                onComplete(score, timeSpent);
+                // Reset current game for play again
+                const shuffledWords = [...currentItems].sort(() => Math.random() - 0.5);
+                const shuffledImages = [...currentItems].sort(() => Math.random() - 0.5);
+
+                setWords(shuffledWords);
+                setImages(shuffledImages);
+                setMatches([]);
+                setCompletedMatches(new Set());
+                setScore(0);
+                setAttempts(0);
+                setGameComplete(false);
+                setShowFeedback(null);
               }}
               className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
             >
-              Continue Learning
+              🔄 Play Again
             </button>
-          ) : null}
+          </div>
         </motion.div>
       )}
 

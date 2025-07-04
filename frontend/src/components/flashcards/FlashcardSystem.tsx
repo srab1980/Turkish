@@ -54,21 +54,70 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
 
   // Generate fresh vocabulary from previous lessons if needed
   const generateFreshVocabulary = (batchNumber: number): VocabularyItem[] => {
-    const freshVocab: VocabularyItem[] = [
-      { turkish: 'güneş', english: 'sun', category: 'nature', difficulty: 'easy' },
-      { turkish: 'ay', english: 'moon', category: 'nature', difficulty: 'easy' },
-      { turkish: 'yıldız', english: 'star', category: 'nature', difficulty: 'easy' },
-      { turkish: 'bulut', english: 'cloud', category: 'nature', difficulty: 'easy' },
-      { turkish: 'rüzgar', english: 'wind', category: 'nature', difficulty: 'medium' },
-      { turkish: 'yağmur', english: 'rain', category: 'nature', difficulty: 'medium' },
-      { turkish: 'kar', english: 'snow', category: 'nature', difficulty: 'easy' },
-      { turkish: 'deniz', english: 'sea', category: 'nature', difficulty: 'easy' },
-      { turkish: 'dağ', english: 'mountain', category: 'nature', difficulty: 'medium' },
-      { turkish: 'orman', english: 'forest', category: 'nature', difficulty: 'medium' }
+    const allFreshVocab: VocabularyItem[] = [
+      // Batch 1 - Nature
+      { turkish: 'güneş', english: 'sun', category: 'nature', difficulty: 'easy', pronunciation: 'gü-NEŞH' },
+      { turkish: 'ay', english: 'moon', category: 'nature', difficulty: 'easy', pronunciation: 'AH-y' },
+      { turkish: 'yıldız', english: 'star', category: 'nature', difficulty: 'easy', pronunciation: 'yıl-DUZ' },
+      { turkish: 'bulut', english: 'cloud', category: 'nature', difficulty: 'easy', pronunciation: 'bu-LUT' },
+      { turkish: 'rüzgar', english: 'wind', category: 'nature', difficulty: 'medium', pronunciation: 'rüz-GAR' },
+      { turkish: 'yağmur', english: 'rain', category: 'nature', difficulty: 'medium', pronunciation: 'yağ-MUR' },
+      { turkish: 'kar', english: 'snow', category: 'nature', difficulty: 'easy', pronunciation: 'KAR' },
+      { turkish: 'deniz', english: 'sea', category: 'nature', difficulty: 'easy', pronunciation: 'de-NİZ' },
+      { turkish: 'dağ', english: 'mountain', category: 'nature', difficulty: 'medium', pronunciation: 'DAĞ' },
+      { turkish: 'orman', english: 'forest', category: 'nature', difficulty: 'medium', pronunciation: 'or-MAN' },
+
+      // Batch 2 - Animals
+      { turkish: 'kedi', english: 'cat', category: 'animals', difficulty: 'easy', pronunciation: 'ke-Dİ' },
+      { turkish: 'köpek', english: 'dog', category: 'animals', difficulty: 'easy', pronunciation: 'kö-PEK' },
+      { turkish: 'kuş', english: 'bird', category: 'animals', difficulty: 'easy', pronunciation: 'KUŞH' },
+      { turkish: 'balık', english: 'fish', category: 'animals', difficulty: 'easy', pronunciation: 'ba-LUK' },
+      { turkish: 'at', english: 'horse', category: 'animals', difficulty: 'easy', pronunciation: 'AT' },
+      { turkish: 'inek', english: 'cow', category: 'animals', difficulty: 'medium', pronunciation: 'i-NEK' },
+      { turkish: 'koyun', english: 'sheep', category: 'animals', difficulty: 'medium', pronunciation: 'ko-YUN' },
+      { turkish: 'tavuk', english: 'chicken', category: 'animals', difficulty: 'medium', pronunciation: 'ta-VUK' },
+      { turkish: 'fare', english: 'mouse', category: 'animals', difficulty: 'easy', pronunciation: 'fa-RE' },
+      { turkish: 'kartal', english: 'eagle', category: 'animals', difficulty: 'hard', pronunciation: 'kar-TAL' },
+
+      // Batch 3 - Food
+      { turkish: 'ekmek', english: 'bread', category: 'food', difficulty: 'easy', pronunciation: 'ek-MEK' },
+      { turkish: 'su', english: 'water', category: 'food', difficulty: 'easy', pronunciation: 'SU' },
+      { turkish: 'çay', english: 'tea', category: 'food', difficulty: 'easy', pronunciation: 'ÇHAY' },
+      { turkish: 'kahve', english: 'coffee', category: 'food', difficulty: 'easy', pronunciation: 'kah-VE' },
+      { turkish: 'elma', english: 'apple', category: 'food', difficulty: 'easy', pronunciation: 'el-MA' },
+      { turkish: 'portakal', english: 'orange', category: 'food', difficulty: 'medium', pronunciation: 'por-ta-KAL' },
+      { turkish: 'muz', english: 'banana', category: 'food', difficulty: 'easy', pronunciation: 'MUZ' },
+      { turkish: 'domates', english: 'tomato', category: 'food', difficulty: 'medium', pronunciation: 'do-ma-TES' },
+      { turkish: 'patates', english: 'potato', category: 'food', difficulty: 'medium', pronunciation: 'pa-ta-TES' },
+      { turkish: 'peynir', english: 'cheese', category: 'food', difficulty: 'medium', pronunciation: 'pey-NİR' },
+
+      // Batch 4 - Colors
+      { turkish: 'kırmızı', english: 'red', category: 'colors', difficulty: 'medium', pronunciation: 'kır-mı-ZI' },
+      { turkish: 'mavi', english: 'blue', category: 'colors', difficulty: 'easy', pronunciation: 'ma-Vİ' },
+      { turkish: 'yeşil', english: 'green', category: 'colors', difficulty: 'medium', pronunciation: 'ye-ŞHIL' },
+      { turkish: 'sarı', english: 'yellow', category: 'colors', difficulty: 'easy', pronunciation: 'sa-RI' },
+      { turkish: 'beyaz', english: 'white', category: 'colors', difficulty: 'medium', pronunciation: 'be-YAZ' },
+      { turkish: 'siyah', english: 'black', category: 'colors', difficulty: 'medium', pronunciation: 'si-YAH' },
+      { turkish: 'pembe', english: 'pink', category: 'colors', difficulty: 'medium', pronunciation: 'pem-BE' },
+      { turkish: 'mor', english: 'purple', category: 'colors', difficulty: 'easy', pronunciation: 'MOR' },
+      { turkish: 'turuncu', english: 'orange', category: 'colors', difficulty: 'hard', pronunciation: 'tu-run-CU' },
+      { turkish: 'gri', english: 'gray', category: 'colors', difficulty: 'easy', pronunciation: 'GRİ' },
+
+      // Batch 5 - Family
+      { turkish: 'anne', english: 'mother', category: 'family', difficulty: 'easy', pronunciation: 'an-NE' },
+      { turkish: 'baba', english: 'father', category: 'family', difficulty: 'easy', pronunciation: 'ba-BA' },
+      { turkish: 'kardeş', english: 'sibling', category: 'family', difficulty: 'medium', pronunciation: 'kar-DEŞH' },
+      { turkish: 'çocuk', english: 'child', category: 'family', difficulty: 'medium', pronunciation: 'çho-CUK' },
+      { turkish: 'dede', english: 'grandfather', category: 'family', difficulty: 'easy', pronunciation: 'de-DE' },
+      { turkish: 'nine', english: 'grandmother', category: 'family', difficulty: 'easy', pronunciation: 'ni-NE' },
+      { turkish: 'amca', english: 'uncle', category: 'family', difficulty: 'medium', pronunciation: 'am-CA' },
+      { turkish: 'teyze', english: 'aunt', category: 'family', difficulty: 'medium', pronunciation: 'tey-ZE' },
+      { turkish: 'kuzen', english: 'cousin', category: 'family', difficulty: 'medium', pronunciation: 'ku-ZEN' },
+      { turkish: 'aile', english: 'family', category: 'family', difficulty: 'medium', pronunciation: 'a-İ-le' }
     ];
 
     const startIndex = (batchNumber - 1) * 10;
-    return freshVocab.slice(startIndex, startIndex + 10);
+    return allFreshVocab.slice(startIndex, startIndex + 10);
   };
 
   // Initialize cards with SRS data - ensure 10 cards minimum
@@ -110,7 +159,15 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
         interval: 1,
       }));
 
-      setCards([...cards, ...newCards]);
+      // Replace current cards with new batch (don't append)
+      setCards(newCards);
+      setCurrentCardIndex(0);
+      setIsFlipped(false);
+      setShowAnswer(false);
+      setAttempts(0);
+      setCardStartTime(new Date());
+      setSessionComplete(false);
+
       setCurrentBatch(currentBatch + 1);
       setCompletedBatches([...completedBatches, currentBatch]);
 
@@ -211,10 +268,19 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
 
   const playAudio = () => {
     if (currentCard?.turkish && 'speechSynthesis' in window) {
+      // Stop any current speech
+      speechSynthesis.cancel();
+
       const utterance = new SpeechSynthesisUtterance(currentCard.turkish);
       utterance.lang = 'tr-TR';
       utterance.rate = 0.8;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      console.log('Playing audio for:', currentCard.turkish); // Debug log
       speechSynthesis.speak(utterance);
+    } else {
+      console.log('Speech synthesis not available or no Turkish text'); // Debug log
     }
   };
 
@@ -275,39 +341,63 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
               style={{ transformStyle: 'preserve-3d' }}
             >
               {/* Front of card */}
-              <div className="absolute inset-0 bg-white rounded-lg border-2 border-gray-200 flex flex-col items-center justify-center p-6 backface-hidden">
-                <div className="text-3xl font-bold text-gray-800 mb-4 text-center">
-                  {currentCard.turkish}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200 flex flex-col items-center justify-center p-6 backface-hidden">
+                <div className="text-center mb-6">
+                  <div className="text-sm font-medium text-blue-600 mb-2">TURKISH WORD</div>
+                  <div className="text-4xl font-bold text-blue-900 mb-2">
+                    {currentCard.turkish}
+                  </div>
+                  {currentCard.pronunciation && (
+                    <div className="text-lg text-blue-700 italic">
+                      ({currentCard.pronunciation})
+                    </div>
+                  )}
                 </div>
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     playAudio();
                   }}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors"
+                  className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-colors shadow-lg flex items-center space-x-2"
                 >
-                  🔊 Play Audio
+                  <span className="text-xl">🔊</span>
+                  <span className="font-medium">Hear Pronunciation</span>
                 </button>
-                <div className="mt-4 text-sm text-gray-500 text-center">
-                  Tap to reveal meaning
+
+                <div className="mt-4 text-sm text-blue-600 text-center font-medium">
+                  👆 Tap card to see English meaning
                 </div>
               </div>
 
               {/* Back of card */}
-              <div className="absolute inset-0 bg-green-50 rounded-lg border-2 border-green-200 flex flex-col items-center justify-center p-6 rotate-y-180 backface-hidden">
-                <div className="text-2xl font-semibold text-green-800 mb-2 text-center">
-                  {currentCard.english}
+              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border-2 border-green-200 flex flex-col items-center justify-center p-6 rotate-y-180 backface-hidden">
+                <div className="text-center mb-6">
+                  <div className="text-sm font-medium text-green-600 mb-2">ENGLISH MEANING</div>
+                  <div className="text-4xl font-bold text-green-900 mb-4">
+                    {currentCard.english}
+                  </div>
+
+                  <div className="text-lg text-green-700 mb-4">
+                    Turkish: <span className="font-semibold">{currentCard.turkish}</span>
+                  </div>
+
+                  {currentCard.example && (
+                    <div className="text-sm text-green-600 text-center italic bg-green-50 p-3 rounded-lg">
+                      Example: "{currentCard.example}"
+                    </div>
+                  )}
                 </div>
-                {currentCard.example && (
-                  <div className="text-sm text-gray-600 text-center italic mt-2">
-                    "{currentCard.example}"
-                  </div>
-                )}
-                {currentCard.pronunciation && (
-                  <div className="text-sm text-gray-500 text-center mt-2">
-                    [{currentCard.pronunciation}]
-                  </div>
-                )}
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    playAudio();
+                  }}
+                  className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-colors"
+                >
+                  🔊 Hear Turkish Again
+                </button>
               </div>
             </div>
           </motion.div>
@@ -343,7 +433,7 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
       )}
 
       {/* Load More Vocabulary Button */}
-      {showLoadMore && currentCardIndex >= cards.length - 1 && currentBatch < maxBatches && (
+      {showLoadMore && sessionComplete && currentBatch < maxBatches && (
         <div className="text-center mt-6">
           <button
             onClick={loadMoreVocabulary}
@@ -352,7 +442,7 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
             📚 Load More Vocabulary (Batch {currentBatch + 1}/{maxBatches})
           </button>
           <p className="text-sm text-gray-600 mt-2">
-            Get 10 more Turkish words to practice
+            Get 10 fresh Turkish words to practice
           </p>
         </div>
       )}
