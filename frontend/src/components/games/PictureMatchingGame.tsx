@@ -42,13 +42,46 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
 
   // Generate fresh picture matching items
   const generateFreshItems = (batchNumber: number): PictureMatchingItem[] => {
-    const freshItems: PictureMatchingItem[] = [
-      { id: `fresh-${batchNumber}-1`, turkish: 'güneş', english: 'sun', imageUrl: '☀️' },
-      { id: `fresh-${batchNumber}-2`, turkish: 'ay', english: 'moon', imageUrl: '🌙' },
-      { id: `fresh-${batchNumber}-3`, turkish: 'yıldız', english: 'star', imageUrl: '⭐' },
-      { id: `fresh-${batchNumber}-4`, turkish: 'bulut', english: 'cloud', imageUrl: '☁️' }
+    const allBatches: PictureMatchingItem[][] = [
+      // Batch 1 - Weather
+      [
+        { id: `fresh-1-1`, turkish: 'güneş', english: 'sun', imageUrl: '☀️' },
+        { id: `fresh-1-2`, turkish: 'ay', english: 'moon', imageUrl: '🌙' },
+        { id: `fresh-1-3`, turkish: 'yıldız', english: 'star', imageUrl: '⭐' },
+        { id: `fresh-1-4`, turkish: 'bulut', english: 'cloud', imageUrl: '☁️' }
+      ],
+      // Batch 2 - Animals
+      [
+        { id: `fresh-2-1`, turkish: 'kedi', english: 'cat', imageUrl: '🐱' },
+        { id: `fresh-2-2`, turkish: 'köpek', english: 'dog', imageUrl: '🐶' },
+        { id: `fresh-2-3`, turkish: 'kuş', english: 'bird', imageUrl: '🐦' },
+        { id: `fresh-2-4`, turkish: 'balık', english: 'fish', imageUrl: '🐟' }
+      ],
+      // Batch 3 - Food
+      [
+        { id: `fresh-3-1`, turkish: 'elma', english: 'apple', imageUrl: '🍎' },
+        { id: `fresh-3-2`, turkish: 'muz', english: 'banana', imageUrl: '🍌' },
+        { id: `fresh-3-3`, turkish: 'portakal', english: 'orange', imageUrl: '🍊' },
+        { id: `fresh-3-4`, turkish: 'çilek', english: 'strawberry', imageUrl: '🍓' }
+      ],
+      // Batch 4 - Transportation
+      [
+        { id: `fresh-4-1`, turkish: 'araba', english: 'car', imageUrl: '🚗' },
+        { id: `fresh-4-2`, turkish: 'otobüs', english: 'bus', imageUrl: '🚌' },
+        { id: `fresh-4-3`, turkish: 'uçak', english: 'airplane', imageUrl: '✈️' },
+        { id: `fresh-4-4`, turkish: 'gemi', english: 'ship', imageUrl: '🚢' }
+      ],
+      // Batch 5 - Objects
+      [
+        { id: `fresh-5-1`, turkish: 'ev', english: 'house', imageUrl: '🏠' },
+        { id: `fresh-5-2`, turkish: 'ağaç', english: 'tree', imageUrl: '🌳' },
+        { id: `fresh-5-3`, turkish: 'çiçek', english: 'flower', imageUrl: '🌸' },
+        { id: `fresh-5-4`, turkish: 'kitap', english: 'book', imageUrl: '📚' }
+      ]
     ];
-    return freshItems;
+
+    const batchIndex = (batchNumber - 1) % allBatches.length;
+    return allBatches[batchIndex];
   };
 
   useEffect(() => {
@@ -94,9 +127,8 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
 
       setCurrentBatch(currentBatch + 1);
 
-      if (currentBatch + 1 >= maxBatches) {
-        setShowLoadMore(false);
-      }
+      // Don't hide showLoadMore - let the UI condition handle it
+      console.log(`Picture Matching: Loaded batch ${currentBatch + 1}, maxBatches: ${maxBatches}`);
     }
   };
 
@@ -357,15 +389,29 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
           <p className="text-sm text-green-600 mb-4">
             Score: {score} points | Batch {currentBatch + 1}
           </p>
-          <div className="flex justify-center space-x-4">
-            {currentBatch < maxBatches && showLoadMore && (
+          <div className="flex flex-col space-y-3">
+            {/* Load More Batch Button */}
+            {currentBatch < maxBatches && (
               <button
                 onClick={loadMoreItems}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
               >
-                🖼️ Next Batch
+                🖼️ Load Batch {currentBatch + 2} (4 pictures)
               </button>
             )}
+
+            {/* Continue Learning Button */}
+            <button
+              onClick={() => {
+                const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+                onComplete(score, timeSpent);
+              }}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              ✅ Continue Learning
+            </button>
+
+            {/* Play Again Button */}
             <button
               onClick={() => {
                 // Reset current game for play again
@@ -381,10 +427,15 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
                 setGameComplete(false);
                 setShowFeedback(null);
               }}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
               🔄 Play Again
             </button>
+
+            {/* Debug Info */}
+            <div className="text-xs text-gray-400 mt-2">
+              Debug: currentBatch={currentBatch}, maxBatches={maxBatches}, showLoadMore={currentBatch < maxBatches ? 'YES' : 'NO'}
+            </div>
           </div>
         </motion.div>
       )}
@@ -394,8 +445,11 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
         <p>🎯 Drag Turkish words to their matching pictures</p>
         <p>🔊 Correct matches will pronounce the Turkish word</p>
         <p>✅ Pictures turn green when matched correctly</p>
+        <p>📦 5 batches available, 4 pictures each (24 total pairs)</p>
         {currentBatch > 0 && (
-          <p className="text-blue-600 font-medium">Batch {currentBatch + 1} - Fresh vocabulary!</p>
+          <p className="text-purple-600 font-medium">
+            Batch {currentBatch + 1} - {['Weather', 'Animals', 'Food', 'Transportation', 'Objects'][currentBatch]} theme!
+          </p>
         )}
       </div>
     </div>
