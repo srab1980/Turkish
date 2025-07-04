@@ -37,7 +37,7 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
   const [attempts, setAttempts] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [currentBatch, setCurrentBatch] = useState(0);
-  const [maxBatches] = useState(5);
+  const [maxBatches] = useState(5); // 5 additional batches (total 6 patches: 0,1,2,3,4,5)
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [completedBatches, setCompletedBatches] = useState<number[]>([]);
   const [sessionComplete, setSessionComplete] = useState(false);
@@ -173,9 +173,12 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
       setCurrentBatch(currentBatch + 1);
       setCompletedBatches([...completedBatches, currentBatch]);
 
-      if (currentBatch + 1 >= maxBatches) {
-        setShowLoadMore(false);
-      }
+      // Hide load more only when we reach the last batch (batch 5)
+      // We have 6 total patches: 0, 1, 2, 3, 4, 5
+      // currentBatch starts at 0, so when currentBatch becomes 5, we've loaded all patches
+      console.log(`Current batch after loading: ${currentBatch + 1}, maxBatches: ${maxBatches}`);
+
+      // Don't hide load more - let the condition in the UI handle it
     }
   };
 
@@ -516,6 +519,11 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
                 📚 Load Patch {currentBatch + 2} (10 cards)
               </button>
             )}
+
+            {/* Debug Info */}
+            <div className="text-xs text-gray-400 mt-2">
+              Debug: currentBatch={currentBatch}, maxBatches={maxBatches}, showButton={currentBatch < maxBatches ? 'YES' : 'NO'}
+            </div>
 
             {/* Batch Progress */}
             <div className="mt-3 text-sm text-gray-600">
