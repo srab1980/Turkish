@@ -53,12 +53,29 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
   const currentGame = games[currentGameIndex];
 
   // Audio pronunciation function
-  const playAudio = (text: string) => {
+  const playAudio = (text: string, language: 'turkish' | 'english' = 'turkish') => {
     try {
+      // Cancel any ongoing speech
+      speechSynthesis.cancel();
+
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'tr-TR'; // Turkish language
+
+      // Set language based on content type
+      if (language === 'turkish') {
+        utterance.lang = 'tr-TR'; // Turkish language
+      } else {
+        utterance.lang = 'en-US'; // English language
+      }
+
       utterance.rate = 0.8;
       utterance.pitch = 1;
+      utterance.volume = 1;
+
+      // Add error handling
+      utterance.onerror = (event) => {
+        console.log('Speech synthesis error:', event.error);
+      };
+
       speechSynthesis.speak(utterance);
     } catch (error) {
       console.log('Speech synthesis not available:', error);
@@ -128,14 +145,26 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
     // Take only first 6 pairs for 12 cards
     const gamePairs = pairs.slice(0, 6);
 
-    const cards = [...gamePairs, ...gamePairs].map((item, index) => ({
-      id: `${item.id}-${index}`,
-      content: index < gamePairs.length ? item.turkish : item.english,
-      type: index < gamePairs.length ? 'turkish' : 'english',
+    // Create cards properly (6 Turkish + 6 English = 12 cards)
+    const turkishCards = gamePairs.map((item) => ({
+      id: `${item.id}-turkish`,
+      content: item.turkish,
+      type: 'turkish',
       pairId: item.id,
       flipped: false,
       matched: false,
-    })).sort(() => Math.random() - 0.5);
+    }));
+
+    const englishCards = gamePairs.map((item) => ({
+      id: `${item.id}-english`,
+      content: item.english,
+      type: 'english',
+      pairId: item.id,
+      flipped: false,
+      matched: false,
+    }));
+
+    const cards = [...turkishCards, ...englishCards].sort(() => Math.random() - 0.5);
 
     setGameState({
       cards,
@@ -205,15 +234,26 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
     if (currentBatch < maxBatches) {
       const newPairs = generateFreshMemoryPairs(lessonId || 'default', currentBatch + 1);
 
-      // Create cards from new pairs
-      const cards = [...newPairs, ...newPairs].map((item, index) => ({
-        id: `${item.id}-${index}`,
-        content: index < newPairs.length ? item.turkish : item.english,
-        type: index < newPairs.length ? 'turkish' : 'english',
+      // Create cards from new pairs (6 Turkish + 6 English = 12 cards)
+      const turkishCards = newPairs.map((item, index) => ({
+        id: `${item.id}-turkish`,
+        content: item.turkish,
+        type: 'turkish',
         pairId: item.id,
         flipped: false,
         matched: false,
-      })).sort(() => Math.random() - 0.5);
+      }));
+
+      const englishCards = newPairs.map((item, index) => ({
+        id: `${item.id}-english`,
+        content: item.english,
+        type: 'english',
+        pairId: item.id,
+        flipped: false,
+        matched: false,
+      }));
+
+      const cards = [...turkishCards, ...englishCards].sort(() => Math.random() - 0.5);
 
       // Update game state with new cards
       setGameState({
@@ -391,7 +431,9 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
       // Pronounce the card content when flipped
       const card = newCards[cardIndex];
       if (card.type === 'turkish') {
-        playAudio(card.content); // Pronounce Turkish word
+        playAudio(card.content, 'turkish'); // Pronounce Turkish word
+      } else {
+        playAudio(card.content, 'english'); // Pronounce English word
       }
 
       if (newFlippedCards.length === 2) {
@@ -405,13 +447,13 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
           setScore(score + 10);
 
           // Play success sound for correct match
-          playAudio('Doğru! Harika!'); // "Correct! Great!"
+          playAudio('Doğru! Harika!', 'turkish'); // "Correct! Great!"
 
           // Check if all 6 pairs (12 cards) are matched
           if (newMatches === 6) {
             setTimeout(() => {
               setGameComplete(true);
-              playAudio('Tebrikler! Tüm kartları eşleştirdin!'); // "Congratulations! You matched all cards!"
+              playAudio('Tebrikler! Tüm kartları eşleştirdin!', 'turkish'); // "Congratulations! You matched all cards!"
             }, 1000);
           }
         } else {
@@ -621,16 +663,36 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
               onClick={() => {
                 setGameComplete(false);
                 setScore(0);
-                const data = currentGame.data as MemoryMatchData;
-                const pairs = [...data.pairs];
-                const cards = [...pairs, ...pairs].map((item, index) => ({
-                  id: `${item.id}-${index}`,
-                  content: index < pairs.length ? item.turkish : item.english,
-                  type: index < pairs.length ? 'turkish' : 'english',
+
+                // Get current batch pairs or original data
+                let pairs;
+                if (currentBatch > 0) {
+                  pairs = generateFreshMemoryPairs(lessonId || 'default', currentBatch);
+                } else {
+                  const data = currentGame.data as MemoryMatchData;
+                  pairs = [...data.pairs].slice(0, 6);
+                }
+
+                // Create cards properly (6 Turkish + 6 English = 12 cards)
+                const turkishCards = pairs.map((item) => ({
+                  id: `${item.id}-turkish`,
+                  content: item.turkish,
+                  type: 'turkish',
                   pairId: item.id,
                   flipped: false,
                   matched: false,
-                })).sort(() => Math.random() - 0.5);
+                }));
+
+                const englishCards = pairs.map((item) => ({
+                  id: `${item.id}-english`,
+                  content: item.english,
+                  type: 'english',
+                  pairId: item.id,
+                  flipped: false,
+                  matched: false,
+                }));
+
+                const cards = [...turkishCards, ...englishCards].sort(() => Math.random() - 0.5);
 
                 setGameState({
                   cards,
