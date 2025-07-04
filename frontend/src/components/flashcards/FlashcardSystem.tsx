@@ -40,6 +40,7 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [completedBatches, setCompletedBatches] = useState<number[]>([]);
   const [sessionComplete, setSessionComplete] = useState(false);
+  const [autoPlayAudio, setAutoPlayAudio] = useState(false);
 
   // Text-to-speech function for Turkish pronunciation
   const speakTurkish = (text: string) => {
@@ -242,15 +243,16 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
       setShowAnswer(false);
       setAttempts(0);
       setCardStartTime(new Date());
-    } else {
-      // Check if we can load more or complete session
-      if (currentBatch < maxBatches && showLoadMore) {
-        // Show load more option
-        setSessionComplete(false);
-      } else {
-        // Complete the session
-        setSessionComplete(true);
+
+      // Auto-play audio for next card if enabled
+      if (autoPlayAudio) {
+        setTimeout(() => {
+          playAudio();
+        }, 500);
       }
+    } else {
+      // Complete the current batch
+      setSessionComplete(true);
     }
   };
 
@@ -292,6 +294,16 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
     }
   };
 
+  // Auto-play audio when card changes (if enabled)
+  useEffect(() => {
+    if (autoPlayAudio && currentCard && !isFlipped) {
+      const timer = setTimeout(() => {
+        playAudio();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [currentCardIndex, autoPlayAudio, currentCard, isFlipped]);
+
   if (!currentCard) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -302,17 +314,39 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
 
   return (
     <div className="max-w-md mx-auto p-4">
+      {/* Audio Settings */}
+      <div className="mb-4 flex justify-center">
+        <div className="bg-gray-100 rounded-lg p-2 flex items-center space-x-3">
+          <span className="text-sm text-gray-600">Auto-play audio:</span>
+          <button
+            onClick={() => setAutoPlayAudio(!autoPlayAudio)}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+              autoPlayAudio
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+            }`}
+          >
+            {autoPlayAudio ? '🔊 ON' : '🔇 OFF'}
+          </button>
+        </div>
+      </div>
+
       {/* Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between text-sm text-gray-600 mb-2">
           <span>Card {currentCardIndex + 1} of {cards.length}</span>
-          <span>{Math.round(((currentCardIndex) / cards.length) * 100)}% Complete</span>
+          <span>{Math.round(((currentCardIndex + 1) / cards.length) * 100)}% Complete</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
+          <div
             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentCardIndex) / cards.length) * 100}%` }}
+            style={{ width: `${((currentCardIndex + 1) / cards.length) * 100}%` }}
           />
+        </div>
+        <div className="text-center mt-2">
+          <span className="text-xs text-gray-500">
+            Batch {currentBatch + 1} of {maxBatches + 1} | {completedBatches.length} batches completed
+          </span>
         </div>
       </div>
 
@@ -432,20 +466,7 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
         </motion.div>
       )}
 
-      {/* Load More Vocabulary Button */}
-      {showLoadMore && sessionComplete && currentBatch < maxBatches && (
-        <div className="text-center mt-6">
-          <button
-            onClick={loadMoreVocabulary}
-            className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
-          >
-            📚 Load More Vocabulary (Batch {currentBatch + 1}/{maxBatches})
-          </button>
-          <p className="text-sm text-gray-600 mt-2">
-            Get 10 fresh Turkish words to practice
-          </p>
-        </div>
-      )}
+
 
       {/* Session Complete */}
       {sessionComplete && (
@@ -455,27 +476,56 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
           className="text-center mt-8 p-6 bg-green-50 rounded-lg border-2 border-green-200"
         >
           <div className="text-4xl mb-4">🎉</div>
-          <h2 className="text-2xl font-bold text-green-800 mb-2">Excellent Work!</h2>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">Batch Complete!</h2>
           <p className="text-green-700 mb-4">
-            You've completed {cards.length} flashcards!
+            You've completed {cards.length} flashcards in Batch {currentBatch + 1}!
           </p>
           {completedBatches.length > 0 && (
             <p className="text-sm text-green-600 mb-4">
-              Completed {completedBatches.length + 1} vocabulary batches
+              Total completed: {completedBatches.length + 1} vocabulary batches
             </p>
           )}
-          <button
-            onClick={() => onComplete(results)}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Continue Learning
-          </button>
+
+          <div className="flex flex-col space-y-3">
+            {/* Load More Button */}
+            {currentBatch < maxBatches && (
+              <button
+                onClick={loadMoreVocabulary}
+                className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+              >
+                📚 Load Next Batch ({currentBatch + 2}/{maxBatches + 1})
+              </button>
+            )}
+
+            {/* Continue to Other Exercises */}
+            <button
+              onClick={() => onComplete(results)}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              ✅ Continue to Other Exercises
+            </button>
+
+            {/* Replay Current Batch */}
+            <button
+              onClick={() => {
+                setCurrentCardIndex(0);
+                setIsFlipped(false);
+                setShowAnswer(false);
+                setAttempts(0);
+                setSessionComplete(false);
+                setCardStartTime(new Date());
+              }}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              🔄 Replay This Batch
+            </button>
+          </div>
         </motion.div>
       )}
 
       {/* Instructions */}
       <div className="mt-6 text-center text-sm text-gray-500">
-        <p>🔊 Click audio button to hear Turkish pronunciation</p>
+        <p>🔊 {autoPlayAudio ? 'Audio plays automatically' : 'Click audio button to hear pronunciation'}</p>
         <p>Swipe right for easy, left for hard, or use buttons</p>
         <p>Your progress is saved automatically</p>
         {currentBatch > 0 && (
