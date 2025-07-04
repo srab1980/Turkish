@@ -327,8 +327,11 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
           setGameState({ cards: newCards, flippedCards: [], matches: newMatches });
           setScore(score + 10);
           
-          if (newMatches === data.pairs.length) {
-            completeGame();
+          // Check if all 6 pairs (12 cards) are matched
+          if (newMatches === 6) {
+            setTimeout(() => {
+              setGameComplete(true);
+            }, 1000);
           }
         } else {
           // No match, flip back after delay
@@ -484,6 +487,47 @@ export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }:
           )}
         </div>
       </div>
+
+      {/* Memory Match Load More Button */}
+      {currentGame.type === 'memory_match' && gameComplete && showLoadMore && currentBatch < maxBatches && (
+        <div className="text-center mt-6">
+          <button
+            onClick={loadMoreMemoryCards}
+            className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+          >
+            🧠 Load More Memory Cards (Batch {currentBatch + 1}/{maxBatches})
+          </button>
+          <p className="text-sm text-gray-600 mt-2">
+            Get 12 more cards with fresh vocabulary to practice
+          </p>
+        </div>
+      )}
+
+      {/* Memory Match Game Complete */}
+      {currentGame.type === 'memory_match' && gameComplete && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center mt-8 p-6 bg-green-50 rounded-lg border-2 border-green-200"
+        >
+          <div className="text-4xl mb-4">🎉</div>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">Perfect Memory!</h2>
+          <p className="text-green-700 mb-4">
+            You matched all 12 cards correctly!
+          </p>
+          <p className="text-sm text-green-600 mb-4">
+            Score: {score} points | Batch {currentBatch + 1}
+          </p>
+          {!showLoadMore || currentBatch >= maxBatches ? (
+            <button
+              onClick={completeGame}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Continue Learning
+            </button>
+          ) : null}
+        </motion.div>
+      )}
     </div>
   );
 }

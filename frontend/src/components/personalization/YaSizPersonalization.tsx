@@ -281,7 +281,7 @@ export default function YaSizPersonalization({
   const audioChunksRef = useRef<Blob[]>([]);
 
   const currentQuestion = currentQuestions[currentQuestionIndex];
-  const questionsToShow = currentQuestions.slice(0, maxQuestions);
+  const questionsToShow = currentQuestions.slice(0, Math.min(maxQuestions, currentQuestions.length));
 
   // Initialize with at least 5 questions
   useEffect(() => {
@@ -394,13 +394,28 @@ export default function YaSizPersonalization({
 
   const submitResponse = () => {
     if (responseType === 'text' && !textInput.trim()) {
-      alert('Please enter your response or switch to audio recording.');
+      setShowFeedback('Please enter your response or switch to audio recording.');
       return;
     }
 
     if (responseType === 'audio' && !audioBlob) {
-      alert('Please record your response or switch to text input.');
+      setShowFeedback('Please record your response or switch to text input.');
       return;
+    }
+
+    // Check grammar for text responses
+    if (responseType === 'text') {
+      const grammarResult = checkResponse(textInput);
+      setGrammarCheck(grammarResult);
+
+      if (!grammarResult.correct) {
+        setShowFeedback('Grammar suggestions available - check below!');
+        return;
+      } else {
+        setShowFeedback('Excellent Turkish! ✅');
+      }
+    } else {
+      setShowFeedback('Audio response recorded! 🎤');
     }
 
     const response: UserResponse = {
@@ -414,17 +429,22 @@ export default function YaSizPersonalization({
     const newResponses = [...responses, response];
     setResponses(newResponses);
 
-    // Reset for next question
-    setTextInput('');
-    setAudioBlob(null);
-    setShowSuggestions(false);
+    // Auto-advance to next question after 2 seconds
+    setTimeout(() => {
+      // Reset for next question
+      setTextInput('');
+      setAudioBlob(null);
+      setShowSuggestions(false);
+      setShowFeedback(null);
+      setGrammarCheck(null);
 
-    if (currentQuestionIndex < questionsToShow.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      setSessionComplete(true);
-      onComplete(newResponses);
-    }
+      if (currentQuestionIndex < questionsToShow.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        setSessionComplete(true);
+        onComplete(newResponses);
+      }
+    }, 2000);
   };
 
   const skipQuestion = () => {
@@ -681,6 +701,48 @@ export default function YaSizPersonalization({
             )}
           </div>
         </div>
+      )}
+
+      {/* Feedback Display */}
+      {showFeedback && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`mb-4 p-4 rounded-lg ${
+            showFeedback.includes('✅')
+              ? 'bg-green-50 border border-green-200 text-green-800'
+              : showFeedback.includes('🎤')
+              ? 'bg-blue-50 border border-blue-200 text-blue-800'
+              : 'bg-yellow-50 border border-yellow-200 text-yellow-800'
+          }`}
+        >
+          <div className="font-medium">{showFeedback}</div>
+        </motion.div>
+      )}
+
+      {/* Grammar Check Results */}
+      {grammarCheck && !grammarCheck.correct && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-4 bg-orange-50 border border-orange-200 rounded-lg"
+        >
+          <h4 className="font-medium text-orange-800 mb-2">💡 Turkish Grammar Suggestions:</h4>
+          <ul className="text-sm text-orange-700 space-y-1">
+            {grammarCheck.suggestions.map((suggestion, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-orange-500 mr-2">•</span>
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={() => setGrammarCheck(null)}
+            className="mt-3 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm"
+          >
+            Got it! Continue
+          </button>
+        </motion.div>
       )}
 
       {/* Action Buttons */}

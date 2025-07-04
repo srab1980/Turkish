@@ -8,6 +8,7 @@ interface FlashcardSystemProps {
   vocabularyItems: VocabularyItem[];
   onComplete: (results: FlashcardResult[]) => void;
   unitId: string;
+  lessonId?: string;
 }
 
 interface FlashcardResult {
@@ -25,7 +26,7 @@ interface FlashcardState extends VocabularyItem {
   interval: number;
 }
 
-export default function FlashcardSystem({ vocabularyItems, onComplete, unitId }: FlashcardSystemProps) {
+export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, lessonId }: FlashcardSystemProps) {
   const [cards, setCards] = useState<FlashcardState[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -34,10 +35,54 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId }:
   const [cardStartTime, setCardStartTime] = useState<Date>(new Date());
   const [attempts, setAttempts] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [currentBatch, setCurrentBatch] = useState(0);
+  const [maxBatches] = useState(5);
+  const [showLoadMore, setShowLoadMore] = useState(false);
+  const [completedBatches, setCompletedBatches] = useState<number[]>([]);
+  const [sessionComplete, setSessionComplete] = useState(false);
 
-  // Initialize cards with SRS data
+  // Text-to-speech function for Turkish pronunciation
+  const speakTurkish = (text: string) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'tr-TR';
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      speechSynthesis.speak(utterance);
+    }
+  };
+
+  // Generate fresh vocabulary from previous lessons if needed
+  const generateFreshVocabulary = (batchNumber: number): VocabularyItem[] => {
+    const freshVocab: VocabularyItem[] = [
+      { turkish: 'güneş', english: 'sun', category: 'nature', difficulty: 'easy' },
+      { turkish: 'ay', english: 'moon', category: 'nature', difficulty: 'easy' },
+      { turkish: 'yıldız', english: 'star', category: 'nature', difficulty: 'easy' },
+      { turkish: 'bulut', english: 'cloud', category: 'nature', difficulty: 'easy' },
+      { turkish: 'rüzgar', english: 'wind', category: 'nature', difficulty: 'medium' },
+      { turkish: 'yağmur', english: 'rain', category: 'nature', difficulty: 'medium' },
+      { turkish: 'kar', english: 'snow', category: 'nature', difficulty: 'easy' },
+      { turkish: 'deniz', english: 'sea', category: 'nature', difficulty: 'easy' },
+      { turkish: 'dağ', english: 'mountain', category: 'nature', difficulty: 'medium' },
+      { turkish: 'orman', english: 'forest', category: 'nature', difficulty: 'medium' }
+    ];
+
+    const startIndex = (batchNumber - 1) * 10;
+    return freshVocab.slice(startIndex, startIndex + 10);
+  };
+
+  // Initialize cards with SRS data - ensure 10 cards minimum
   useEffect(() => {
-    const initialCards = vocabularyItems.map((item, index) => ({
+    let allVocab = [...vocabularyItems];
+
+    // Ensure we have at least 10 vocabulary items
+    while (allVocab.length < 10) {
+      const freshVocab = generateFreshVocabulary(1);
+      const needed = 10 - allVocab.length;
+      allVocab = [...allVocab, ...freshVocab.slice(0, needed)];
+    }
+
+    const initialCards = allVocab.slice(0, 10).map((item, index) => ({
       ...item,
       id: `${unitId}-${index}`,
       repetitionLevel: 0,
@@ -45,10 +90,35 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId }:
       easeFactor: 2.5,
       interval: 1,
     }));
+
     setCards(initialCards);
     setSessionStartTime(new Date());
     setCardStartTime(new Date());
+    setShowLoadMore(true);
   }, [vocabularyItems, unitId]);
+
+  // Load more vocabulary batches
+  const loadMoreVocabulary = () => {
+    if (currentBatch < maxBatches) {
+      const newVocab = generateFreshVocabulary(currentBatch + 1);
+      const newCards = newVocab.map((item, index) => ({
+        ...item,
+        id: `${unitId}-batch${currentBatch + 1}-${index}`,
+        repetitionLevel: 0,
+        nextReview: new Date(),
+        easeFactor: 2.5,
+        interval: 1,
+      }));
+
+      setCards([...cards, ...newCards]);
+      setCurrentBatch(currentBatch + 1);
+      setCompletedBatches([...completedBatches, currentBatch]);
+
+      if (currentBatch + 1 >= maxBatches) {
+        setShowLoadMore(false);
+      }
+    }
+  };
 
   const currentCard = cards[currentCardIndex];
 
@@ -108,7 +178,7 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId }:
     };
     setResults([...results, result]);
 
-    // Move to next card
+    // Move to next card or complete session
     if (currentCardIndex < cards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
       setIsFlipped(false);
@@ -116,7 +186,14 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId }:
       setAttempts(0);
       setCardStartTime(new Date());
     } else {
-      onComplete([...results, result]);
+      // Check if we can load more or complete session
+      if (currentBatch < maxBatches && showLoadMore) {
+        // Show load more option
+        setSessionComplete(false);
+      } else {
+        // Complete the session
+        setSessionComplete(true);
+      }
     }
   };
 
@@ -265,10 +342,55 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId }:
         </motion.div>
       )}
 
+      {/* Load More Vocabulary Button */}
+      {showLoadMore && currentCardIndex >= cards.length - 1 && currentBatch < maxBatches && (
+        <div className="text-center mt-6">
+          <button
+            onClick={loadMoreVocabulary}
+            className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+          >
+            📚 Load More Vocabulary (Batch {currentBatch + 1}/{maxBatches})
+          </button>
+          <p className="text-sm text-gray-600 mt-2">
+            Get 10 more Turkish words to practice
+          </p>
+        </div>
+      )}
+
+      {/* Session Complete */}
+      {sessionComplete && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center mt-8 p-6 bg-green-50 rounded-lg border-2 border-green-200"
+        >
+          <div className="text-4xl mb-4">🎉</div>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">Excellent Work!</h2>
+          <p className="text-green-700 mb-4">
+            You've completed {cards.length} flashcards!
+          </p>
+          {completedBatches.length > 0 && (
+            <p className="text-sm text-green-600 mb-4">
+              Completed {completedBatches.length + 1} vocabulary batches
+            </p>
+          )}
+          <button
+            onClick={() => onComplete(results)}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Continue Learning
+          </button>
+        </motion.div>
+      )}
+
       {/* Instructions */}
       <div className="mt-6 text-center text-sm text-gray-500">
+        <p>🔊 Click audio button to hear Turkish pronunciation</p>
         <p>Swipe right for easy, left for hard, or use buttons</p>
         <p>Your progress is saved automatically</p>
+        {currentBatch > 0 && (
+          <p className="text-purple-600 font-medium">Batch {currentBatch + 1} - Fresh vocabulary!</p>
+        )}
       </div>
     </div>
   );

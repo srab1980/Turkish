@@ -16,6 +16,7 @@ interface PictureMatchingGameProps {
   items: PictureMatchingItem[];
   onComplete: (score: number, timeSpent: number) => void;
   gameTitle: string;
+  lessonId?: string;
 }
 
 interface MatchPair {
@@ -24,7 +25,7 @@ interface MatchPair {
   isCorrect: boolean;
 }
 
-export default function PictureMatchingGame({ items, onComplete, gameTitle }: PictureMatchingGameProps) {
+export default function PictureMatchingGame({ items, onComplete, gameTitle, lessonId }: PictureMatchingGameProps) {
   const [words, setWords] = useState<PictureMatchingItem[]>([]);
   const [images, setImages] = useState<PictureMatchingItem[]>([]);
   const [matches, setMatches] = useState<MatchPair[]>([]);
@@ -34,15 +35,70 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle }: Pi
   const [showFeedback, setShowFeedback] = useState<string | null>(null);
   const [completedMatches, setCompletedMatches] = useState<Set<string>>(new Set());
   const [gameComplete, setGameComplete] = useState(false);
+  const [currentBatch, setCurrentBatch] = useState(0);
+  const [maxBatches] = useState(5);
+  const [showLoadMore, setShowLoadMore] = useState(false);
+  const [currentItems, setCurrentItems] = useState<PictureMatchingItem[]>(items);
+
+  // Generate fresh picture matching items
+  const generateFreshItems = (batchNumber: number): PictureMatchingItem[] => {
+    const freshItems: PictureMatchingItem[] = [
+      { id: `fresh-${batchNumber}-1`, turkish: 'güneş', english: 'sun', imageUrl: '☀️' },
+      { id: `fresh-${batchNumber}-2`, turkish: 'ay', english: 'moon', imageUrl: '🌙' },
+      { id: `fresh-${batchNumber}-3`, turkish: 'yıldız', english: 'star', imageUrl: '⭐' },
+      { id: `fresh-${batchNumber}-4`, turkish: 'bulut', english: 'cloud', imageUrl: '☁️' }
+    ];
+    return freshItems;
+  };
 
   useEffect(() => {
+    // Ensure we have at least 4 items
+    let gameItems = [...items];
+    while (gameItems.length < 4) {
+      const freshItems = generateFreshItems(1);
+      const needed = 4 - gameItems.length;
+      gameItems = [...gameItems, ...freshItems.slice(0, needed)];
+    }
+
+    // Take only first 4 items for the game
+    const selectedItems = gameItems.slice(0, 4);
+    setCurrentItems(selectedItems);
+
     // Shuffle and prepare items
-    const shuffledWords = [...items].sort(() => Math.random() - 0.5);
-    const shuffledImages = [...items].sort(() => Math.random() - 0.5);
-    
+    const shuffledWords = [...selectedItems].sort(() => Math.random() - 0.5);
+    const shuffledImages = [...selectedItems].sort(() => Math.random() - 0.5);
+
     setWords(shuffledWords);
     setImages(shuffledImages);
+    setShowLoadMore(true);
   }, [items]);
+
+  // Load more picture matching batches
+  const loadMoreItems = () => {
+    if (currentBatch < maxBatches) {
+      const newItems = generateFreshItems(currentBatch + 1);
+      setCurrentItems(newItems);
+
+      // Reset game state for new batch
+      const shuffledWords = [...newItems].sort(() => Math.random() - 0.5);
+      const shuffledImages = [...newItems].sort(() => Math.random() - 0.5);
+
+      setWords(shuffledWords);
+      setImages(shuffledImages);
+      setMatches([]);
+      setCompletedMatches(new Set());
+      setScore(0);
+      setAttempts(0);
+      setGameComplete(false);
+      setShowFeedback(null);
+
+      setCurrentBatch(currentBatch + 1);
+
+      if (currentBatch + 1 >= maxBatches) {
+        setShowLoadMore(false);
+      }
+    }
+  };
 
   const playAudio = (text: string) => {
     if ('speechSynthesis' in window) {
@@ -69,26 +125,27 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle }: Pi
 
   const handleMatch = (wordId: string, imageId: string) => {
     setAttempts(attempts + 1);
-    
+
     const isCorrect = wordId === imageId;
     const newMatch: MatchPair = { wordId, imageId, isCorrect };
-    
+
     setMatches([...matches, newMatch]);
 
     if (isCorrect) {
       setScore(score + 10);
       setCompletedMatches(new Set([...completedMatches, wordId]));
       setShowFeedback('correct');
-      
-      // Play success audio
-      playAudio('Doğru! Tebrikler!');
-      
-      // Check if game is complete
-      if (completedMatches.size + 1 === items.length) {
+
+      // Find the Turkish word and pronounce it
+      const matchedItem = currentItems.find(item => item.id === wordId);
+      if (matchedItem) {
+        playAudio(matchedItem.turkish);
+      }
+
+      // Check if game is complete (all 4 items matched)
+      if (completedMatches.size + 1 === currentItems.length) {
         setTimeout(() => {
           setGameComplete(true);
-          const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
-          onComplete(score + 10, timeSpent);
         }, 1500);
       }
     } else {
@@ -283,10 +340,58 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle }: Pi
         </div>
       </DragDropContext>
 
+      {/* Load More Items Button */}
+      {showLoadMore && gameComplete && currentBatch < maxBatches && (
+        <div className="text-center mt-6">
+          <button
+            onClick={loadMoreItems}
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+          >
+            🖼️ Load More Pictures (Batch {currentBatch + 1}/{maxBatches})
+          </button>
+          <p className="text-sm text-gray-600 mt-2">
+            Get 4 more picture matching pairs to practice
+          </p>
+        </div>
+      )}
+
+      {/* Game Complete Message */}
+      {gameComplete && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center mt-8 p-6 bg-green-50 rounded-lg border-2 border-green-200"
+        >
+          <div className="text-4xl mb-4">🎉</div>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">Perfect Match!</h2>
+          <p className="text-green-700 mb-4">
+            You matched all {currentItems.length} pictures correctly!
+          </p>
+          <p className="text-sm text-green-600 mb-4">
+            Score: {score} points | Batch {currentBatch + 1}
+          </p>
+          {!showLoadMore || currentBatch >= maxBatches ? (
+            <button
+              onClick={() => {
+                const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+                onComplete(score, timeSpent);
+              }}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Continue Learning
+            </button>
+          ) : null}
+        </motion.div>
+      )}
+
       {/* Instructions */}
       <div className="mt-6 text-center text-sm text-gray-600">
-        <p>Drag Turkish words to their matching pictures</p>
-        <p>Click on pictures to hear pronunciation</p>
+        <p>🎯 Drag Turkish words to their matching pictures</p>
+        <p>🔊 Correct matches will pronounce the Turkish word</p>
+        <p>✅ Pictures turn green when matched correctly</p>
+        {currentBatch > 0 && (
+          <p className="text-blue-600 font-medium">Batch {currentBatch + 1} - Fresh vocabulary!</p>
+        )}
       </div>
     </div>
   );
