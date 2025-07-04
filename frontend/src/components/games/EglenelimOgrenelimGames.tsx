@@ -29,14 +29,16 @@ interface WordSearchData {
 
 interface MemoryMatchData {
   pairs: { id: string; turkish: string; english: string; image?: string }[];
+  additionalBatches?: { id: string; turkish: string; english: string; image?: string }[][];
 }
 
 interface EglenelimOgrenelimGamesProps {
   games: MiniGame[];
   onComplete: (gameId: string, score: number, timeSpent: number) => void;
+  lessonId?: string;
 }
 
-export default function EglenelimOgrenelimGames({ games, onComplete }: EglenelimOgrenelimGamesProps) {
+export default function EglenelimOgrenelimGames({ games, onComplete, lessonId }: EglenelimOgrenelimGamesProps) {
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
   const [gameState, setGameState] = useState<any>({});
   const [score, setScore] = useState(0);
@@ -44,6 +46,9 @@ export default function EglenelimOgrenelimGames({ games, onComplete }: Eglenelim
   const [gameStartTime] = useState(new Date());
   const [gameComplete, setGameComplete] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
+  const [currentBatch, setCurrentBatch] = useState(0);
+  const [maxBatches] = useState(5);
+  const [showLoadMore, setShowLoadMore] = useState(false);
 
   const currentGame = games[currentGameIndex];
 
@@ -99,16 +104,60 @@ export default function EglenelimOgrenelimGames({ games, onComplete }: Eglenelim
 
   const initializeMemoryMatch = () => {
     const data = currentGame.data as MemoryMatchData;
-    const cards = [...data.pairs, ...data.pairs].map((item, index) => ({
+
+    // Ensure we have at least 6 pairs (12 cards)
+    let pairs = [...data.pairs];
+    while (pairs.length < 6) {
+      const additionalPairs = generateFreshMemoryPairs(lessonId || 'default', pairs.length);
+      pairs = [...pairs, ...additionalPairs];
+    }
+
+    // Take only first 6 pairs for 12 cards
+    const gamePairs = pairs.slice(0, 6);
+
+    const cards = [...gamePairs, ...gamePairs].map((item, index) => ({
       id: `${item.id}-${index}`,
-      content: index < data.pairs.length ? item.turkish : item.english,
-      type: index < data.pairs.length ? 'turkish' : 'english',
+      content: index < gamePairs.length ? item.turkish : item.english,
+      type: index < gamePairs.length ? 'turkish' : 'english',
       pairId: item.id,
       flipped: false,
       matched: false,
     })).sort(() => Math.random() - 0.5);
-    
-    setGameState({ cards, flippedCards: [], matches: 0 });
+
+    setGameState({
+      cards,
+      flippedCards: [],
+      matches: 0,
+      totalPairs: gamePairs.length
+    });
+
+    setShowLoadMore(true);
+  };
+
+  // Generate fresh memory pairs for additional batches
+  const generateFreshMemoryPairs = (lessonId: string, startIndex: number) => {
+    const freshPairs = [
+      { id: `fresh-${startIndex + 1}`, turkish: 'güneş', english: 'sun' },
+      { id: `fresh-${startIndex + 2}`, turkish: 'ay', english: 'moon' },
+      { id: `fresh-${startIndex + 3}`, turkish: 'yıldız', english: 'star' },
+      { id: `fresh-${startIndex + 4}`, turkish: 'bulut', english: 'cloud' },
+      { id: `fresh-${startIndex + 5}`, turkish: 'rüzgar', english: 'wind' },
+      { id: `fresh-${startIndex + 6}`, turkish: 'yağmur', english: 'rain' }
+    ];
+
+    return freshPairs;
+  };
+
+  const loadMoreMemoryCards = () => {
+    if (currentBatch < maxBatches) {
+      const newPairs = generateFreshMemoryPairs(lessonId || 'default', (currentBatch + 1) * 6);
+      initializeMemoryMatch();
+      setCurrentBatch(currentBatch + 1);
+
+      if (currentBatch + 1 >= maxBatches) {
+        setShowLoadMore(false);
+      }
+    }
   };
 
   const completeGame = () => {

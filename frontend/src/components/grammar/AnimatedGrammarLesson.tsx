@@ -7,6 +7,7 @@ interface GrammarRule {
   id: string;
   title: string;
   description: string;
+  summary: string; // Simple summary of the grammar rule
   examples: GrammarExample[];
   animation: AnimationType;
   difficulty: number;
@@ -96,15 +97,72 @@ const getGrammarVariations = (animationType: AnimationType, lessonId: string): G
   return lessonVariations;
 };
 
+// Generate fresh example batches for additional practice
+const generateFreshExampleBatch = (animationType: AnimationType, lessonId: string, batchNumber: number): GrammarExample[] => {
+  const allVariations = getGrammarVariations(animationType, lessonId);
+  const batchSize = 5;
+  const startIndex = (batchNumber - 1) * batchSize;
+
+  // If we run out of predefined examples, generate new ones
+  if (startIndex >= allVariations.length) {
+    const baseVariations = allVariations;
+    const newExamples: GrammarExample[] = [];
+
+    for (let i = 0; i < batchSize; i++) {
+      const baseExample = baseVariations[i % baseVariations.length];
+      const newExample: GrammarExample = {
+        id: `${baseExample.id}-batch${batchNumber}-${i}`,
+        base: generateNewWord(animationType, batchNumber, i),
+        suffix: baseExample.suffix,
+        result: generateNewWord(animationType, batchNumber, i) + baseExample.suffix,
+        translation: `${generateNewTranslation(animationType, batchNumber, i)} (${baseExample.suffix})`,
+        explanation: baseExample.explanation
+      };
+      newExamples.push(newExample);
+    }
+    return newExamples;
+  }
+
+  return allVariations.slice(startIndex, startIndex + batchSize);
+};
+
+// Helper function to generate new words for fresh batches
+const generateNewWord = (animationType: AnimationType, batchNumber: number, index: number): string => {
+  const wordSets: Record<AnimationType, string[]> = {
+    vowel_harmony: ['bahçe', 'deniz', 'güneş', 'yıldız', 'çilek', 'portakal', 'elma', 'armut', 'kiraz', 'üzüm'],
+    plural_suffix: ['kalem', 'defter', 'masa', 'sandalye', 'pencere', 'kapı', 'duvar', 'tavan', 'zemin', 'lamba'],
+    possessive_suffix: ['telefon', 'bilgisayar', 'çanta', 'ayakkabı', 'gözlük', 'saat', 'anahtar', 'cüzdan', 'şapka', 'eldiven'],
+    case_suffix: ['park', 'hastane', 'market', 'restoran', 'kütüphane', 'müze', 'sinema', 'tiyatro', 'stadyum', 'havaalanı']
+  };
+
+  const words = wordSets[animationType];
+  return words[(batchNumber * 5 + index) % words.length];
+};
+
+// Helper function to generate new translations
+const generateNewTranslation = (animationType: AnimationType, batchNumber: number, index: number): string => {
+  const translationSets: Record<AnimationType, string[]> = {
+    vowel_harmony: ['garden', 'sea', 'sun', 'star', 'strawberry', 'orange', 'apple', 'pear', 'cherry', 'grape'],
+    plural_suffix: ['pen', 'notebook', 'table', 'chair', 'window', 'door', 'wall', 'ceiling', 'floor', 'lamp'],
+    possessive_suffix: ['phone', 'computer', 'bag', 'shoes', 'glasses', 'watch', 'key', 'wallet', 'hat', 'gloves'],
+    case_suffix: ['park', 'hospital', 'market', 'restaurant', 'library', 'museum', 'cinema', 'theater', 'stadium', 'airport']
+  };
+
+  const translations = translationSets[animationType];
+  return translations[(batchNumber * 5 + index) % translations.length];
+};
+
 export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: AnimatedGrammarLessonProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentExample, setCurrentExample] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
   const [animationPhase, setAnimationPhase] = useState<'intro' | 'demonstration' | 'practice' | 'complete'>('intro');
-  const [currentBatch, setCurrentBatch] = useState(0); // 0 = main, 1 = batch 1, 2 = batch 2
+  const [currentBatch, setCurrentBatch] = useState(0); // 0 = main, 1-5 = additional batches
   const [currentExamples, setCurrentExamples] = useState<GrammarExample[]>(rule.examples);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [completedBatches, setCompletedBatches] = useState<number[]>([]);
+  const [maxBatches] = useState(5); // Maximum 5 additional batches
+  const [showSummary, setShowSummary] = useState(false);
 
   const example = currentExamples[currentExample];
 
@@ -160,17 +218,22 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
   };
 
   const loadMoreExamples = () => {
-    if (rule.additionalBatches && currentBatch < rule.additionalBatches.length) {
-      const nextBatch = rule.additionalBatches[currentBatch];
-      setCurrentExamples([...currentExamples, ...nextBatch]);
+    if (currentBatch < maxBatches) {
+      // Generate fresh examples for this batch
+      const newBatch = generateFreshExampleBatch(rule.animation, rule.lessonId || 'default', currentBatch + 1);
+      setCurrentExamples([...currentExamples, ...newBatch]);
       setCurrentBatch(currentBatch + 1);
       setCompletedBatches([...completedBatches, currentBatch]);
 
-      // Hide load more if no more batches
-      if (currentBatch + 1 >= rule.additionalBatches.length) {
+      // Hide load more if reached max batches
+      if (currentBatch + 1 >= maxBatches) {
         setShowLoadMore(false);
       }
     }
+  };
+
+  const showGrammarSummary = () => {
+    setShowSummary(true);
   };
 
   const nextExample = () => {
@@ -179,7 +242,12 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
       setCurrentStep(0);
       setAnimationPhase('demonstration');
     } else {
-      setAnimationPhase('complete');
+      // After completing 5 slides, show summary
+      if (currentExample + 1 >= 5 && !showSummary) {
+        setShowSummary(true);
+      } else {
+        setAnimationPhase('complete');
+      }
     }
   };
 
@@ -541,17 +609,54 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
         </div>
       )}
 
+      {/* Grammar Rule Summary */}
+      {showSummary && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mt-8 p-6 bg-blue-50 rounded-lg border-2 border-blue-200"
+        >
+          <div className="text-center">
+            <div className="text-4xl mb-4">📚</div>
+            <h2 className="text-2xl font-bold text-blue-800 mb-4">Grammar Rule Summary</h2>
+            <div className="text-lg text-blue-700 mb-6 leading-relaxed">
+              {rule.summary || rule.description}
+            </div>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => {
+                  setShowSummary(false);
+                  setShowLoadMore(true);
+                }}
+                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+              >
+                📚 Load More Examples
+              </button>
+              <button
+                onClick={() => {
+                  setShowSummary(false);
+                  setAnimationPhase('complete');
+                }}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Continue Learning
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Load More Examples Button */}
-      {showLoadMore && animationPhase !== 'complete' && (
+      {showLoadMore && !showSummary && animationPhase !== 'complete' && currentBatch < maxBatches && (
         <div className="text-center mt-6">
           <button
             onClick={loadMoreExamples}
             className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
           >
-            📚 Load More Examples (Batch {currentBatch + 2})
+            📚 Load More Examples (Batch {currentBatch + 1}/{maxBatches})
           </button>
           <p className="text-sm text-gray-600 mt-2">
-            Get {rule.additionalBatches?.[currentBatch]?.length || 5} more practice examples
+            Get 5 more fresh practice examples to master this rule
           </p>
         </div>
       )}

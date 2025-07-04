@@ -186,6 +186,85 @@ const getSentenceVariations = (lessonId: string): SentenceExercise[] => {
   return variationsByLesson[lessonId] || variationsByLesson['default'];
 };
 
+// Generate fresh sentence batches for additional practice
+const generateFreshSentenceBatch = (lessonId: string, batchNumber: number): SentenceExercise[] => {
+  const freshSentences: SentenceExercise[] = [
+    {
+      id: `fresh-${batchNumber}-1`,
+      instruction: 'Build a sentence about your daily routine',
+      correctSentence: 'Sabah kahvaltı yapıyorum',
+      translation: 'I have breakfast in the morning',
+      grammarFocus: 'Daily activities',
+      difficulty: 2,
+      hints: ['Start with time', 'Use present tense'],
+      wordTiles: [
+        { id: 'f1', word: 'Sabah', type: 'adjective', correctPosition: 0, translation: 'Morning' },
+        { id: 'f2', word: 'kahvaltı', type: 'object', correctPosition: 1, translation: 'breakfast' },
+        { id: 'f3', word: 'yapıyorum', type: 'verb', correctPosition: 2, translation: 'I do/have' }
+      ]
+    },
+    {
+      id: `fresh-${batchNumber}-2`,
+      instruction: 'Build a sentence about transportation',
+      correctSentence: 'Otobüsle işe gidiyorum',
+      translation: 'I go to work by bus',
+      grammarFocus: 'Transportation',
+      difficulty: 3,
+      hints: ['Use instrumental case', 'Add direction'],
+      wordTiles: [
+        { id: 'f4', word: 'Otobüsle', type: 'adjective', correctPosition: 0, translation: 'By bus' },
+        { id: 'f5', word: 'işe', type: 'object', correctPosition: 1, translation: 'to work' },
+        { id: 'f6', word: 'gidiyorum', type: 'verb', correctPosition: 2, translation: 'I go' }
+      ]
+    },
+    {
+      id: `fresh-${batchNumber}-3`,
+      instruction: 'Build a sentence about weekend activities',
+      correctSentence: 'Hafta sonu arkadaşlarımla buluşuyorum',
+      translation: 'I meet with my friends on weekends',
+      grammarFocus: 'Social activities',
+      difficulty: 3,
+      hints: ['Start with time expression', 'Use "with" construction'],
+      wordTiles: [
+        { id: 'f7', word: 'Hafta', type: 'adjective', correctPosition: 0, translation: 'Week' },
+        { id: 'f8', word: 'sonu', type: 'object', correctPosition: 1, translation: 'end' },
+        { id: 'f9', word: 'arkadaşlarımla', type: 'object', correctPosition: 2, translation: 'with my friends' },
+        { id: 'f10', word: 'buluşuyorum', type: 'verb', correctPosition: 3, translation: 'I meet' }
+      ]
+    },
+    {
+      id: `fresh-${batchNumber}-4`,
+      instruction: 'Build a sentence about shopping',
+      correctSentence: 'Marketten ekmek alıyorum',
+      translation: 'I buy bread from the market',
+      grammarFocus: 'Shopping expressions',
+      difficulty: 2,
+      hints: ['Use ablative case', 'Object + verb'],
+      wordTiles: [
+        { id: 'f11', word: 'Marketten', type: 'adjective', correctPosition: 0, translation: 'From market' },
+        { id: 'f12', word: 'ekmek', type: 'object', correctPosition: 1, translation: 'bread' },
+        { id: 'f13', word: 'alıyorum', type: 'verb', correctPosition: 2, translation: 'I buy' }
+      ]
+    },
+    {
+      id: `fresh-${batchNumber}-5`,
+      instruction: 'Build a sentence about evening activities',
+      correctSentence: 'Akşam televizyon izliyorum',
+      translation: 'I watch television in the evening',
+      grammarFocus: 'Evening routines',
+      difficulty: 2,
+      hints: ['Start with time', 'Object + verb'],
+      wordTiles: [
+        { id: 'f14', word: 'Akşam', type: 'adjective', correctPosition: 0, translation: 'Evening' },
+        { id: 'f15', word: 'televizyon', type: 'object', correctPosition: 1, translation: 'television' },
+        { id: 'f16', word: 'izliyorum', type: 'verb', correctPosition: 2, translation: 'I watch' }
+      ]
+    }
+  ];
+
+  return freshSentences;
+};
+
 export default function SentenceBuilder({
   exercises,
   onComplete,
@@ -207,6 +286,9 @@ export default function SentenceBuilder({
   const [currentExercises, setCurrentExercises] = useState<SentenceExercise[]>(exercises);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [completedBatches, setCompletedBatches] = useState<number[]>([]);
+  const [maxBatches] = useState(5); // Maximum 5 additional batches
+  const [autoCheckEnabled, setAutoCheckEnabled] = useState(true);
+  const [draggedTile, setDraggedTile] = useState<WordTile | null>(null);
 
   const currentExercise = currentExercises[currentExerciseIndex];
 
@@ -346,16 +428,73 @@ export default function SentenceBuilder({
   };
 
   const loadMoreExercises = () => {
-    if (additionalBatches && currentBatch < additionalBatches.length) {
-      const nextBatch = additionalBatches[currentBatch];
-      setCurrentExercises([...currentExercises, ...nextBatch]);
+    if (currentBatch < maxBatches) {
+      // Generate fresh exercises for this batch
+      const newBatch = generateFreshSentenceBatch(lessonId || 'default', currentBatch + 1);
+      setCurrentExercises([...currentExercises, ...newBatch]);
       setCurrentBatch(currentBatch + 1);
       setCompletedBatches([...completedBatches, currentBatch]);
 
-      // Hide load more if no more batches
-      if (currentBatch + 1 >= additionalBatches.length) {
+      // Hide load more if reached max batches
+      if (currentBatch + 1 >= maxBatches) {
         setShowLoadMore(false);
       }
+    }
+  };
+
+  // Auto-check when sentence is complete
+  useEffect(() => {
+    if (autoCheckEnabled && sentenceSlots.every(slot => slot !== null)) {
+      const isCorrect = checkSentence();
+      if (isCorrect) {
+        setShowFeedback('correct');
+        setTimeout(() => {
+          nextExercise();
+        }, 1500);
+      }
+    }
+  }, [sentenceSlots, autoCheckEnabled]);
+
+  // Enhanced drag and drop functions
+  const handleDragStart = (e: React.DragEvent, tile: WordTile) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify(tile));
+    e.dataTransfer.effectAllowed = 'move';
+    setDraggedTile(tile);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDragEnd = () => {
+    setDraggedTile(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, slotIndex: number) => {
+    e.preventDefault();
+    const tileData = e.dataTransfer.getData('text/plain');
+
+    if (!tileData) return;
+
+    try {
+      const tile: WordTile = JSON.parse(tileData);
+
+      const newSlots = [...sentenceSlots];
+
+      // If slot is occupied, return the tile to available tiles
+      if (newSlots[slotIndex]) {
+        setAvailableTiles([...availableTiles, newSlots[slotIndex]!]);
+      }
+
+      newSlots[slotIndex] = tile;
+      setSentenceSlots(newSlots);
+
+      // Remove tile from available tiles
+      setAvailableTiles(availableTiles.filter(t => t.id !== tile.id));
+      setDraggedTile(null);
+    } catch (error) {
+      console.error('Error parsing drag data:', error);
     }
   };
 
@@ -576,16 +715,16 @@ export default function SentenceBuilder({
       </div>
 
       {/* Load More Exercises Button */}
-      {showLoadMore && !gameComplete && (
+      {showLoadMore && !gameComplete && currentBatch < maxBatches && (
         <div className="text-center mt-6">
           <button
             onClick={loadMoreExercises}
             className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
           >
-            📝 Load More Exercises (Batch {currentBatch + 2})
+            📝 Load More Exercises (Batch {currentBatch + 1}/{maxBatches})
           </button>
           <p className="text-sm text-gray-600 mt-2">
-            Get {additionalBatches?.[currentBatch]?.length || 5} more sentence building exercises
+            Get 5 fresh sentence building exercises to practice more
           </p>
         </div>
       )}

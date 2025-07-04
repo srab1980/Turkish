@@ -197,6 +197,59 @@ const getPersonalizationQuestions = (lessonId: string): PersonalQuestion[] => {
   return questionsByLesson[lessonId] || questionsByLesson['default'];
 };
 
+// Generate fresh question batches for additional practice
+const generateFreshQuestionBatch = (lessonId: string, batchNumber: number): PersonalQuestion[] => {
+  const freshQuestions: PersonalQuestion[] = [
+    {
+      id: `fresh-${batchNumber}-1`,
+      question: 'What is your favorite season and why?',
+      questionTurkish: 'En sevdiğiniz mevsim hangisi ve neden?',
+      category: 'personal',
+      difficulty: 3,
+      suggestedAnswers: ['En sevdiğim mevsim...', 'Çünkü...', '... mevsimini seviyorum'],
+      grammarFocus: 'Preferences and reasons'
+    },
+    {
+      id: `fresh-${batchNumber}-2`,
+      question: 'Describe your ideal weekend',
+      questionTurkish: 'İdeal hafta sonunuzu tarif edin',
+      category: 'personal',
+      difficulty: 3,
+      suggestedAnswers: ['İdeal hafta sonum...', 'Hafta sonları...', 'Genellikle...'],
+      grammarFocus: 'Time expressions and activities'
+    },
+    {
+      id: `fresh-${batchNumber}-3`,
+      question: 'What Turkish food would you like to try?',
+      questionTurkish: 'Hangi Türk yemeğini denemek istersiniz?',
+      category: 'food',
+      difficulty: 2,
+      suggestedAnswers: ['... denemek istiyorum', 'Türk mutfağından...', 'Özellikle...'],
+      grammarFocus: 'Desire expressions and food vocabulary'
+    },
+    {
+      id: `fresh-${batchNumber}-4`,
+      question: 'How do you usually spend your evenings?',
+      questionTurkish: 'Akşamlarınızı genellikle nasıl geçiriyorsunuz?',
+      category: 'personal',
+      difficulty: 2,
+      suggestedAnswers: ['Akşamları...', 'Genellikle...', 'Evde...'],
+      grammarFocus: 'Daily routines and time expressions'
+    },
+    {
+      id: `fresh-${batchNumber}-5`,
+      question: 'What would you like to learn about Turkish culture?',
+      questionTurkish: 'Türk kültürü hakkında ne öğrenmek istersiniz?',
+      category: 'culture',
+      difficulty: 3,
+      suggestedAnswers: ['Türk kültürü hakkında...', '... öğrenmek istiyorum', 'Özellikle...'],
+      grammarFocus: 'Cultural topics and learning expressions'
+    }
+  ];
+
+  return freshQuestions;
+};
+
 export default function YaSizPersonalization({
   questions,
   onComplete,
@@ -218,6 +271,11 @@ export default function YaSizPersonalization({
   const [currentQuestions, setCurrentQuestions] = useState<PersonalQuestion[]>(questions);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [completedBatches, setCompletedBatches] = useState<number[]>([]);
+  const [maxBatches] = useState(5); // Maximum 5 additional batches
+  const [currentSlide, setCurrentSlide] = useState(0); // For slide view
+  const [slideResponses, setSlideResponses] = useState<UserResponse[]>([]);
+  const [showFeedback, setShowFeedback] = useState<string | null>(null);
+  const [grammarCheck, setGrammarCheck] = useState<{correct: boolean, suggestions: string[]} | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -249,17 +307,47 @@ export default function YaSizPersonalization({
   }, [questions, lessonId, additionalBatches]);
 
   const loadMoreQuestions = () => {
-    if (additionalBatches && currentBatch < additionalBatches.length) {
-      const nextBatch = additionalBatches[currentBatch];
-      setCurrentQuestions([...currentQuestions, ...nextBatch]);
+    if (currentBatch < maxBatches) {
+      // Generate fresh questions for this batch
+      const newBatch = generateFreshQuestionBatch(lessonId || 'default', currentBatch + 1);
+      setCurrentQuestions([...currentQuestions, ...newBatch]);
       setCurrentBatch(currentBatch + 1);
       setCompletedBatches([...completedBatches, currentBatch]);
 
-      // Hide load more if no more batches
-      if (currentBatch + 1 >= additionalBatches.length) {
+      // Hide load more if reached max batches
+      if (currentBatch + 1 >= maxBatches) {
         setShowLoadMore(false);
       }
     }
+  };
+
+  // Simple grammar and spelling check
+  const checkResponse = (response: string): {correct: boolean, suggestions: string[]} => {
+    const suggestions: string[] = [];
+    let correct = true;
+
+    // Basic Turkish grammar checks
+    if (response.length < 3) {
+      correct = false;
+      suggestions.push('Cevabınız çok kısa. Lütfen daha detaylı yazın.');
+    }
+
+    // Check for common Turkish patterns
+    if (response.includes('Ben') && !response.includes('im') && !response.includes('um') && !response.includes('yorum')) {
+      suggestions.push('Türkçede "Ben" ile başlayan cümlelerde fiil çekimi önemlidir.');
+    }
+
+    // Check capitalization
+    if (response[0] && response[0] !== response[0].toUpperCase()) {
+      suggestions.push('Cümle büyük harfle başlamalıdır.');
+    }
+
+    // Check for period
+    if (!response.endsWith('.') && !response.endsWith('!') && !response.endsWith('?')) {
+      suggestions.push('Cümle noktalama işareti ile bitmelidir.');
+    }
+
+    return { correct: correct && suggestions.length === 0, suggestions };
   };
 
   const startRecording = async () => {
