@@ -36,7 +36,7 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
   const [completedMatches, setCompletedMatches] = useState<Set<string>>(new Set());
   const [gameComplete, setGameComplete] = useState(false);
   const [currentBatch, setCurrentBatch] = useState(0);
-  const [maxBatches] = useState(5);
+  const [maxBatches] = useState(5); // 5 additional batches (total 6: 0,1,2,3,4,5)
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [currentItems, setCurrentItems] = useState<PictureMatchingItem[]>(items);
 
@@ -242,6 +242,13 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
           <span>Completed: {completedMatches.size}/{items.length}</span>
           <span>Attempts: {attempts}</span>
         </div>
+
+        {/* Debug Info at Top */}
+        <div className="mt-2 text-xs text-blue-600 bg-blue-50 p-2 rounded">
+          🔍 Debug: Batch {currentBatch + 1}/6 | Complete: {gameComplete ? 'YES' : 'NO'} |
+          LoadMore: {currentBatch < maxBatches ? 'AVAILABLE' : 'HIDDEN'} |
+          Items: {currentItems.length}
+        </div>
       </div>
 
       {/* Progress Bar */}
@@ -400,6 +407,13 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
               </button>
             )}
 
+            {/* Show button even if condition fails for debugging */}
+            {currentBatch >= maxBatches && (
+              <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
+                ⚠️ No more batches: currentBatch={currentBatch}, maxBatches={maxBatches}
+              </div>
+            )}
+
             {/* Continue Learning Button */}
             <button
               onClick={() => {
@@ -436,6 +450,17 @@ export default function PictureMatchingGame({ items, onComplete, gameTitle, less
             <div className="text-xs text-gray-400 mt-2">
               Debug: currentBatch={currentBatch}, maxBatches={maxBatches}, showLoadMore={currentBatch < maxBatches ? 'YES' : 'NO'}
             </div>
+
+            {/* Force Load More Button for Testing */}
+            <button
+              onClick={() => {
+                console.log('Force loading next batch...');
+                loadMoreItems();
+              }}
+              className="bg-red-600 text-white px-4 py-2 rounded text-sm"
+            >
+              🔧 Force Load Next Batch (Debug)
+            </button>
           </div>
         </motion.div>
       )}
