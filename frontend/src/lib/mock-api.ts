@@ -59,6 +59,17 @@ const mockCourses: Course[] = [
     isPublished: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '9610de27-b05b-48b6-a926-12f84967f0d1',
+    title: 'Turkish A1 - İstanbul Yabancılar İçin Türkçe',
+    description: 'Complete A1 level Turkish language course based on official curriculum documents',
+    level: 'A1',
+    totalUnits: 12,
+    estimatedHours: 120,
+    isPublished: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
   }
 ];
 
@@ -90,6 +101,40 @@ const mockUnits: Unit[] = [
     courseId: '1',
     title: 'AİLE - Family',
     description: 'Family members and relationships vocabulary',
+    unitNumber: 3,
+    estimatedHours: 15,
+    isPublished: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
+  },
+  // Units for the UUID course
+  {
+    id: 'unit-uuid-1',
+    courseId: '9610de27-b05b-48b6-a926-12f84967f0d1',
+    title: 'MERHABA - Hello',
+    description: 'Introduction to Turkish greetings and basic expressions',
+    unitNumber: 1,
+    estimatedHours: 10,
+    isPublished: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: 'unit-uuid-2',
+    courseId: '9610de27-b05b-48b6-a926-12f84967f0d1',
+    title: 'TANIŞMA - Meeting People',
+    description: 'Learning how to introduce yourself and others',
+    unitNumber: 2,
+    estimatedHours: 15,
+    isPublished: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: 'unit-uuid-3',
+    courseId: '9610de27-b05b-48b6-a926-12f84967f0d1',
+    title: 'GÜNLÜK HAYAT - Daily Life',
+    description: 'Daily activities and routines vocabulary',
     unitNumber: 3,
     estimatedHours: 15,
     isPublished: true,
@@ -256,7 +301,20 @@ const mockLessons: Lesson[] = [
   // Unit 12: TATİL - Vacation
   { id: '34', unitId: '12', title: 'Travel Vocabulary', description: 'Learn travel and vacation vocabulary', lessonNumber: 1, estimatedMinutes: 45, difficultyLevel: 'A1', lessonType: 'vocabulary', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
   { id: '35', unitId: '12', title: 'Past Tense', description: 'Learn past tense for vacation stories', lessonNumber: 2, estimatedMinutes: 55, difficultyLevel: 'A1', lessonType: 'grammar', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-  { id: '36', unitId: '12', title: 'Vacation Stories', description: 'Tell stories about your vacation', lessonNumber: 3, estimatedMinutes: 50, difficultyLevel: 'A1', lessonType: 'conversation', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' }
+  { id: '36', unitId: '12', title: 'Vacation Stories', description: 'Tell stories about your vacation', lessonNumber: 3, estimatedMinutes: 50, difficultyLevel: 'A1', lessonType: 'conversation', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+
+  // Lessons for UUID Course (9610de27-b05b-48b6-a926-12f84967f0d1)
+  // Unit: unit-uuid-1 (MERHABA - Hello)
+  { id: 'lesson-uuid-1', unitId: 'unit-uuid-1', title: 'Basic Greetings', description: 'Learn essential Turkish greetings', lessonNumber: 1, estimatedMinutes: 45, difficultyLevel: 'A1', lessonType: 'vocabulary', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 'lesson-uuid-2', unitId: 'unit-uuid-1', title: 'Introducing Yourself', description: 'Learn how to introduce yourself in Turkish', lessonNumber: 2, estimatedMinutes: 50, difficultyLevel: 'A1', lessonType: 'conversation', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+
+  // Unit: unit-uuid-2 (TANIŞMA - Meeting People)
+  { id: 'lesson-uuid-3', unitId: 'unit-uuid-2', title: 'Personal Information', description: 'Share your name, age, and nationality', lessonNumber: 1, estimatedMinutes: 45, difficultyLevel: 'A1', lessonType: 'conversation', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 'lesson-uuid-4', unitId: 'unit-uuid-2', title: 'Countries and Nationalities', description: 'Learn country names and nationalities', lessonNumber: 2, estimatedMinutes: 50, difficultyLevel: 'A1', lessonType: 'vocabulary', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+
+  // Unit: unit-uuid-3 (GÜNLÜK HAYAT - Daily Life)
+  { id: 'lesson-uuid-5', unitId: 'unit-uuid-3', title: 'Daily Activities', description: 'Learn verbs for daily activities', lessonNumber: 1, estimatedMinutes: 45, difficultyLevel: 'A1', lessonType: 'vocabulary', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 'lesson-uuid-6', unitId: 'unit-uuid-3', title: 'Present Tense', description: 'Learn present tense conjugation', lessonNumber: 2, estimatedMinutes: 55, difficultyLevel: 'A1', lessonType: 'grammar', isPublished: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' }
 ];
 
 const mockExercises: Exercise[] = [
