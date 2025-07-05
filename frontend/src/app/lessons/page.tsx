@@ -69,8 +69,8 @@ export default function LessonsPage() {
             category = "Practical"
           }
 
-          // Extract topics from exercises
-          const topics = lesson.exercises.map(ex => ex.type.replace('_', ' ')).slice(0, 3)
+          // Extract topics from exercises (with safety check)
+          const topics = lesson.exercises ? lesson.exercises.map(ex => ex.type.replace('_', ' ')).slice(0, 3) : []
 
           return {
             ...lesson,

@@ -38,6 +38,7 @@ export interface Lesson {
   isPublished: boolean;
   createdAt: string;
   updatedAt: string;
+  exercises?: Exercise[]; // Optional exercises array
 }
 
 export interface Exercise {
@@ -96,10 +97,16 @@ class CurriculumService {
         mockApiService.getExercises()
       ]);
 
+      // Enrich lessons with their exercises
+      const enrichedLessons = lessons.map(lesson => ({
+        ...lesson,
+        exercises: exercises.filter(exercise => exercise.lessonId === lesson.id)
+      }));
+
       return {
         courses,
         units,
-        lessons,
+        lessons: enrichedLessons,
         exercises
       };
     } catch (error) {
