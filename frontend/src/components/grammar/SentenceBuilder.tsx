@@ -288,6 +288,7 @@ export default function SentenceBuilder({
   const [completedBatches, setCompletedBatches] = useState<number[]>([]);
   const [maxBatches] = useState(5); // Maximum 5 additional batches
   const [autoCheckEnabled, setAutoCheckEnabled] = useState(true);
+  const [sentenceChecked, setSentenceChecked] = useState(false);
   const [draggedTile, setDraggedTile] = useState<WordTile | null>(null);
 
   const currentExercise = currentExercises[currentExerciseIndex];
@@ -444,33 +445,55 @@ export default function SentenceBuilder({
 
   // Auto-check when sentence is complete
   useEffect(() => {
-    if (autoCheckEnabled && sentenceSlots.every(slot => slot !== null)) {
+    if (autoCheckEnabled && sentenceSlots.every(slot => slot !== null) && !sentenceChecked) {
+      setSentenceChecked(true);
+
       // Check if sentence is correct
       const userSentence = sentenceSlots.map(tile => tile?.word).join(' ');
       const isCorrect = userSentence === currentExercise.correctSentence;
 
-      setAttempts(attempts + 1);
+      setAttempts(prev => prev + 1);
 
       if (isCorrect) {
         const points = showHint ? 5 : 10;
-        setScore(score + points);
+        setScore(prev => prev + points);
         setShowFeedback('correct');
 
         setTimeout(() => {
-          if (currentExerciseIndex < currentExercises.length - 1) {
-            setCurrentExerciseIndex(currentExerciseIndex + 1);
-          } else {
-            setGameComplete(true);
-            const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
-            onComplete(score + points, timeSpent);
-          }
+          setCurrentExerciseIndex(prev => {
+            if (prev < currentExercises.length - 1) {
+              setSentenceChecked(false); // Reset for next exercise
+              return prev + 1;
+            } else {
+              setGameComplete(true);
+              const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+              onComplete(score + points, timeSpent);
+              return prev;
+            }
+          });
         }, 1500);
       } else {
         setShowFeedback('incorrect');
-        setTimeout(() => setShowFeedback(null), 2000);
+        setTimeout(() => {
+          setShowFeedback(null);
+          setSentenceChecked(false); // Allow retry
+        }, 2000);
       }
     }
-  }, [sentenceSlots, autoCheckEnabled, currentExercise, attempts, score, showHint, currentExerciseIndex, currentExercises.length, gameStartTime, onComplete]);
+  }, [sentenceSlots, autoCheckEnabled, currentExercise, showHint, currentExercises.length, gameStartTime, onComplete, sentenceChecked, score]);
+
+  // Reset sentence checked flag when exercise changes or when sentence is incomplete
+  useEffect(() => {
+    if (sentenceSlots.some(slot => slot === null)) {
+      setSentenceChecked(false);
+    }
+  }, [sentenceSlots]);
+
+  // Reset sentence checked flag when exercise changes
+  useEffect(() => {
+    setSentenceChecked(false);
+    setShowFeedback(null);
+  }, [currentExerciseIndex]);
 
   const getWordTypeColor = (type: string) => {
     const colors = {
