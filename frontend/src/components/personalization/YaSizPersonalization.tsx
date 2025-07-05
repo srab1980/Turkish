@@ -566,7 +566,7 @@ export default function YaSizPersonalization({
           Share your personal experiences to make learning more relevant
         </p>
         <div className="flex justify-center space-x-6 text-sm text-gray-500">
-          <span>Question {currentQuestionIndex + 1} of {Math.min(currentQuestions.length, maxQuestions)}</span>
+          <span>Question {currentQuestionIndex + 1} of {currentQuestions.length}</span>
           <span>Category: {currentQuestion.category}</span>
           <span>Difficulty: {'⭐'.repeat(currentQuestion.difficulty)}</span>
           {currentBatch > 0 && <span>Batch {currentBatch + 1}</span>}
@@ -578,7 +578,7 @@ export default function YaSizPersonalization({
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div
             className="bg-blue-600 h-3 rounded-full transition-all duration-500"
-            style={{ width: `${((currentQuestionIndex + 1) / Math.min(currentQuestions.length, maxQuestions)) * 100}%` }}
+            style={{ width: `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%` }}
           />
         </div>
       </div>

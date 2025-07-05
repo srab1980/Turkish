@@ -186,83 +186,165 @@ const getSentenceVariations = (lessonId: string): SentenceExercise[] => {
   return variationsByLesson[lessonId] || variationsByLesson['default'];
 };
 
-// Generate fresh sentence batches for additional practice
+// Generate fresh sentence batches for additional practice (unique per batch)
 const generateFreshSentenceBatch = (lessonId: string, batchNumber: number): SentenceExercise[] => {
-  const freshSentences: SentenceExercise[] = [
-    {
-      id: `fresh-${batchNumber}-1`,
-      instruction: 'Build a sentence about your daily routine',
-      correctSentence: 'Sabah kahvaltı yapıyorum',
-      translation: 'I have breakfast in the morning',
-      grammarFocus: 'Daily activities',
-      difficulty: 2,
-      hints: ['Start with time', 'Use present tense'],
-      wordTiles: [
-        { id: 'f1', word: 'Sabah', type: 'adjective', correctPosition: 0, translation: 'Morning' },
-        { id: 'f2', word: 'kahvaltı', type: 'object', correctPosition: 1, translation: 'breakfast' },
-        { id: 'f3', word: 'yapıyorum', type: 'verb', correctPosition: 2, translation: 'I do/have' }
-      ]
-    },
-    {
-      id: `fresh-${batchNumber}-2`,
-      instruction: 'Build a sentence about transportation',
-      correctSentence: 'Otobüsle işe gidiyorum',
-      translation: 'I go to work by bus',
-      grammarFocus: 'Transportation',
-      difficulty: 3,
-      hints: ['Use instrumental case', 'Add direction'],
-      wordTiles: [
-        { id: 'f4', word: 'Otobüsle', type: 'adjective', correctPosition: 0, translation: 'By bus' },
-        { id: 'f5', word: 'işe', type: 'object', correctPosition: 1, translation: 'to work' },
-        { id: 'f6', word: 'gidiyorum', type: 'verb', correctPosition: 2, translation: 'I go' }
-      ]
-    },
-    {
-      id: `fresh-${batchNumber}-3`,
-      instruction: 'Build a sentence about weekend activities',
-      correctSentence: 'Hafta sonu arkadaşlarımla buluşuyorum',
-      translation: 'I meet with my friends on weekends',
-      grammarFocus: 'Social activities',
-      difficulty: 3,
-      hints: ['Start with time expression', 'Use "with" construction'],
-      wordTiles: [
-        { id: 'f7', word: 'Hafta', type: 'adjective', correctPosition: 0, translation: 'Week' },
-        { id: 'f8', word: 'sonu', type: 'object', correctPosition: 1, translation: 'end' },
-        { id: 'f9', word: 'arkadaşlarımla', type: 'object', correctPosition: 2, translation: 'with my friends' },
-        { id: 'f10', word: 'buluşuyorum', type: 'verb', correctPosition: 3, translation: 'I meet' }
-      ]
-    },
-    {
-      id: `fresh-${batchNumber}-4`,
-      instruction: 'Build a sentence about shopping',
-      correctSentence: 'Marketten ekmek alıyorum',
-      translation: 'I buy bread from the market',
-      grammarFocus: 'Shopping expressions',
-      difficulty: 2,
-      hints: ['Use ablative case', 'Object + verb'],
-      wordTiles: [
-        { id: 'f11', word: 'Marketten', type: 'adjective', correctPosition: 0, translation: 'From market' },
-        { id: 'f12', word: 'ekmek', type: 'object', correctPosition: 1, translation: 'bread' },
-        { id: 'f13', word: 'alıyorum', type: 'verb', correctPosition: 2, translation: 'I buy' }
-      ]
-    },
-    {
-      id: `fresh-${batchNumber}-5`,
-      instruction: 'Build a sentence about evening activities',
-      correctSentence: 'Akşam televizyon izliyorum',
-      translation: 'I watch television in the evening',
-      grammarFocus: 'Evening routines',
-      difficulty: 2,
-      hints: ['Start with time', 'Object + verb'],
-      wordTiles: [
-        { id: 'f14', word: 'Akşam', type: 'adjective', correctPosition: 0, translation: 'Evening' },
-        { id: 'f15', word: 'televizyon', type: 'object', correctPosition: 1, translation: 'television' },
-        { id: 'f16', word: 'izliyorum', type: 'verb', correctPosition: 2, translation: 'I watch' }
-      ]
-    }
+  // Different sentence sets for each batch to avoid duplication
+  const batchSentenceSets = [
+    // Batch 1 - Daily Routine
+    [
+      {
+        id: `fresh-${batchNumber}-1`,
+        instruction: 'Build a sentence about your daily routine',
+        correctSentence: 'Sabah kahvaltı yapıyorum',
+        translation: 'I have breakfast in the morning',
+        grammarFocus: 'Daily activities',
+        difficulty: 2,
+        hints: ['Start with time', 'Use present tense'],
+        wordTiles: [
+          { id: `f${batchNumber}-1`, word: 'Sabah', type: 'adjective', correctPosition: 0, translation: 'Morning' },
+          { id: `f${batchNumber}-2`, word: 'kahvaltı', type: 'object', correctPosition: 1, translation: 'breakfast' },
+          { id: `f${batchNumber}-3`, word: 'yapıyorum', type: 'verb', correctPosition: 2, translation: 'I do/have' }
+        ]
+      },
+      {
+        id: `fresh-${batchNumber}-2`,
+        instruction: 'Build a sentence about transportation',
+        correctSentence: 'Otobüsle işe gidiyorum',
+        translation: 'I go to work by bus',
+        grammarFocus: 'Transportation',
+        difficulty: 3,
+        hints: ['Use instrumental case', 'Add direction'],
+        wordTiles: [
+          { id: `f${batchNumber}-4`, word: 'Otobüsle', type: 'adjective', correctPosition: 0, translation: 'By bus' },
+          { id: `f${batchNumber}-5`, word: 'işe', type: 'object', correctPosition: 1, translation: 'to work' },
+          { id: `f${batchNumber}-6`, word: 'gidiyorum', type: 'verb', correctPosition: 2, translation: 'I go' }
+        ]
+      },
+      {
+        id: `fresh-${batchNumber}-3`,
+        instruction: 'Build a sentence about weekend activities',
+        correctSentence: 'Hafta sonu arkadaşlarımla buluşuyorum',
+        translation: 'I meet with my friends on weekends',
+        grammarFocus: 'Social activities',
+        difficulty: 3,
+        hints: ['Start with time expression', 'Use "with" construction'],
+        wordTiles: [
+          { id: `f${batchNumber}-7`, word: 'Hafta', type: 'adjective', correctPosition: 0, translation: 'Week' },
+          { id: `f${batchNumber}-8`, word: 'sonu', type: 'object', correctPosition: 1, translation: 'end' },
+          { id: `f${batchNumber}-9`, word: 'arkadaşlarımla', type: 'object', correctPosition: 2, translation: 'with my friends' },
+          { id: `f${batchNumber}-10`, word: 'buluşuyorum', type: 'verb', correctPosition: 3, translation: 'I meet' }
+        ]
+      },
+      {
+        id: `fresh-${batchNumber}-4`,
+        instruction: 'Build a sentence about shopping',
+        correctSentence: 'Marketten ekmek alıyorum',
+        translation: 'I buy bread from the market',
+        grammarFocus: 'Shopping expressions',
+        difficulty: 2,
+        hints: ['Use ablative case', 'Object + verb'],
+        wordTiles: [
+          { id: `f${batchNumber}-11`, word: 'Marketten', type: 'adjective', correctPosition: 0, translation: 'From market' },
+          { id: `f${batchNumber}-12`, word: 'ekmek', type: 'object', correctPosition: 1, translation: 'bread' },
+          { id: `f${batchNumber}-13`, word: 'alıyorum', type: 'verb', correctPosition: 2, translation: 'I buy' }
+        ]
+      },
+      {
+        id: `fresh-${batchNumber}-5`,
+        instruction: 'Build a sentence about evening activities',
+        correctSentence: 'Akşam televizyon izliyorum',
+        translation: 'I watch television in the evening',
+        grammarFocus: 'Evening routines',
+        difficulty: 2,
+        hints: ['Start with time', 'Object + verb'],
+        wordTiles: [
+          { id: `f${batchNumber}-14`, word: 'Akşam', type: 'adjective', correctPosition: 0, translation: 'Evening' },
+          { id: `f${batchNumber}-15`, word: 'televizyon', type: 'object', correctPosition: 1, translation: 'television' },
+          { id: `f${batchNumber}-16`, word: 'izliyorum', type: 'verb', correctPosition: 2, translation: 'I watch' }
+        ]
+      }
+    ],
+    // Batch 2 - Different themes
+    [
+      {
+        id: `fresh-${batchNumber}-1`,
+        instruction: 'Build a sentence about weather',
+        correctSentence: 'Bugün hava çok güzel',
+        translation: 'Today the weather is very nice',
+        grammarFocus: 'Weather expressions',
+        difficulty: 2,
+        hints: ['Start with "Bugün"', 'Use adjectives'],
+        wordTiles: [
+          { id: `f${batchNumber}-1`, word: 'Bugün', type: 'adjective', correctPosition: 0, translation: 'Today' },
+          { id: `f${batchNumber}-2`, word: 'hava', type: 'subject', correctPosition: 1, translation: 'weather' },
+          { id: `f${batchNumber}-3`, word: 'çok', type: 'adjective', correctPosition: 2, translation: 'very' },
+          { id: `f${batchNumber}-4`, word: 'güzel', type: 'adjective', correctPosition: 3, translation: 'nice' }
+        ]
+      },
+      {
+        id: `fresh-${batchNumber}-2`,
+        instruction: 'Build a sentence about food preferences',
+        correctSentence: 'Türk yemeği çok seviyorum',
+        translation: 'I love Turkish food very much',
+        grammarFocus: 'Food and preferences',
+        difficulty: 3,
+        hints: ['Object comes first', 'Use "seviyorum"'],
+        wordTiles: [
+          { id: `f${batchNumber}-5`, word: 'Türk', type: 'adjective', correctPosition: 0, translation: 'Turkish' },
+          { id: `f${batchNumber}-6`, word: 'yemeği', type: 'object', correctPosition: 1, translation: 'food' },
+          { id: `f${batchNumber}-7`, word: 'çok', type: 'adjective', correctPosition: 2, translation: 'very much' },
+          { id: `f${batchNumber}-8`, word: 'seviyorum', type: 'verb', correctPosition: 3, translation: 'I love' }
+        ]
+      },
+      {
+        id: `fresh-${batchNumber}-3`,
+        instruction: 'Build a sentence about family',
+        correctSentence: 'Ailemle birlikte yaşıyorum',
+        translation: 'I live together with my family',
+        grammarFocus: 'Family relationships',
+        difficulty: 3,
+        hints: ['Use "ile" construction', 'Add "birlikte"'],
+        wordTiles: [
+          { id: `f${batchNumber}-9`, word: 'Ailemle', type: 'object', correctPosition: 0, translation: 'With my family' },
+          { id: `f${batchNumber}-10`, word: 'birlikte', type: 'adjective', correctPosition: 1, translation: 'together' },
+          { id: `f${batchNumber}-11`, word: 'yaşıyorum', type: 'verb', correctPosition: 2, translation: 'I live' }
+        ]
+      },
+      {
+        id: `fresh-${batchNumber}-4`,
+        instruction: 'Build a sentence about hobbies',
+        correctSentence: 'Boş zamanımda kitap okuyorum',
+        translation: 'I read books in my free time',
+        grammarFocus: 'Hobbies and free time',
+        difficulty: 3,
+        hints: ['Start with time expression', 'Object + verb'],
+        wordTiles: [
+          { id: `f${batchNumber}-12`, word: 'Boş', type: 'adjective', correctPosition: 0, translation: 'Free' },
+          { id: `f${batchNumber}-13`, word: 'zamanımda', type: 'object', correctPosition: 1, translation: 'in my time' },
+          { id: `f${batchNumber}-14`, word: 'kitap', type: 'object', correctPosition: 2, translation: 'book' },
+          { id: `f${batchNumber}-15`, word: 'okuyorum', type: 'verb', correctPosition: 3, translation: 'I read' }
+        ]
+      },
+      {
+        id: `fresh-${batchNumber}-5`,
+        instruction: 'Build a sentence about travel',
+        correctSentence: 'Yazın tatile gidiyorum',
+        translation: 'I go on vacation in summer',
+        grammarFocus: 'Travel and seasons',
+        difficulty: 2,
+        hints: ['Start with season', 'Use direction'],
+        wordTiles: [
+          { id: `f${batchNumber}-16`, word: 'Yazın', type: 'adjective', correctPosition: 0, translation: 'In summer' },
+          { id: `f${batchNumber}-17`, word: 'tatile', type: 'object', correctPosition: 1, translation: 'on vacation' },
+          { id: `f${batchNumber}-18`, word: 'gidiyorum', type: 'verb', correctPosition: 2, translation: 'I go' }
+        ]
+      }
+    ]
   ];
 
-  return freshSentences;
+  // Select the appropriate batch based on batch number
+  const selectedBatch = batchSentenceSets[(batchNumber - 1) % batchSentenceSets.length];
+  return selectedBatch;
 };
 
 export default function SentenceBuilder({
@@ -330,12 +412,19 @@ export default function SentenceBuilder({
           setSentenceChecked(false); // Reset for next exercise
           return prev + 1;
         } else {
-          // After completing initial 5 sentences, show load more option
-          if (currentBatch === 0 && currentBatch < maxBatches) {
+          // After completing initial 5 sentences (batch 0), show load more option
+          if (currentBatch === 0) {
             setGameComplete(true); // Show completion screen with load more
             setShowLoadMore(true); // Enable load more button
+          } else if (currentBatch === 1) {
+            // After completing one additional batch, auto-transfer to next exercise
+            setGameComplete(true);
+            setTimeout(() => {
+              const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+              onComplete(score + points, timeSpent);
+            }, 2000); // Give user 2 seconds to see completion
           } else {
-            // Final completion after all batches
+            // Final completion after all batches (shouldn't reach here normally)
             setGameComplete(true);
             setTimeout(() => {
               const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
@@ -585,13 +674,20 @@ export default function SentenceBuilder({
 
         {/* Load More Button */}
         <div className="space-y-4">
-          {showLoadMore && currentBatch < maxBatches && (
+          {showLoadMore && currentBatch === 0 && (
             <button
               onClick={loadMoreExercises}
               className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
             >
-              📝 Load Batch {currentBatch + 2} (5 more sentences)
+              📝 Load Additional Batch (5 more sentences)
             </button>
+          )}
+
+          {/* Show message after batch 1 completion */}
+          {currentBatch === 1 && (
+            <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-blue-800 font-semibold">🎉 Great job! Moving to next exercise...</p>
+            </div>
           )}
 
           {/* Continue Learning Button */}
