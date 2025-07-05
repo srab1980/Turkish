@@ -289,7 +289,58 @@ export default function SentenceBuilder({
   const [maxBatches] = useState(5); // Maximum 5 additional batches
   const [autoCheckEnabled, setAutoCheckEnabled] = useState(true);
   const [sentenceChecked, setSentenceChecked] = useState(false);
+
+  // Audio pronunciation function
+  const playAudio = (text: string, language: 'turkish' | 'english' = 'turkish') => {
+    try {
+      // Cancel any ongoing speech
+      speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      // Set language based on content type
+      if (language === 'turkish') {
+        utterance.lang = 'tr-TR'; // Turkish language
+      } else {
+        utterance.lang = 'en-US'; // English language
+      }
+
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      // Add error handling
+      utterance.onerror = (event) => {
+        console.log('Speech synthesis error:', event.error);
+      };
+
+      speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.log('Speech synthesis not available:', error);
+    }
+  };
+
   const [draggedTile, setDraggedTile] = useState<WordTile | null>(null);
+
+  // Handle exercise completion
+  const handleExerciseCompletion = (points: number) => {
+    setTimeout(() => {
+      setCurrentExerciseIndex(prev => {
+        if (prev < currentExercises.length - 1) {
+          setSentenceChecked(false); // Reset for next exercise
+          return prev + 1;
+        } else {
+          setGameComplete(true);
+          // Use setTimeout to avoid setState during render
+          setTimeout(() => {
+            const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+            onComplete(score + points, timeSpent);
+          }, 0);
+          return prev;
+        }
+      });
+    }, 1500);
+  };
 
   const currentExercise = currentExercises[currentExerciseIndex];
 
@@ -459,19 +510,18 @@ export default function SentenceBuilder({
         setScore(prev => prev + points);
         setShowFeedback('correct');
 
+        // Pronounce the correct sentence in Turkish
         setTimeout(() => {
-          setCurrentExerciseIndex(prev => {
-            if (prev < currentExercises.length - 1) {
-              setSentenceChecked(false); // Reset for next exercise
-              return prev + 1;
-            } else {
-              setGameComplete(true);
-              const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
-              onComplete(score + points, timeSpent);
-              return prev;
-            }
-          });
-        }, 1500);
+          playAudio(userSentence, 'turkish');
+        }, 500);
+
+        // Pronounce the English translation after Turkish
+        setTimeout(() => {
+          playAudio(currentExercise.translation, 'english');
+        }, 2500);
+
+        // Handle exercise completion
+        handleExerciseCompletion(points);
       } else {
         setShowFeedback('incorrect');
         setTimeout(() => {
@@ -622,8 +672,11 @@ export default function SentenceBuilder({
                             } ${snapshot.isDragging ? 'shadow-lg transform rotate-2' : 'hover:shadow-md'}`}
                             whileHover={{ scale: 1.05 }}
                             whileDrag={{ scale: 1.1, rotate: 5 }}
+                            onClick={() => playAudio(tile.word, 'turkish')}
+                            title={`Click to pronounce: ${tile.word} (${tile.translation})`}
                           >
                             {tile.word}
+                            <span className="ml-1 text-xs opacity-60">🔊</span>
                           </motion.div>
                         )}
                       </Draggable>
@@ -662,9 +715,11 @@ export default function SentenceBuilder({
                         } ${snapshot.isDragging ? 'shadow-lg transform rotate-2' : 'hover:shadow-md'}`}
                         whileHover={{ scale: 1.05 }}
                         whileDrag={{ scale: 1.1, rotate: 5 }}
-                        title={tile.translation}
+                        onClick={() => playAudio(tile.word, 'turkish')}
+                        title={`Click to pronounce: ${tile.word} (${tile.translation})`}
                       >
                         {tile.word}
+                        <span className="ml-1 text-xs opacity-60">🔊</span>
                       </motion.div>
                     )}
                   </Draggable>
