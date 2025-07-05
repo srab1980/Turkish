@@ -62,7 +62,7 @@ export interface CurriculumData {
 
 class CurriculumService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-  private useMockApi = false; // Use real API now that backend is working
+  private useMockApi = true; // Force use mock API for now to ensure courses show
 
   async getCurriculumData(): Promise<CurriculumData> {
     try {
