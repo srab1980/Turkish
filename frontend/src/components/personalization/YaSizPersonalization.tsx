@@ -297,10 +297,8 @@ export default function YaSizPersonalization({
 
       setCurrentQuestions(questionList);
 
-      // Show load more button if we have additional batches
-      if (additionalBatches && additionalBatches.length > 0) {
-        setShowLoadMore(true);
-      }
+      // Always show load more button for additional batches
+      setShowLoadMore(true);
     };
 
     initializeQuestions();

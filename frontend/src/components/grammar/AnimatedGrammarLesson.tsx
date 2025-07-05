@@ -161,6 +161,36 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
   const [currentExamples, setCurrentExamples] = useState<GrammarExample[]>(rule.examples);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [completedBatches, setCompletedBatches] = useState<number[]>([]);
+
+  // Audio pronunciation function
+  const playAudio = (text: string, language: 'turkish' | 'english' = 'turkish') => {
+    try {
+      // Cancel any ongoing speech
+      speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      // Set language based on content type
+      if (language === 'turkish') {
+        utterance.lang = 'tr-TR'; // Turkish language
+      } else {
+        utterance.lang = 'en-US'; // English language
+      }
+
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      // Add error handling
+      utterance.onerror = (event) => {
+        console.log('Speech synthesis error:', event.error);
+      };
+
+      speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.log('Speech synthesis not available:', error);
+    }
+  };
   const [maxBatches] = useState(5); // Maximum 5 additional batches
   const [showSummary, setShowSummary] = useState(false);
 
@@ -258,7 +288,12 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          className="text-3xl font-bold text-blue-600 bg-blue-100 px-4 py-2 rounded-lg"
+          onAnimationComplete={() => {
+            // Pronounce the base word when it appears
+            setTimeout(() => playAudio(example.base, 'turkish'), 500);
+          }}
+          className="text-3xl font-bold text-blue-600 bg-blue-100 px-4 py-2 rounded-lg cursor-pointer"
+          onClick={() => playAudio(example.base, 'turkish')}
         >
           {example.base}
         </motion.div>
@@ -310,9 +345,25 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 2.5, type: "spring", stiffness: 200 }}
-          className="text-3xl font-bold text-purple-600 bg-purple-100 px-4 py-2 rounded-lg border-2 border-purple-300"
+          onAnimationComplete={() => {
+            // Pronounce the result when it appears
+            setTimeout(() => playAudio(example.result, 'turkish'), 300);
+          }}
+          className="text-3xl font-bold text-purple-600 bg-purple-100 px-4 py-2 rounded-lg border-2 border-purple-300 cursor-pointer"
+          onClick={() => playAudio(example.result, 'turkish')}
         >
           {example.result}
+        </motion.div>
+
+        {/* English Translation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 3.5 }}
+          className="text-lg text-gray-600 italic bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 cursor-pointer"
+          onClick={() => playAudio(example.translation, 'english')}
+        >
+          🔊 "{example.translation}"
         </motion.div>
       </div>
     );
@@ -327,7 +378,12 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold text-blue-600"
+          onAnimationComplete={() => {
+            // Pronounce the base word when it appears
+            setTimeout(() => playAudio(example.base, 'turkish'), 500);
+          }}
+          className="text-4xl font-bold text-blue-600 cursor-pointer"
+          onClick={() => playAudio(example.base, 'turkish')}
         >
           {example.base}
         </motion.div>
@@ -352,7 +408,12 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 3, type: "spring", stiffness: 300 }}
-          className="text-4xl font-bold text-purple-600 bg-purple-100 px-6 py-3 rounded-lg border-4 border-purple-300"
+          onAnimationComplete={() => {
+            // Pronounce the result when it appears
+            setTimeout(() => playAudio(example.result, 'turkish'), 300);
+          }}
+          className="text-4xl font-bold text-purple-600 bg-purple-100 px-6 py-3 rounded-lg border-4 border-purple-300 cursor-pointer"
+          onClick={() => playAudio(example.result, 'turkish')}
         >
           {example.result}
         </motion.div>
@@ -365,6 +426,17 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
           className="text-2xl"
         >
           ✨ *snap* ✨
+        </motion.div>
+
+        {/* English Translation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 4 }}
+          className="text-lg text-gray-600 italic bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 cursor-pointer"
+          onClick={() => playAudio(example.translation, 'english')}
+        >
+          🔊 "{example.translation}"
         </motion.div>
       </div>
     );

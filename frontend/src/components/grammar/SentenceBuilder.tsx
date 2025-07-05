@@ -292,24 +292,24 @@ export default function SentenceBuilder({
 
   const currentExercise = currentExercises[currentExerciseIndex];
 
-  // Initialize with at least 5 exercises
+  // Initialize with exactly 5 exercises
   useEffect(() => {
     const initializeExercises = () => {
       let exerciseList = [...exercises];
 
-      // Ensure we have at least 5 exercises by generating variations if needed
+      // Ensure we have exactly 5 exercises by generating variations if needed
       while (exerciseList.length < 5) {
         const baseExercise = exerciseList[exerciseList.length % exerciseList.length];
         const variation = generateSentenceVariation(baseExercise, exerciseList.length, lessonId);
         exerciseList.push(variation);
       }
 
+      // Limit to exactly 5 exercises
+      exerciseList = exerciseList.slice(0, 5);
       setCurrentExercises(exerciseList);
 
-      // Show load more button if we have additional batches
-      if (additionalBatches && additionalBatches.length > 0) {
-        setShowLoadMore(true);
-      }
+      // Always show load more button for additional batches
+      setShowLoadMore(true);
     };
 
     initializeExercises();
@@ -445,15 +445,32 @@ export default function SentenceBuilder({
   // Auto-check when sentence is complete
   useEffect(() => {
     if (autoCheckEnabled && sentenceSlots.every(slot => slot !== null)) {
-      const isCorrect = checkSentence();
+      // Check if sentence is correct
+      const userSentence = sentenceSlots.map(tile => tile?.word).join(' ');
+      const isCorrect = userSentence === currentExercise.correctSentence;
+
+      setAttempts(attempts + 1);
+
       if (isCorrect) {
+        const points = showHint ? 5 : 10;
+        setScore(score + points);
         setShowFeedback('correct');
+
         setTimeout(() => {
-          nextExercise();
+          if (currentExerciseIndex < currentExercises.length - 1) {
+            setCurrentExerciseIndex(currentExerciseIndex + 1);
+          } else {
+            setGameComplete(true);
+            const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+            onComplete(score + points, timeSpent);
+          }
         }, 1500);
+      } else {
+        setShowFeedback('incorrect');
+        setTimeout(() => setShowFeedback(null), 2000);
       }
     }
-  }, [sentenceSlots, autoCheckEnabled]);
+  }, [sentenceSlots, autoCheckEnabled, currentExercise, attempts, score, showHint, currentExerciseIndex, currentExercises.length, gameStartTime, onComplete]);
 
   const getWordTypeColor = (type: string) => {
     const colors = {
@@ -651,12 +668,6 @@ export default function SentenceBuilder({
       {/* Action Buttons */}
       <div className="flex justify-center space-x-4">
         <button
-          onClick={checkSentence}
-          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-        >
-          Check Sentence
-        </button>
-        <button
           onClick={clearSentence}
           className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
         >
@@ -669,6 +680,11 @@ export default function SentenceBuilder({
         >
           💡 Hint (-5 pts)
         </button>
+      </div>
+
+      {/* Auto-check info */}
+      <div className="text-center mt-4 text-sm text-gray-600">
+        💡 Sentences are automatically checked when complete
       </div>
 
       {/* Load More Exercises Button */}

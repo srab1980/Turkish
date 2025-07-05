@@ -213,6 +213,7 @@ export default function InteractiveLessonRouter({
             }}
             allowAudio={true}
             maxQuestions={currentExercise.data.maxQuestions || 3}
+            lessonId={lesson.id}
           />
         );
 
