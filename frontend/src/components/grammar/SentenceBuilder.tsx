@@ -330,12 +330,18 @@ export default function SentenceBuilder({
           setSentenceChecked(false); // Reset for next exercise
           return prev + 1;
         } else {
-          setGameComplete(true);
-          // Use setTimeout to avoid setState during render
-          setTimeout(() => {
-            const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
-            onComplete(score + points, timeSpent);
-          }, 0);
+          // After completing initial 5 sentences, show load more option
+          if (currentBatch === 0 && currentBatch < maxBatches) {
+            setGameComplete(true); // Show completion screen with load more
+            setShowLoadMore(true); // Enable load more button
+          } else {
+            // Final completion after all batches
+            setGameComplete(true);
+            setTimeout(() => {
+              const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+              onComplete(score + points, timeSpent);
+            }, 0);
+          }
           return prev;
         }
       });
@@ -481,11 +487,17 @@ export default function SentenceBuilder({
 
   const loadMoreExercises = () => {
     if (currentBatch < maxBatches) {
-      // Generate fresh exercises for this batch
+      // Generate fresh exercises for this batch (5 new sentences)
       const newBatch = generateFreshSentenceBatch(lessonId || 'default', currentBatch + 1);
-      setCurrentExercises([...currentExercises, ...newBatch]);
+
+      // Replace current exercises with new batch (not append)
+      setCurrentExercises(newBatch);
+      setCurrentExerciseIndex(0); // Reset to first exercise
       setCurrentBatch(currentBatch + 1);
       setCompletedBatches([...completedBatches, currentBatch]);
+      setGameComplete(false); // Resume game
+      setSentenceChecked(false); // Reset check flag
+      setShowFeedback(null); // Clear feedback
 
       // Hide load more if reached max batches
       if (currentBatch + 1 >= maxBatches) {
@@ -510,15 +522,10 @@ export default function SentenceBuilder({
         setScore(prev => prev + points);
         setShowFeedback('correct');
 
-        // Pronounce the correct sentence in Turkish
+        // Pronounce the correct sentence in Turkish only
         setTimeout(() => {
           playAudio(userSentence, 'turkish');
         }, 500);
-
-        // Pronounce the English translation after Turkish
-        setTimeout(() => {
-          playAudio(currentExercise.translation, 'english');
-        }, 2500);
 
         // Handle exercise completion
         handleExerciseCompletion(points);
@@ -567,13 +574,36 @@ export default function SentenceBuilder({
         <div className="text-6xl mb-4">🎉</div>
         <h2 className="text-2xl font-bold text-green-800 mb-4">Tebrikler! (Congratulations!)</h2>
         <div className="text-lg text-green-700 mb-6">
-          <p>Final Score: {score} points</p>
+          <p>Score: {score} points</p>
           <p>Exercises Completed: {currentExercises.length}</p>
           {completedBatches.length > 0 && (
             <p>Batches Completed: {completedBatches.length + 1}</p>
           )}
           <p>Total Attempts: {attempts}</p>
           <p>Accuracy: {Math.round((score / (attempts * 10)) * 100)}%</p>
+        </div>
+
+        {/* Load More Button */}
+        <div className="space-y-4">
+          {showLoadMore && currentBatch < maxBatches && (
+            <button
+              onClick={loadMoreExercises}
+              className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+            >
+              📝 Load Batch {currentBatch + 2} (5 more sentences)
+            </button>
+          )}
+
+          {/* Continue Learning Button */}
+          <button
+            onClick={() => {
+              const timeSpent = (new Date().getTime() - gameStartTime.getTime()) / 1000;
+              onComplete(score, timeSpent);
+            }}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors ml-4"
+          >
+            ✅ Continue Learning
+          </button>
         </div>
       </motion.div>
     );

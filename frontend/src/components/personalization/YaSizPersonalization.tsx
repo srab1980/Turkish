@@ -283,18 +283,20 @@ export default function YaSizPersonalization({
   const currentQuestion = currentQuestions[currentQuestionIndex];
   const questionsToShow = currentQuestions.slice(0, Math.min(maxQuestions, currentQuestions.length));
 
-  // Initialize with at least 5 questions
+  // Initialize with exactly 5 questions per batch
   useEffect(() => {
     const initializeQuestions = () => {
       let questionList = [...questions];
 
-      // Ensure we have at least 5 questions by generating variations if needed
+      // Ensure we have exactly 5 questions by generating variations if needed
       while (questionList.length < 5) {
         const baseQuestion = questionList[questionList.length % questionList.length];
         const variation = generateQuestionVariation(baseQuestion, questionList.length, lessonId);
         questionList.push(variation);
       }
 
+      // Limit to exactly 5 questions per batch
+      questionList = questionList.slice(0, 5);
       setCurrentQuestions(questionList);
 
       // Always show load more button for additional batches
@@ -306,11 +308,16 @@ export default function YaSizPersonalization({
 
   const loadMoreQuestions = () => {
     if (currentBatch < maxBatches) {
-      // Generate fresh questions for this batch
+      // Generate fresh questions for this batch (exactly 5 questions)
       const newBatch = generateFreshQuestionBatch(lessonId || 'default', currentBatch + 1);
-      setCurrentQuestions([...currentQuestions, ...newBatch]);
+
+      // Replace current questions with new batch (not append)
+      setCurrentQuestions(newBatch.slice(0, 5)); // Ensure exactly 5 questions
+      setCurrentQuestionIndex(0); // Reset to first question
       setCurrentBatch(currentBatch + 1);
       setCompletedBatches([...completedBatches, currentBatch]);
+      setSessionComplete(false); // Resume session
+      setResponses([]); // Reset responses for new batch
 
       // Hide load more if reached max batches
       if (currentBatch + 1 >= maxBatches) {
@@ -391,29 +398,37 @@ export default function YaSizPersonalization({
   };
 
   const submitResponse = () => {
+    // Validation: Check if response is provided
     if (responseType === 'text' && !textInput.trim()) {
-      setShowFeedback('Please enter your response or switch to audio recording.');
+      setShowFeedback('❌ Please enter your response or switch to audio recording.');
       return;
     }
 
     if (responseType === 'audio' && !audioBlob) {
-      setShowFeedback('Please record your response or switch to text input.');
+      setShowFeedback('❌ Please record your response or switch to text input.');
       return;
     }
 
-    // Check grammar for text responses
+    // Enhanced validation for text responses
     if (responseType === 'text') {
+      // Check minimum length
+      if (textInput.trim().length < 3) {
+        setShowFeedback('❌ Please provide a more detailed response (at least 3 characters).');
+        return;
+      }
+
+      // Check grammar for text responses
       const grammarResult = checkResponse(textInput);
       setGrammarCheck(grammarResult);
 
       if (!grammarResult.correct) {
-        setShowFeedback('Grammar suggestions available - check below!');
-        return;
+        setShowFeedback('⚠️ Grammar suggestions available - check below! You can still submit or improve your answer.');
+        // Don't return here - allow submission with grammar issues
       } else {
-        setShowFeedback('Excellent Turkish! ✅');
+        setShowFeedback('✅ Excellent Turkish! Perfect grammar!');
       }
     } else {
-      setShowFeedback('Audio response recorded! 🎤');
+      setShowFeedback('🎤 Audio response recorded successfully!');
     }
 
     const response: UserResponse = {
@@ -436,11 +451,12 @@ export default function YaSizPersonalization({
       setShowFeedback(null);
       setGrammarCheck(null);
 
-      if (currentQuestionIndex < questionsToShow.length - 1) {
+      if (currentQuestionIndex < currentQuestions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
+        // After completing 5 questions, show completion screen
         setSessionComplete(true);
-        onComplete(newResponses);
+        // Only call onComplete if this is the final batch or user chooses to continue
       }
     }, 2000);
   };
@@ -497,7 +513,7 @@ export default function YaSizPersonalization({
         <p className="text-lg text-green-700 mb-6">
           You've shared {responses.length} personal responses. This will help make your learning experience more relevant and engaging!
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-6">
           <div className="bg-white p-4 rounded-lg border border-green-200">
             <div className="font-semibold text-green-800">Responses Given</div>
             <div className="text-2xl font-bold text-green-600">{responses.length}</div>
@@ -514,6 +530,26 @@ export default function YaSizPersonalization({
               {responses.filter(r => r.audioResponse).length}
             </div>
           </div>
+        </div>
+
+        {/* Load More Button */}
+        <div className="space-y-4">
+          {showLoadMore && currentBatch < maxBatches && (
+            <button
+              onClick={loadMoreQuestions}
+              className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+            >
+              💭 Load More Questions (Batch {currentBatch + 2})
+            </button>
+          )}
+
+          {/* Continue Learning Button */}
+          <button
+            onClick={() => onComplete(responses)}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors ml-4"
+          >
+            ✅ Continue Learning
+          </button>
         </div>
       </motion.div>
     );
