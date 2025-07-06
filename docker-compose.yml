@@ -57,12 +57,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: dev
       args:
         - NEXT_PUBLIC_API_URL=http://localhost:3001
     container_name: turkish-app-frontend
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_AI_SERVICE_URL=http://localhost:8080
     ports:
       - "3000:3000"
     depends_on:

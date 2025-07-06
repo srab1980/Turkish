@@ -62,27 +62,26 @@ export interface CurriculumData {
 }
 
 class CurriculumService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-  private useMockApi = true; // Force use mock API for now to ensure courses show
+  private baseUrl = process.env.NEXT_PUBLIC_AI_SERVICE_URL || 'http://localhost:8080';
+  private useMockApi = true; // Use rich mock data by default, AI service as enhancement
 
   async getCurriculumData(): Promise<CurriculumData> {
     try {
       // Try backend first, fallback to mock if it fails
       if (!this.useMockApi) {
         try {
-          const response = await fetch(`${this.baseUrl}/api/v1/curriculum/data`);
+          console.log('Attempting to fetch curriculum data from:', `${this.baseUrl}/api/v1/curriculum/curriculum-data`);
+          const response = await fetch(`${this.baseUrl}/api/v1/curriculum/curriculum-data`);
 
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
 
           const result = await response.json();
+          console.log('Successfully received curriculum data from AI service:', result);
 
-          if (!result.success) {
-            throw new Error(result.message || 'Failed to fetch curriculum data');
-          }
-
-          return result.data;
+          // Transform AI service response to our curriculum data format
+          return this.transformAIResponseToCurriculumData(result);
         } catch (error) {
           console.warn('Backend not available, using mock data:', error);
           this.useMockApi = true;
@@ -173,6 +172,115 @@ class CurriculumService {
 
   getExercisesByLesson(exercises: Exercise[], lessonId: string): Exercise[] {
     return exercises.filter(exercise => exercise.lessonId === lessonId);
+  }
+
+  // Transform AI service response to our curriculum data format
+  private transformAIResponseToCurriculumData(aiResponse: any): CurriculumData {
+    const curriculum = aiResponse.curriculum;
+
+    // Create courses from AI response
+    const courses: Course[] = [{
+      id: 'ai-generated-course',
+      title: curriculum.title || 'Turkish A1 Course',
+      description: curriculum.description || 'AI-generated Turkish language course',
+      level: 'A1',
+      totalUnits: curriculum.units?.length || 12,
+      estimatedHours: curriculum.estimated_duration || 36,
+      isPublished: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+
+    // Create units from AI response
+    const units: Unit[] = curriculum.units?.map((unit: any, index: number) => ({
+      id: `unit-${index + 1}`,
+      courseId: 'ai-generated-course',
+      title: unit.title || `Unit ${index + 1}`,
+      description: unit.description || `Learning unit ${index + 1}`,
+      unitNumber: index + 1,
+      estimatedHours: unit.estimated_hours || 3,
+      isPublished: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    })) || [];
+
+    // Create lessons from AI response
+    const lessons: Lesson[] = [];
+    curriculum.units?.forEach((unit: any, unitIndex: number) => {
+      unit.lessons?.forEach((lesson: any, lessonIndex: number) => {
+        const lessonTitle = typeof lesson === 'string' ? lesson : lesson.title;
+        const lessonDescription = typeof lesson === 'string' ? `Learn about ${lesson.toLowerCase()}` : lesson.description;
+
+        lessons.push({
+          id: `lesson-${unitIndex + 1}-${lessonIndex + 1}`,
+          unitId: `unit-${unitIndex + 1}`,
+          title: lessonTitle,
+          description: lessonDescription,
+          lessonNumber: lessonIndex + 1,
+          estimatedMinutes: 30,
+          difficultyLevel: curriculum.target_level || 'A1',
+          lessonType: 'mixed',
+          isPublished: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      });
+    });
+
+    // Create basic exercises
+    const exercises: Exercise[] = lessons.map((lesson, index) => ({
+      id: `exercise-${index + 1}`,
+      lessonId: lesson.id,
+      title: `${lesson.title} Practice`,
+      description: `Practice exercises for ${lesson.title}`,
+      type: 'multiple_choice',
+      estimatedMinutes: 10,
+      isPublished: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }));
+
+    return {
+      courses,
+      units,
+      lessons,
+      exercises
+    };
+  }
+
+  // Generate new lessons using AI service
+  async generateNewLessons(topic: string, level: string = 'A1'): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1/teacher/create-lesson`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: `${topic} Lesson`,
+          topic: topic,
+          target_level: level,
+          lesson_type: 'vocabulary',
+          duration_minutes: 30,
+          learning_objectives: [`Learn about ${topic}`],
+          include_exercises: true,
+          exercise_count: 3,
+          include_vocabulary: true,
+          vocabulary_count: 5,
+          include_grammar: false,
+          cultural_context: false
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error generating new lessons:', error);
+      throw error;
+    }
   }
 
   // Get course progress data

@@ -2,292 +2,187 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { curriculumService } from '@/lib/curriculum-service';
+import { curriculumApi } from '@/lib/curriculum-api';
 import InteractiveLessonRouter from '@/components/lessons/InteractiveLessonRouter';
 import { UserProgressProvider } from '@/contexts/UserProgressContext';
-import { motion } from 'framer-motion';
+import { AppError, handleError, LessonError } from '@/lib/error-handler';
+import { LessonErrorBoundary } from '@/components/ErrorBoundary';
+import { Lesson, Exercise, ExerciseType, VocabularyItem, Question } from '@/types/lesson.types';
 
-// Mock data generator for interactive exercises
-const generateInteractiveExercises = (lessonData: any) => {
-  const exercises = [];
-  
-  // Add flashcards for vocabulary lessons
-  if (lessonData.lessonType === 'vocabulary' || lessonData.lessonType === 'VOCABULARY') {
-    exercises.push({
-      id: `${lessonData.id}-flashcards`,
-      type: 'flashcards',
-      data: {
-        vocabularyItems: [
-          { id: '1', turkish: 'Merhaba', english: 'Hello', pronunciation: 'mer-ha-ba' },
-          { id: '2', turkish: 'Teşekkürler', english: 'Thank you', pronunciation: 'te-shek-kür-ler' },
-          { id: '3', turkish: 'Günaydın', english: 'Good morning', pronunciation: 'gün-ay-dın' },
-          { id: '4', turkish: 'İyi akşamlar', english: 'Good evening', pronunciation: 'i-yi ak-sham-lar' },
-          { id: '5', turkish: 'Hoşça kal', english: 'Goodbye', pronunciation: 'hosh-cha kal' }
-        ]
-      },
-      points: 50
-    });
+interface LessonPageProps {
+  params: { id: string };
+}
 
-    exercises.push({
-      id: `${lessonData.id}-picture-matching`,
-      type: 'picture_matching',
-      data: {
-        title: 'Match Turkish Words with Pictures',
-        items: [
-          { id: '1', turkish: 'Ev', english: 'House', imageUrl: '/images/house.svg' },
-          { id: '2', turkish: 'Araba', english: 'Car', imageUrl: '/images/car.svg' },
-          { id: '3', turkish: 'Kitap', english: 'Book', imageUrl: '/images/book.svg' },
-          { id: '4', turkish: 'Su', english: 'Water', imageUrl: '/images/water.svg' }
-        ]
-      },
-      points: 40
-    });
-  }
-
-  // Add grammar exercises for grammar lessons
-  if (lessonData.lessonType === 'grammar' || lessonData.lessonType === 'GRAMMAR') {
-    exercises.push({
-      id: `${lessonData.id}-grammar-animation`,
-      type: 'grammar_animation',
-      data: {
-        rule: {
-          id: 'vowel-harmony-1',
-          title: 'Turkish Vowel Harmony',
-          description: 'Learn how vowels change in Turkish suffixes',
-          animation: 'vowel_harmony',
-          difficulty: 2,
-          examples: [
-            {
-              base: 'ev',
-              suffix: 'ler',
-              result: 'evler',
-              translation: 'houses',
-              explanation: 'The suffix -ler is used because "ev" contains the front vowel "e"'
-            },
-            {
-              base: 'araba',
-              suffix: 'lar',
-              result: 'arabalar',
-              translation: 'cars',
-              explanation: 'The suffix -lar is used because "araba" contains the back vowel "a"'
-            }
-          ]
-        }
-      },
-      points: 60
-    });
-
-    exercises.push({
-      id: `${lessonData.id}-sentence-builder`,
-      type: 'sentence_builder',
-      data: {
-        exercises: [
-          {
-            id: 'sentence-1',
-            instruction: 'Build the sentence: "I am a student"',
-            correctSentence: 'Ben bir öğrenciyim',
-            translation: 'I am a student',
-            wordTiles: [
-              { id: 'ben', word: 'Ben', type: 'subject', correctPosition: 0, translation: 'I' },
-              { id: 'bir', word: 'bir', type: 'article', correctPosition: 1, translation: 'a/an' },
-              { id: 'ogrenci', word: 'öğrenciyim', type: 'verb', correctPosition: 2, translation: 'am a student' }
-            ],
-            grammarFocus: 'Subject + Article + Predicate',
-            difficulty: 1,
-            hints: ['Start with the subject pronoun', 'Add the article', 'End with the predicate']
-          }
-        ]
-      },
-      points: 50
-    });
-  }
-
-  // Add reading exercises for reading lessons
-  if (lessonData.lessonType === 'reading' || lessonData.lessonType === 'READING') {
-    exercises.push({
-      id: `${lessonData.id}-interactive-reading`,
-      type: 'reading',
-      data: {
-        passage: {
-          id: 'reading-1',
-          title: 'Türkiye\'de Bir Gün',
-          content: 'Merhaba! Benim adım Ahmet. Ben Türkiye\'de yaşıyorum. Her sabah erken kalkıyorum. Kahvaltı yapıyorum ve işe gidiyorum. Akşam eve geldiğimde televizyon izliyorum.',
-          level: 'A1',
-          topic: 'Daily Life',
-          estimatedTime: 5,
-          vocabulary: [
-            { turkish: 'merhaba', english: 'hello', pronunciation: 'mer-ha-ba' },
-            { turkish: 'adım', english: 'my name', pronunciation: 'a-dım' },
-            { turkish: 'yaşıyorum', english: 'I live', pronunciation: 'ya-shı-yo-rum' },
-            { turkish: 'sabah', english: 'morning', pronunciation: 'sa-bah' },
-            { turkish: 'kahvaltı', english: 'breakfast', pronunciation: 'kah-val-tı' }
-          ],
-          comprehensionQuestions: [
-            {
-              id: 'q1',
-              question: 'What is the person\'s name?',
-              options: ['Ali', 'Mehmet', 'Ahmet', 'Mustafa'],
-              correctAnswer: 2,
-              explanation: 'The text says "Benim adım Ahmet" which means "My name is Ahmet"'
-            }
-          ]
-        }
-      },
-      points: 70
-    });
-  }
-
-  // Add personalization exercise
-  exercises.push({
-    id: `${lessonData.id}-personalization`,
-    type: 'personalization',
-    data: {
-      questions: [
-        {
-          id: 'personal-1',
-          question: 'What is your name and where are you from?',
-          questionTurkish: 'Adınız ne ve nerelisiniz?',
-          category: 'personal',
-          difficulty: 1,
-          suggestedAnswers: [
-            'Benim adım [name]. Ben [country]\'den geliyorum.',
-            'Ben [name]. [city]\'de yaşıyorum.'
-          ]
-        }
-      ],
-      maxQuestions: 1
-    },
-    points: 30
-  });
-
-  // Add mini-game
-  exercises.push({
-    id: `${lessonData.id}-mini-game`,
-    type: 'mini_games',
-    data: {
-      games: [
-        {
-          id: 'memory-1',
-          title: 'Turkish-English Memory Match',
-          titleTurkish: 'Türkçe-İngilizce Hafıza Oyunu',
-          type: 'memory_match',
-          difficulty: 2,
-          instructions: 'Match Turkish words with their English translations',
-          data: {
-            pairs: [
-              { id: 'pair1', turkish: 'Merhaba', english: 'Hello' },
-              { id: 'pair2', turkish: 'Teşekkürler', english: 'Thank you' },
-              { id: 'pair3', turkish: 'Evet', english: 'Yes' },
-              { id: 'pair4', turkish: 'Hayır', english: 'No' }
-            ]
-          }
-        }
-      ]
-    },
-    points: 40
-  });
-
-  return exercises;
-};
-
-export default function LessonPage() {
-  const params = useParams();
-  const router = useRouter();
-  const lessonId = params.id as string;
-  const [lessonData, setLessonData] = useState<any>(null);
+const LessonPage: React.FC<LessonPageProps> = ({ params }) => {
+  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    loadLessonData();
-  }, [lessonId]);
+    const loadLesson = async () => {
+      try {
+        console.log('🔄 Loading lesson from curriculum:', params.id);
+        setLoading(true);
+        setError(null);
 
-  const loadLessonData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const curriculumData = await curriculumService.getCurriculumData();
-      const lesson = curriculumData.lessons.find(l => l.id === lessonId);
-      
-      if (!lesson) {
-        setError('Lesson not found');
-        return;
+        // Get lesson from real curriculum
+        const allLessons = curriculumApi.getAllLessons();
+        console.log('🔍 Looking for lesson ID:', params.id);
+        console.log('📚 Available lesson IDs:', allLessons.map(l => l.id));
+        
+        const lessonData = curriculumApi.getLesson(params.id);
+        
+        if (!lessonData) {
+          console.error('❌ Lesson not found. Looking for ID:', params.id);
+          console.error('📋 Available lessons:', allLessons);
+          throw new LessonError(
+            'LESSON_NOT_FOUND',
+            `Lesson with ID ${params.id} not found in curriculum`,
+            'Lesson loading'
+          );
+        }
+
+        console.log('✅ Lesson loaded successfully:', {
+          id: lessonData.id,
+          title: lessonData.title,
+          unitId: lessonData.unitId,
+          exerciseCount: lessonData.exercises.length
+        });
+
+        setLesson(lessonData);
+      } catch (error) {
+        console.error('❌ Failed to load lesson:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load lesson';
+        setError(errorMessage);
+        handleError(error, `Loading lesson ${params.id}`);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      // Transform lesson data to include interactive exercises
-      const interactiveLesson = {
-        ...lesson,
-        exercises: generateInteractiveExercises(lesson),
-        difficulty: lesson.difficultyLevel || 1,
-        estimatedTime: lesson.estimatedDuration || 15
-      };
+    if (params.id) {
+      loadLesson();
+    }
+  }, [params.id]);
 
-      setLessonData(interactiveLesson);
+  const handleLessonComplete = async (lessonId: string, score: number, timeSpent: number) => {
+    try {
+      console.log('🎉 Lesson completed:', { lessonId, score, timeSpent });
+      // TODO: Save progress to backend/local storage
+      
+      // Navigate to next lesson or unit overview
+      const allLessons = curriculumApi.getAllLessons();
+      const currentIndex = allLessons.findIndex(l => l.id === lessonId);
+      
+      if (currentIndex < allLessons.length - 1) {
+        const nextLesson = allLessons[currentIndex + 1];
+        router.push(`/lesson/${nextLesson.id}`);
+      } else {
+        router.push('/lessons'); // Go to lessons overview
+      }
     } catch (error) {
-      console.error('Failed to load lesson:', error);
-      setError('Failed to load lesson data');
-    } finally {
-      setLoading(false);
+      handleError(error, 'Lesson completion');
     }
   };
 
-  const handleLessonComplete = (lessonId: string, score: number, timeSpent: number) => {
-    console.log('Lesson completed:', { lessonId, score, timeSpent });
-    // Here you would typically save progress to the backend
-    // For now, we'll just redirect back to courses
-    setTimeout(() => {
-      router.push('/courses');
-    }, 3000);
-  };
-
-  const handleExerciseComplete = (exerciseId: string, score: number, timeSpent: number) => {
-    console.log('Exercise completed:', { exerciseId, score, timeSpent });
-    // Here you would typically save exercise progress to the backend
+  const handleExerciseComplete = async (exerciseId: string, score: number, timeSpent: number) => {
+    try {
+      console.log('✅ Exercise completed:', { exerciseId, score, timeSpent });
+      // TODO: Save exercise progress
+    } catch (error) {
+      handleError(error, 'Exercise completion');
+    }
   };
 
   if (loading) {
     return (
-      <UserProgressProvider>
-        <div className="min-h-screen flex items-center justify-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"
-          />
-          <span className="ml-3 text-lg text-gray-600">Loading lesson...</span>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading lesson...</p>
         </div>
-      </UserProgressProvider>
+      </div>
     );
   }
 
-  if (error || !lessonData) {
+  if (error) {
     return (
-      <UserProgressProvider>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-6xl mb-4">😕</div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Lesson Not Found</h1>
-            <p className="text-gray-600 mb-4">{error || 'The requested lesson could not be found.'}</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">Lesson Not Found</h1>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <div className="space-y-3">
             <button
-              onClick={() => router.push('/courses')}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              onClick={() => router.push('/lessons')}
+              className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Back to Courses
+              Browse All Lessons
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Try Again
             </button>
           </div>
         </div>
-      </UserProgressProvider>
+      </div>
+    );
+  }
+
+  if (!lesson) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">No lesson data available</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <UserProgressProvider>
-      <InteractiveLessonRouter
-        lesson={lessonData}
-        userProgress={{}} // You would load actual user progress here
-        onLessonComplete={handleLessonComplete}
-        onExerciseComplete={handleExerciseComplete}
-      />
-    </UserProgressProvider>
+    <LessonErrorBoundary>
+      <UserProgressProvider>
+        <div className="min-h-screen bg-gray-50">
+          {/* Lesson Header */}
+          <div className="bg-white shadow-sm border-b">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">{lesson.title}</h1>
+                  <p className="text-gray-600 mt-1">{lesson.description}</p>
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                    <span>📚 Unit {lesson.unitId.split('-')[1]}</span>
+                    <span>⏱️ {lesson.estimatedMinutes} minutes</span>
+                    <span>🎯 {lesson.difficultyLevel}</span>
+                    <span>🎮 {lesson.exercises.length} exercises</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => router.push('/lessons')}
+                  className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  ← Back to Lessons
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Lesson Content */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <InteractiveLessonRouter
+              lesson={lesson}
+              userProgress={{}}
+              onLessonComplete={handleLessonComplete}
+              onExerciseComplete={handleExerciseComplete}
+            />
+          </div>
+        </div>
+      </UserProgressProvider>
+    </LessonErrorBoundary>
   );
-}
+};
+
+export default LessonPage;

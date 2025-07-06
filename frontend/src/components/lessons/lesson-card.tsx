@@ -19,8 +19,8 @@ interface LessonCardProps {
     id: string
     title: string
     description: string
-    duration: number
-    difficulty: "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
+    estimatedMinutes: number
+    difficultyLevel: "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
     progress: number
     isCompleted: boolean
     isLocked: boolean
@@ -57,10 +57,10 @@ export function LessonCard({ lesson, onStart }: LessonCardProps) {
             </p>
           </div>
           <div className="flex flex-col items-end space-y-2">
-            <Badge 
-              className={`${getDifficultyColor(lesson.difficulty)} text-white`}
+            <Badge
+              className={`${getDifficultyColor(lesson.difficultyLevel)} text-white`}
             >
-              {lesson.difficulty}
+              {lesson.difficultyLevel}
             </Badge>
             {lesson.isCompleted && (
               <CheckCircle className="h-5 w-5 text-green-500" />
@@ -89,7 +89,7 @@ export function LessonCard({ lesson, onStart }: LessonCardProps) {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1">
               <Clock className="h-4 w-4" />
-              <span>{lesson.duration} min</span>
+              <span>{lesson.estimatedMinutes} min</span>
             </div>
             <div className="flex items-center space-x-1">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />

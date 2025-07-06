@@ -318,32 +318,17 @@ export default function FlashcardSystem({ vocabularyItems, onComplete, unitId, l
 
   return (
     <div className="max-w-md mx-auto p-4">
-      {/* Exercise Navigation */}
+      {/* Exercise Navigation - REMOVED HARDCODED EXERCISES */}
       {onExerciseChange && (
         <div className="mb-4 flex justify-center">
           <div className="bg-gray-100 rounded-lg p-2 flex items-center space-x-2">
-            <span className="text-sm text-gray-600">Exercises:</span>
-            {[
-              { id: 'flashcards', name: '1. Flashcards', icon: '📚' },
-              { id: 'sentence-builder', name: '2. Sentences', icon: '🧩' },
-              { id: 'personalization', name: '3. Personal', icon: '💭' },
-              { id: 'mini-games', name: '4. Games', icon: '🎮' }
-            ].map((exercise) => (
-              <button
-                key={exercise.id}
-                onClick={() => onExerciseChange(exercise.id)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
-                  exercise.id === 'flashcards'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                }`}
-              >
-                {exercise.icon} {exercise.name}
-              </button>
-            ))}
+            <span className="text-sm text-gray-600">🎯 Exercise Variety Enabled!</span>
+            <span className="text-xs text-green-600 font-medium">Different exercises per lesson</span>
           </div>
         </div>
       )}
+
+
 
       {/* Audio Settings */}
       <div className="mb-4 flex justify-center">

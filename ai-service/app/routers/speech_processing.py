@@ -1,10 +1,13 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Query
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 import aiofiles
 import os
 import uuid
+import io
+import base64
 from typing import Optional, List, Dict, Any
+from openai import OpenAI
 
 from app.core.config import settings
 from app.services.speech_processor import SpeechProcessor, PronunciationScore
@@ -290,6 +293,142 @@ async def get_pronunciation_guide():
             }
         ]
     }
+
+@router.post("/text-to-speech")
+async def text_to_speech(
+    text: str = Query(..., description="Text to convert to speech"),
+    language: str = Query("tr", description="Language code (tr for Turkish)"),
+    voice: str = Query("alloy", description="Voice to use for TTS"),
+    speed: float = Query(1.0, ge=0.25, le=4.0, description="Speech speed (0.25 to 4.0)")
+):
+    """Convert text to speech using OpenAI TTS API"""
+
+    try:
+        # Validate input
+        if not text.strip():
+            raise HTTPException(status_code=400, detail="Text cannot be empty")
+
+        if len(text) > 4096:
+            raise HTTPException(status_code=400, detail="Text too long (max 4096 characters)")
+
+        # Initialize OpenAI client
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+        if not client.api_key:
+            raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+
+        # Generate speech using OpenAI TTS
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice=voice,
+            input=text,
+            speed=speed
+        )
+
+        # Save audio file
+        audio_filename = f"tts_{uuid.uuid4()}.mp3"
+        audio_path = f"./uploads/{audio_filename}"
+
+        # Ensure uploads directory exists
+        os.makedirs("./uploads", exist_ok=True)
+
+        # Write audio content to file
+        with open(audio_path, "wb") as f:
+            f.write(response.content)
+
+        return {
+            "message": "TTS generation successful",
+            "text": text,
+            "language": language,
+            "voice": voice,
+            "speed": speed,
+            "audio_url": f"/api/v1/speech/audio/{audio_filename}",
+            "audio_path": audio_path,
+            "file_size": len(response.content),
+            "status": "success"
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"TTS generation failed: {str(e)}")
+
+@router.get("/audio/{filename}")
+async def get_audio_file(filename: str):
+    """Serve generated audio files"""
+    try:
+        audio_path = f"./uploads/{filename}"
+
+        if not os.path.exists(audio_path):
+            raise HTTPException(status_code=404, detail="Audio file not found")
+
+        def iterfile():
+            with open(audio_path, mode="rb") as file_like:
+                yield from file_like
+
+        return StreamingResponse(
+            iterfile(),
+            media_type="audio/mpeg",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to serve audio file: {str(e)}")
+
+@router.post("/speech-to-text")
+async def speech_to_text(
+    audio_file: UploadFile = File(..., description="Audio file to transcribe"),
+    language: str = Query("tr", description="Language code (tr for Turkish)"),
+    model: str = Query("whisper-1", description="Whisper model to use")
+):
+    """Convert speech to text using OpenAI Whisper API"""
+
+    try:
+        # Validate file type
+        if not audio_file.content_type.startswith('audio/'):
+            raise HTTPException(status_code=400, detail="File must be an audio file")
+
+        # Initialize OpenAI client
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+        if not client.api_key:
+            raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+
+        # Save uploaded file temporarily
+        temp_filename = f"temp_{uuid.uuid4()}_{audio_file.filename}"
+        temp_path = f"./uploads/{temp_filename}"
+
+        # Ensure uploads directory exists
+        os.makedirs("./uploads", exist_ok=True)
+
+        # Save uploaded file
+        async with aiofiles.open(temp_path, 'wb') as f:
+            content = await audio_file.read()
+            await f.write(content)
+
+        # Transcribe using Whisper
+        with open(temp_path, "rb") as audio:
+            transcript = client.audio.transcriptions.create(
+                model=model,
+                file=audio,
+                language=language
+            )
+
+        # Clean up temporary file
+        os.remove(temp_path)
+
+        return {
+            "message": "Speech transcription successful",
+            "transcript": transcript.text,
+            "language": language,
+            "model": model,
+            "original_filename": audio_file.filename,
+            "status": "success"
+        }
+
+    except Exception as e:
+        # Clean up temporary file if it exists
+        if 'temp_path' in locals() and os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise HTTPException(status_code=500, detail=f"Speech transcription failed: {str(e)}")
 
 @router.get("/supported-audio-formats")
 async def get_supported_audio_formats():

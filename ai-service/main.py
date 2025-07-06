@@ -5,8 +5,8 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 
-from app.routers import content_extraction, lesson_generation, speech_processing
-from app.api import conversation
+from app.routers import lesson_generation, speech_processing, conversation, adaptive_learning, curriculum_builder, practice_generator, teacher_tools
+# from app.routers import content_extraction  # Temporarily disabled due to PyPDF2 dependency
 from app.core.config import settings
 # from app.core.database import init_db
 
@@ -32,10 +32,16 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(content_extraction.router, prefix="/api/v1/content", tags=["Content Extraction"])
+# app.include_router(content_extraction.router, prefix="/api/v1/content", tags=["Content Extraction"])  # Temporarily disabled
 app.include_router(lesson_generation.router, prefix="/api/v1/lessons", tags=["Lesson Generation"])
 app.include_router(speech_processing.router, prefix="/api/v1/speech", tags=["Speech Processing"])
-app.include_router(conversation.router, prefix="/api/v1", tags=["Conversation Practice"])
+app.include_router(conversation.router, prefix="/api/v1/conversation", tags=["Conversation Practice"])
+
+# New enhanced routers
+app.include_router(adaptive_learning.router, prefix="/api/v1/adaptive", tags=["Adaptive Learning"])
+app.include_router(curriculum_builder.router, prefix="/api/v1/curriculum", tags=["Curriculum Builder"])
+app.include_router(practice_generator.router, prefix="/api/v1/practice", tags=["Practice Generator"])
+app.include_router(teacher_tools.router, prefix="/api/v1/teacher", tags=["Teacher Tools"])
 
 @app.on_event("startup")
 async def startup_event():

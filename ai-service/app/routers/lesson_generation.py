@@ -1,5 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
+import os
+import json
+from openai import OpenAI
 
 from app.models.content import (
     LessonGenerationRequest,
@@ -13,6 +16,156 @@ from app.services.nlp_processor import NLPProcessor
 
 router = APIRouter()
 nlp_processor = NLPProcessor()
+
+@router.get("/test")
+async def test_lesson_generation():
+    """Simple test endpoint to verify lesson generation service is working"""
+    return {
+        "message": "Lesson generation service is working",
+        "service": "AI-powered lesson generation",
+        "endpoints": [
+            "/generate-with-gpt4 - Generate lessons using GPT-4",
+            "/generate - Generate lessons using NLP processor",
+            "/test - This test endpoint"
+        ],
+        "status": "healthy"
+    }
+
+@router.post("/generate-with-gpt4")
+async def generate_lesson_with_gpt4(
+    topic: str,
+    cefr_level: str = "A1",
+    lesson_type: str = "vocabulary",
+    duration_minutes: int = 15
+):
+    """Generate a complete lesson using GPT-4"""
+
+    try:
+        # Initialize OpenAI client
+        api_key = os.getenv("OPENAI_API_KEY")
+        print(f"OpenAI API Key present: {bool(api_key)}")
+
+        if not api_key:
+            raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+
+        client = OpenAI(api_key=api_key)
+        print("OpenAI client initialized successfully")
+
+        # Create GPT-4 prompt for lesson generation
+        prompt = f"""
+        Create a comprehensive Turkish language lesson with the following specifications:
+
+        Topic: {topic}
+        CEFR Level: {cefr_level}
+        Lesson Type: {lesson_type}
+        Duration: {duration_minutes} minutes
+
+        Please generate a lesson that includes:
+        1. Lesson title and description
+        2. Learning objectives (3-5 objectives)
+        3. Vocabulary list (10-15 words with Turkish and English)
+        4. Grammar rules (if applicable)
+        5. Example sentences (5-10 sentences)
+        6. Practice exercises (5 different types)
+        7. Cultural notes (2-3 interesting facts)
+
+        Format the response as JSON with the following structure:
+        {{
+            "title": "lesson title",
+            "description": "lesson description",
+            "objectives": ["objective1", "objective2", ...],
+            "vocabulary": [
+                {{"turkish": "word", "english": "translation", "pronunciation": "phonetic"}},
+                ...
+            ],
+            "grammar_rules": [
+                {{"rule": "grammar rule", "explanation": "explanation", "examples": ["example1", "example2"]}},
+                ...
+            ],
+            "example_sentences": [
+                {{"turkish": "sentence", "english": "translation"}},
+                ...
+            ],
+            "exercises": [
+                {{
+                    "type": "multiple_choice",
+                    "question": "question",
+                    "options": ["option1", "option2", "option3", "option4"],
+                    "correct_answer": "correct option",
+                    "explanation": "why this is correct"
+                }},
+                ...
+            ],
+            "cultural_notes": ["note1", "note2", ...]
+        }}
+
+        Make sure all content is appropriate for {cefr_level} level learners and focuses on practical, everyday Turkish.
+        """
+
+        # Generate lesson content using GPT-4
+        print("Making GPT-4 API call...")
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an expert Turkish language teacher and curriculum designer. Create engaging, educational content that follows CEFR standards."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=2000
+        )
+        print("GPT-4 API call completed successfully")
+
+        # Parse the response
+        lesson_content = response.choices[0].message.content
+
+        # Try to parse as JSON, fallback to text if needed
+        try:
+            # Clean the response - sometimes GPT-4 adds markdown formatting
+            cleaned_content = lesson_content.strip()
+            if cleaned_content.startswith('```json'):
+                cleaned_content = cleaned_content[7:]
+            if cleaned_content.endswith('```'):
+                cleaned_content = cleaned_content[:-3]
+            cleaned_content = cleaned_content.strip()
+
+            lesson_data = json.loads(cleaned_content)
+
+            # Validate that we have the expected structure
+            if not isinstance(lesson_data, dict) or 'title' not in lesson_data:
+                raise json.JSONDecodeError("Invalid lesson structure", "", 0)
+
+        except json.JSONDecodeError as e:
+            # If JSON parsing fails, return structured text response
+            lesson_data = {
+                "title": f"{topic} - {cefr_level} Level",
+                "description": f"AI-generated lesson about {topic}",
+                "content": lesson_content,
+                "generated_with": "GPT-4",
+                "status": "success_text_format",
+                "parse_error": str(e),
+                "note": "Content generated successfully but not in JSON format. This is normal for complex lessons."
+            }
+
+        return {
+            "message": "Lesson generated successfully with GPT-4",
+            "lesson": lesson_data,
+            "metadata": {
+                "topic": topic,
+                "cefr_level": cefr_level,
+                "lesson_type": lesson_type,
+                "duration_minutes": duration_minutes,
+                "generated_with": "GPT-4",
+                "tokens_used": response.usage.total_tokens if hasattr(response, 'usage') else None
+            },
+            "status": "success"
+        }
+
+    except Exception as e:
+        print(f"Error in lesson generation: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"Lesson generation failed: {str(e)}")
 
 @router.post("/generate", response_model=GeneratedLesson)
 async def generate_lesson(request: LessonGenerationRequest):

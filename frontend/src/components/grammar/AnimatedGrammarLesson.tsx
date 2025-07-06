@@ -115,7 +115,7 @@ const generateFreshExampleBatch = (animationType: AnimationType, lessonId: strin
         base: generateNewWord(animationType, batchNumber, i),
         suffix: baseExample.suffix,
         result: generateNewWord(animationType, batchNumber, i) + baseExample.suffix,
-        translation: `${generateNewTranslation(animationType, batchNumber, i)} (${baseExample.suffix})`,
+        translation: generateNewTranslation(animationType, batchNumber, i),
         explanation: baseExample.explanation
       };
       newExamples.push(newExample);
@@ -139,17 +139,104 @@ const generateNewWord = (animationType: AnimationType, batchNumber: number, inde
   return words[(batchNumber * 5 + index) % words.length];
 };
 
-// Helper function to generate new translations
-const generateNewTranslation = (animationType: AnimationType, batchNumber: number, index: number): string => {
-  const translationSets: Record<AnimationType, string[]> = {
-    vowel_harmony: ['garden', 'sea', 'sun', 'star', 'strawberry', 'orange', 'apple', 'pear', 'cherry', 'grape'],
-    plural_suffix: ['pen', 'notebook', 'table', 'chair', 'window', 'door', 'wall', 'ceiling', 'floor', 'lamp'],
-    possessive_suffix: ['phone', 'computer', 'bag', 'shoes', 'glasses', 'watch', 'key', 'wallet', 'hat', 'gloves'],
-    case_suffix: ['park', 'hospital', 'market', 'restaurant', 'library', 'museum', 'cinema', 'theater', 'stadium', 'airport']
+// Comprehensive Turkish to English dictionary for accurate base word translations
+const getTurkishBaseTranslation = (turkishWord: string): string => {
+  const turkishToEnglish: Record<string, string> = {
+    // Vowel harmony examples
+    'ev': 'house',
+    'kız': 'girl',
+    'göz': 'eye',
+    'top': 'ball',
+    'kitap': 'book',
+    'çiçek': 'flower',
+    'masa': 'table',
+    'pencere': 'window',
+    'kapı': 'door',
+    'öğretmen': 'teacher',
+    'araba': 'car',
+    'elma': 'apple',
+    'okul': 'school',
+    'şehir': 'city',
+    'hayvan': 'animal',
+
+    // Plural suffix examples
+    'çocuk': 'child',
+    'kedi': 'cat',
+    'köpek': 'dog',
+    'kuş': 'bird',
+    'balık': 'fish',
+    'ağaç': 'tree',
+    'meyve': 'fruit',
+    'sebze': 'vegetable',
+    'yemek': 'food',
+
+    // Additional vocabulary
+    'bahçe': 'garden',
+    'deniz': 'sea',
+    'güneş': 'sun',
+    'yıldız': 'star',
+    'çilek': 'strawberry',
+    'portakal': 'orange',
+    'armut': 'pear',
+    'kiraz': 'cherry',
+    'üzüm': 'grape',
+    'kalem': 'pen',
+    'defter': 'notebook',
+    'sandalye': 'chair',
+    'duvar': 'wall',
+    'tavan': 'ceiling',
+    'zemin': 'floor',
+    'lamba': 'lamp',
+    'telefon': 'phone',
+    'bilgisayar': 'computer',
+    'çanta': 'bag',
+    'ayakkabı': 'shoe',
+    'gözlük': 'glasses',
+    'saat': 'watch',
+    'anahtar': 'key',
+    'cüzdan': 'wallet',
+    'şapka': 'hat',
+    'eldiven': 'glove',
+    'park': 'park',
+    'hastane': 'hospital',
+    'market': 'market',
+    'restoran': 'restaurant',
+    'kütüphane': 'library',
+    'müze': 'museum',
+    'sinema': 'cinema',
+    'tiyatro': 'theater',
+    'stadyum': 'stadium',
+    'havaalanı': 'airport'
   };
 
-  const translations = translationSets[animationType];
-  return translations[(batchNumber * 5 + index) % translations.length];
+  return turkishToEnglish[turkishWord] || turkishWord;
+};
+
+// Helper function to generate new translations using Turkish dictionary
+const generateNewTranslation = (animationType: AnimationType, batchNumber: number, index: number): string => {
+  // Get the Turkish word first
+  const turkishWord = generateNewWord(animationType, batchNumber, index);
+  // Get the English translation from our dictionary
+  const baseTranslation = getTurkishBaseTranslation(turkishWord);
+
+  // For plural suffixes, return the plural form
+  if (animationType === 'vowel_harmony' || animationType === 'plural_suffix') {
+    // Simple pluralization rules
+    if (baseTranslation.endsWith('y')) {
+      return baseTranslation.slice(0, -1) + 'ies';
+    } else if (baseTranslation.endsWith('s') || baseTranslation.endsWith('sh') || baseTranslation.endsWith('ch') || baseTranslation.endsWith('x') || baseTranslation.endsWith('z')) {
+      return baseTranslation + 'es';
+    } else if (baseTranslation === 'child') {
+      return 'children';
+    } else if (baseTranslation === 'fish') {
+      return 'fish';
+    } else {
+      return baseTranslation + 's';
+    }
+  }
+
+  // For other types, return the base translation
+  return baseTranslation;
 };
 
 export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: AnimatedGrammarLessonProps) {
@@ -161,34 +248,494 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
   const [currentExamples, setCurrentExamples] = useState<GrammarExample[]>(rule.examples);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [completedBatches, setCompletedBatches] = useState<number[]>([]);
+  const [voicesLoaded, setVoicesLoaded] = useState(false);
+  const [pronunciationQuality, setPronunciationQuality] = useState<'professional' | 'enhanced' | 'basic'>('basic');
 
-  // Audio pronunciation function
-  const playAudio = (text: string, language: 'turkish' | 'english' = 'turkish') => {
+  // Load voices when component mounts
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        setVoicesLoaded(true);
+        console.log('Available voices loaded:', voices.length);
+
+        // Log Turkish voices specifically
+        const turkishVoices = voices.filter(voice =>
+          voice.lang.startsWith('tr') ||
+          voice.name.toLowerCase().includes('turkish')
+        );
+
+        if (turkishVoices.length > 0) {
+          console.log('Turkish voices found:', turkishVoices.map(v => `${v.name} (${v.lang})`));
+          setPronunciationQuality('enhanced');
+        } else {
+          console.log('No Turkish voices found, will use optimized fallback');
+          setPronunciationQuality('basic');
+        }
+      }
+    };
+
+    // Load voices immediately if available
+    loadVoices();
+
+    // Also listen for voiceschanged event (some browsers load voices asynchronously)
+    speechSynthesis.addEventListener('voiceschanged', loadVoices);
+
+    // Force voice loading after a short delay (some browsers need this)
+    const timer = setTimeout(loadVoices, 100);
+
+    return () => {
+      speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  // Enhanced Turkish pronunciation - Direct browser synthesis with optimization
+  const playAudio = async (text: string, language: 'turkish' | 'english' = 'turkish') => {
+    console.log(`Playing audio for: "${text}" in ${language}`);
+
     try {
-      // Cancel any ongoing speech
+      if (language === 'turkish') {
+        // Use optimized Turkish pronunciation directly
+        playOptimizedTurkishAudio(text);
+      } else {
+        // Use browser synthesis for English
+        playBrowserSynthesis(text, language);
+      }
+    } catch (error) {
+      console.error('Audio playback error:', error);
+      // Final fallback
+      playBrowserSynthesis(text, language);
+    }
+  };
+
+  // Optimized Turkish pronunciation with best available voices
+  const playOptimizedTurkishAudio = (text: string) => {
+    try {
+      console.log('Playing optimized Turkish audio for:', text);
       speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
 
-      // Set language based on content type
-      if (language === 'turkish') {
-        utterance.lang = 'tr-TR'; // Turkish language
-      } else {
-        utterance.lang = 'en-US'; // English language
+      // Get all available voices
+      const voices = speechSynthesis.getVoices();
+      console.log(`Found ${voices.length} voices`);
+
+      // Find the best Turkish voice
+      let selectedVoice = null;
+
+      // Priority 1: Native Turkish voices
+      selectedVoice = voices.find(voice =>
+        voice.lang === 'tr-TR' || voice.lang === 'tr'
+      );
+
+      // Priority 2: Turkish voices with any variant
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice =>
+          voice.lang.startsWith('tr') ||
+          voice.name.toLowerCase().includes('turkish') ||
+          voice.name.toLowerCase().includes('türk')
+        );
       }
 
-      utterance.rate = 0.8;
+      // Priority 3: High-quality voices that handle Turkish well
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice =>
+          voice.name.toLowerCase().includes('neural') ||
+          voice.name.toLowerCase().includes('premium') ||
+          voice.name.toLowerCase().includes('enhanced') ||
+          voice.name.toLowerCase().includes('wavenet')
+        );
+      }
+
+      // Priority 4: Female voices (often better for Turkish)
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice =>
+          voice.name.toLowerCase().includes('female') ||
+          voice.name.toLowerCase().includes('woman')
+        );
+      }
+
+      // Use the selected voice or default
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        console.log('Using voice:', selectedVoice.name, selectedVoice.lang);
+      } else {
+        console.log('Using default voice');
+      }
+
+      // Optimize settings for Turkish
+      utterance.lang = 'tr-TR';
+      utterance.rate = 0.75; // Slower for learning
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+
+      // Add event handlers
+      utterance.onstart = () => {
+        console.log('Turkish speech started');
+        setPronunciationQuality('enhanced');
+      };
+
+      utterance.onend = () => {
+        console.log('Turkish speech completed');
+      };
+
+      utterance.onerror = (event) => {
+        console.error('Turkish speech error:', event.error);
+        setPronunciationQuality('basic');
+      };
+
+      // Speak the text
+      speechSynthesis.speak(utterance);
+
+    } catch (error) {
+      console.error('Optimized Turkish audio failed:', error);
+      // Final fallback
+      playBrowserSynthesis(text, 'turkish');
+    }
+  };
+
+  // Professional Turkish TTS using multiple services
+  const tryHighQualityTTS = async (text: string): Promise<boolean> => {
+    try {
+      // Try OpenAI TTS first (most professional)
+      const openAISuccess = await tryOpenAITTS(text);
+      if (openAISuccess) return true;
+
+      // Try Google Cloud TTS as fallback
+      const googleSuccess = await tryGoogleTTS(text);
+      if (googleSuccess) return true;
+
+      // Try Azure Cognitive Services as second fallback
+      const azureSuccess = await tryAzureTTS(text);
+      if (azureSuccess) return true;
+
+      return false;
+    } catch (error) {
+      console.log('All high-quality TTS services failed:', error);
+      return false;
+    }
+  };
+
+  // OpenAI TTS API - Professional quality
+  const tryOpenAITTS = async (text: string): Promise<boolean> => {
+    try {
+      console.log('Trying OpenAI TTS for:', text);
+
+      const response = await fetch('/api/tts/openai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          voice: 'alloy', // OpenAI voice that works well with Turkish
+          language: 'tr'
+        }),
+      });
+
+      console.log('OpenAI TTS response status:', response.status);
+
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        console.log('Audio blob size:', audioBlob.size);
+
+        if (audioBlob.size > 0) {
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+
+          audio.onended = () => {
+            URL.revokeObjectURL(audioUrl);
+            console.log(`OpenAI TTS completed for: ${text}`);
+          };
+
+          audio.onerror = (e) => {
+            console.error('Audio playback error:', e);
+            URL.revokeObjectURL(audioUrl);
+          };
+
+          await audio.play();
+          setPronunciationQuality('professional');
+          return true;
+        }
+      } else {
+        const errorText = await response.text();
+        console.log('OpenAI TTS API error:', response.status, errorText);
+      }
+      return false;
+    } catch (error) {
+      console.error('OpenAI TTS failed:', error);
+      return false;
+    }
+  };
+
+  // Google Cloud TTS fallback
+  const tryGoogleTTS = async (text: string): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/tts/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          languageCode: 'tr-TR',
+          voiceName: 'tr-TR-Wavenet-E' // High-quality Turkish voice
+        }),
+      });
+
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+          console.log(`Google TTS completed for: ${text}`);
+        };
+
+        await audio.play();
+        setPronunciationQuality('professional');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log('Google TTS failed:', error);
+      return false;
+    }
+  };
+
+  // Azure Cognitive Services TTS fallback
+  const tryAzureTTS = async (text: string): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/tts/azure', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          voice: 'tr-TR-EmelNeural', // High-quality Turkish neural voice
+          language: 'tr-TR'
+        }),
+      });
+
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+          console.log(`Azure TTS completed for: ${text}`);
+        };
+
+        await audio.play();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log('Azure TTS failed:', error);
+      return false;
+    }
+  };
+
+  // Enhanced Turkish pronunciation with native browser voices
+  const fallbackToPhoneticPronunciation = (text: string) => {
+    try {
+      console.log('Using fallback pronunciation for:', text);
+      speechSynthesis.cancel();
+
+      // First try to use actual Turkish with best available Turkish voice
+      const success = tryNativeTurkishVoice(text);
+      if (success) {
+        console.log('Using native Turkish voice');
+        return;
+      }
+
+      // If no Turkish voice, use enhanced phonetic pronunciation
+      console.log('Using enhanced phonetic pronunciation');
+      usePhoneticPronunciation(text);
+    } catch (error) {
+      console.error('Enhanced pronunciation failed:', error);
+      // Final fallback - basic browser synthesis
+      playBrowserSynthesis(text, 'turkish');
+    }
+  };
+
+  // Try to use native Turkish voices from the browser
+  const tryNativeTurkishVoice = (text: string): boolean => {
+    try {
+      const voices = speechSynthesis.getVoices();
+
+      // Look for high-quality Turkish voices in order of preference
+      const turkishVoices = voices.filter(voice =>
+        voice.lang.startsWith('tr') ||
+        voice.lang.includes('TR') ||
+        voice.name.toLowerCase().includes('turkish') ||
+        voice.name.toLowerCase().includes('türk')
+      );
+
+      // Prefer neural/premium voices
+      const premiumVoice = turkishVoices.find(voice =>
+        voice.name.toLowerCase().includes('neural') ||
+        voice.name.toLowerCase().includes('premium') ||
+        voice.name.toLowerCase().includes('wavenet') ||
+        voice.name.toLowerCase().includes('enhanced')
+      );
+
+      const selectedVoice = premiumVoice || turkishVoices[0];
+
+      if (selectedVoice) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = selectedVoice;
+        utterance.lang = 'tr-TR';
+        utterance.rate = 0.8; // Slightly slower for learning
+        utterance.pitch = 1.0;
+        utterance.volume = 1;
+
+        utterance.onend = () => {
+          console.log(`Native Turkish pronunciation completed for: ${text} using ${selectedVoice.name}`);
+        };
+
+        utterance.onerror = (event) => {
+          console.log('Native Turkish voice error:', event.error);
+        };
+
+        speechSynthesis.speak(utterance);
+        setPronunciationQuality('enhanced');
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.log('Native Turkish voice failed:', error);
+      return false;
+    }
+  };
+
+  // Enhanced phonetic pronunciation as final fallback
+  const usePhoneticPronunciation = (text: string) => {
+    // Use the original text with best available voice settings
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    const voices = speechSynthesis.getVoices();
+
+    // Try to find any voice that might handle Turkish better
+    const bestVoice = voices.find(voice =>
+      voice.lang.startsWith('tr') ||
+      voice.lang.startsWith('de') || // German voices often handle Turkish sounds better
+      voice.lang.startsWith('it') || // Italian voices for vowel sounds
+      (voice.lang.startsWith('en') && voice.name.toLowerCase().includes('female'))
+    ) || voices[0];
+
+    if (bestVoice) {
+      utterance.voice = bestVoice;
+    }
+
+    // Use Turkish language code even with non-Turkish voice
+    utterance.lang = 'tr-TR';
+    utterance.rate = 0.7; // Slower for clarity
+    utterance.pitch = 1.1; // Slightly higher for Turkish
+    utterance.volume = 1;
+
+    utterance.onend = () => {
+      console.log(`Enhanced fallback pronunciation completed for: ${text}`);
+    };
+
+    utterance.onerror = (event) => {
+      console.log('Enhanced fallback pronunciation error:', event.error);
+    };
+
+    speechSynthesis.speak(utterance);
+  };
+
+  // Create phonetic approximation for unknown Turkish words
+  const createPhoneticApproximation = (text: string): string => {
+    return text
+      .replace(/ş/g, 'sh')
+      .replace(/ç/g, 'ch')
+      .replace(/ğ/g, 'gh')
+      .replace(/ı/g, 'uh')
+      .replace(/ö/g, 'uh')
+      .replace(/ü/g, 'ü')
+      .replace(/j/g, 'zh')
+      .toLowerCase();
+  };
+
+  // Get phonetic guide for display
+  const getPhoneticGuide = (text: string): string => {
+    const turkishPhonetics: Record<string, string> = {
+      'okul': 'oh-KOOL',
+      'şehir': 'sheh-HEER',
+      'ev': 'ehv',
+      'kız': 'kuhz',
+      'göz': 'guhz',
+      'top': 'tohp',
+      'kitap': 'kee-TAHP',
+      'çiçek': 'chee-CHEHK',
+      'masa': 'mah-SAH',
+      'pencere': 'pehn-jeh-REH',
+      'kapı': 'kah-PUH',
+      'öğretmen': 'uh-reht-MEHN',
+      'araba': 'ah-rah-BAH',
+      'elma': 'ehl-MAH',
+      'hayvan': 'hahy-VAHN',
+      'çocuk': 'choh-JOOK',
+      'kedi': 'keh-DEE',
+      'köpek': 'kuh-PEHK',
+      'kuş': 'koosh',
+      'balık': 'bah-LUHK'
+    };
+
+    return turkishPhonetics[text.toLowerCase()] || createPhoneticApproximation(text);
+  };
+
+  // Browser synthesis for English and fallback
+  const playBrowserSynthesis = (text: string, language: 'turkish' | 'english') => {
+    try {
+      console.log(`Using browser synthesis for: "${text}" in ${language}`);
+      speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      if (language === 'turkish') {
+        utterance.lang = 'tr-TR';
+        const voices = speechSynthesis.getVoices();
+        console.log('Available voices:', voices.length);
+
+        const turkishVoice = voices.find(voice => voice.lang.startsWith('tr'));
+        if (turkishVoice) {
+          utterance.voice = turkishVoice;
+          console.log('Using Turkish voice:', turkishVoice.name);
+        } else {
+          console.log('No Turkish voice found, using default');
+        }
+        utterance.rate = 0.7;
+      } else {
+        utterance.lang = 'en-US';
+        utterance.rate = 0.8;
+      }
+
       utterance.pitch = 1;
       utterance.volume = 1;
 
-      // Add error handling
+      utterance.onstart = () => {
+        console.log('Speech started');
+      };
+
+      utterance.onend = () => {
+        console.log('Speech ended');
+      };
+
       utterance.onerror = (event) => {
-        console.log('Speech synthesis error:', event.error);
+        console.error('Speech error:', event.error);
       };
 
       speechSynthesis.speak(utterance);
+      setPronunciationQuality('basic');
     } catch (error) {
-      console.log('Speech synthesis not available:', error);
+      console.error('Browser synthesis failed:', error);
     }
   };
   const [maxBatches] = useState(5); // Maximum 5 additional batches
@@ -283,8 +830,8 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
 
   const renderVowelHarmonyAnimation = () => {
     return (
-      <div className="flex items-center justify-center space-x-4 p-8">
-        {/* Base Word */}
+      <div className="flex flex-col items-center justify-center space-y-6 p-8">
+        {/* Base Word with Translation */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -292,74 +839,126 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
             // Pronounce the base word when it appears
             setTimeout(() => playAudio(example.base, 'turkish'), 500);
           }}
-          className="text-3xl font-bold text-blue-600 bg-blue-100 px-4 py-2 rounded-lg cursor-pointer"
-          onClick={() => playAudio(example.base, 'turkish')}
+          className="text-center"
         >
-          {example.base}
-        </motion.div>
-
-        {/* Plus Sign */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-2xl font-bold text-gray-600"
-        >
-          +
-        </motion.div>
-
-        {/* Suffix with Harmony */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1 }}
-          className="relative"
-        >
-          <div className="text-3xl font-bold text-green-600 bg-green-100 px-4 py-2 rounded-lg">
-            {example.suffix}
-          </div>
-          
-          {/* Vowel Harmony Indicator */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5 }}
-            className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm text-green-700 bg-green-50 px-2 py-1 rounded"
+          <div className="text-4xl font-bold text-blue-600 bg-blue-100 px-6 py-3 rounded-lg border-2 border-blue-300 cursor-pointer mb-2 hover:bg-blue-200 transition-colors relative group"
+            onClick={() => playAudio(example.base, 'turkish')}
+            title={`Click to hear pronunciation: ${getPhoneticGuide(example.base)}`}
           >
-            Vowel Harmony!
+            🔊 {example.base}
+            {/* Phonetic guide tooltip */}
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              {getPhoneticGuide(example.base)}
+            </div>
+          </div>
+          <div className="text-sm text-gray-600 italic">
+            "{getTurkishBaseTranslation(example.base)}" (base word)
+          </div>
+          <div className="text-xs text-blue-500 mt-1 flex items-center justify-center gap-1">
+            <span>🎙️</span>
+            <span>Turkish pronunciation</span>
+            <span className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold border ${
+              pronunciationQuality === 'professional'
+                ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-green-200'
+                : pronunciationQuality === 'enhanced'
+                ? 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 border-blue-200'
+                : 'bg-gray-100 text-gray-600 border-gray-200'
+            }`}>
+              {pronunciationQuality === 'professional' ? '🌟 AI-Powered' :
+               pronunciationQuality === 'enhanced' ? '⚡ Enhanced' : '🔧 Basic'}
+            </span>
+            {voicesLoaded && (
+              <button
+                onClick={() => playAudio('test', 'turkish')}
+                className="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                title="Test audio"
+              >
+                🔊 Test
+              </button>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Animation Row */}
+        <div className="flex items-center justify-center space-x-4">
+          {/* Base Word (smaller) */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1, duration: 0.6 }}
+            className="text-2xl font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-lg"
+          >
+            {example.base}
           </motion.div>
-        </motion.div>
 
-        {/* Equals Sign */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2 }}
-          className="text-2xl font-bold text-gray-600"
-        >
-          =
-        </motion.div>
+          {/* Plus Sign */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+            className="text-2xl font-bold text-gray-600"
+          >
+            +
+          </motion.div>
 
-        {/* Result */}
+          {/* Suffix */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.4, duration: 0.6 }}
+            className="text-center"
+          >
+            <div className="text-2xl font-bold text-green-600 bg-green-100 px-4 py-2 rounded-lg">
+              {example.suffix}
+            </div>
+          </motion.div>
+
+          {/* Equals Sign */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.8 }}
+            className="text-2xl font-bold text-gray-600"
+          >
+            =
+          </motion.div>
+
+          {/* Result */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2.2, type: "spring", stiffness: 200 }}
+            onAnimationComplete={() => {
+              // Pronounce the result when it appears
+              setTimeout(() => playAudio(example.result, 'turkish'), 300);
+            }}
+            className="text-2xl font-bold text-purple-600 bg-purple-100 px-4 py-2 rounded-lg border-2 border-purple-300 cursor-pointer hover:bg-purple-200 transition-colors relative group"
+            onClick={() => playAudio(example.result, 'turkish')}
+            title={`Click to hear pronunciation: ${getPhoneticGuide(example.result)}`}
+          >
+            🔊 {example.result}
+            {/* Phonetic guide tooltip */}
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              {getPhoneticGuide(example.result)}
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Vowel Harmony Indicator */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2.5, type: "spring", stiffness: 200 }}
-          onAnimationComplete={() => {
-            // Pronounce the result when it appears
-            setTimeout(() => playAudio(example.result, 'turkish'), 300);
-          }}
-          className="text-3xl font-bold text-purple-600 bg-purple-100 px-4 py-2 rounded-lg border-2 border-purple-300 cursor-pointer"
-          onClick={() => playAudio(example.result, 'turkish')}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2.6 }}
+          className="text-sm text-green-700 bg-green-50 px-3 py-2 rounded-full border border-green-200"
         >
-          {example.result}
+          ✨ Vowel Harmony Applied! ✨
         </motion.div>
 
         {/* English Translation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3.5 }}
+          transition={{ delay: 3.2 }}
           className="text-lg text-gray-600 italic bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 cursor-pointer"
           onClick={() => playAudio(example.translation, 'english')}
         >
@@ -594,22 +1193,12 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
             <p className="text-lg text-green-600 mb-6">
               You've mastered {rule.title}!
             </p>
-            <div className="flex space-x-4">
-              <button
-                onClick={onComplete}
-                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Continue Learning
-              </button>
-              {onNext && (
-                <button
-                  onClick={onNext}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Next Lesson
-                </button>
-              )}
-            </div>
+            <button
+              onClick={onComplete}
+              className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+            >
+              Continue Learning
+            </button>
           </motion.div>
         )}
       </div>
@@ -711,7 +1300,7 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
                 }}
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Continue Learning
+                Complete Lesson
               </button>
             </div>
           </div>
@@ -733,31 +1322,7 @@ export default function AnimatedGrammarLesson({ rule, onComplete, onNext }: Anim
         </div>
       )}
 
-      {/* Completion Message */}
-      {animationPhase === 'complete' && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center mt-8 p-6 bg-green-50 rounded-lg border-2 border-green-200"
-        >
-          <div className="text-4xl mb-4">🎉</div>
-          <h2 className="text-2xl font-bold text-green-800 mb-2">Excellent Work!</h2>
-          <p className="text-green-700 mb-4">
-            You've completed {currentExamples.length} grammar examples!
-          </p>
-          {completedBatches.length > 0 && (
-            <p className="text-sm text-green-600 mb-4">
-              Completed {completedBatches.length + 1} batches of examples
-            </p>
-          )}
-          <button
-            onClick={onComplete}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Continue Learning
-          </button>
-        </motion.div>
-      )}
+
     </div>
   );
 }

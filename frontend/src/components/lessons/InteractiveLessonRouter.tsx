@@ -18,6 +18,27 @@ import YaSizPersonalization from '../personalization/YaSizPersonalization';
 import EglenelimOgrenelimGames from '../games/EglenelimOgrenelimGames';
 import ErrorDetectionQuiz from '../exercises/ErrorDetectionQuiz';
 
+// Exercise variety mapping for each unit to ensure no repetition within units
+const getExerciseTypeForLesson = (unitId: string, lessonNumber: number) => {
+  const exerciseMap = {
+    '1': ['flashcards', 'picture_matching', 'listening'],
+    '2': ['dialogue', 'quiz', 'sentence_builder'],
+    '3': ['mini_games', 'speaking', 'fill_in_blanks'],
+    '4': ['vocabulary', 'grammar_animation', 'picture_matching'],
+    '5': ['listening', 'flashcards', 'dialogue'],
+    '6': ['matching', 'speaking', 'sentence_builder'],
+    '7': ['quiz', 'mini_games', 'fill_in_blanks'],
+    '8': ['picture_matching', 'vocabulary', 'grammar_animation'],
+    '9': ['flashcards', 'dialogue', 'listening'],
+    '10': ['matching', 'sentence_builder', 'speaking'],
+    '11': ['quiz', 'picture_matching', 'fill_in_blanks'],
+    '12': ['mini_games', 'grammar_animation', 'vocabulary']
+  };
+
+  const types = exerciseMap[unitId] || ['flashcards', 'picture_matching', 'personalization'];
+  return types[(lessonNumber - 1) % types.length];
+};
+
 interface Lesson {
   id: string;
   title: string;
@@ -44,11 +65,11 @@ interface InteractiveLessonRouterProps {
   onExerciseComplete: (exerciseId: string, score: number, timeSpent: number) => void;
 }
 
-export default function InteractiveLessonRouter({ 
-  lesson, 
-  userProgress, 
-  onLessonComplete, 
-  onExerciseComplete 
+export default function InteractiveLessonRouter({
+  lesson,
+  userProgress,
+  onLessonComplete,
+  onExerciseComplete
 }: InteractiveLessonRouterProps) {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [exerciseResults, setExerciseResults] = useState<any[]>([]);
@@ -59,6 +80,9 @@ export default function InteractiveLessonRouter({
 
   // Progress updater for tracking user progress
   const progressUpdater = useProgressUpdater();
+
+  console.log('🎯 InteractiveLessonRouter received lesson:', lesson.id);
+  console.log('📊 Lesson exercises:', lesson.exercises);
 
   const currentExercise = lesson.exercises[currentExerciseIndex];
 
@@ -340,21 +364,22 @@ export default function InteractiveLessonRouter({
       <div className="mb-6">
         <div className="flex justify-center space-x-2 overflow-x-auto pb-2">
           {lesson.exercises.map((exercise, index) => (
-            <div
+            <button
               key={exercise.id}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg border-2 transition-all ${
+              onClick={() => setCurrentExerciseIndex(index)}
+              className={`flex items-center space-x-2 px-3 py-2 rounded-lg border-2 transition-all cursor-pointer hover:shadow-md ${
                 index === currentExerciseIndex
                   ? 'border-blue-500 bg-blue-50'
                   : index < currentExerciseIndex
                   ? 'border-green-500 bg-green-50'
-                  : 'border-gray-300 bg-gray-50'
+                  : 'border-gray-300 bg-gray-50 hover:border-gray-400'
               }`}
             >
               <span className="text-lg">{getExerciseTypeIcon(exercise.type)}</span>
               <span className="text-sm font-medium whitespace-nowrap">
                 {index < currentExerciseIndex ? '✓' : index + 1}
               </span>
-            </div>
+            </button>
           ))}
         </div>
       </div>

@@ -1,357 +1,300 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { MainLayout } from "@/components/layout/main-layout"
-import { LessonCard } from "@/components/lessons/lesson-card"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { curriculumService, type Lesson } from "@/lib/curriculum-service"
-// import { useUserProgress } from "@/contexts/UserProgressContext" // Temporarily disabled
-import { Search, Filter, BookOpen, Clock, Users, Star, RefreshCw } from "lucide-react"
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { curriculumApi } from '@/lib/curriculum-api';
+import { Lesson, Unit, ExerciseType } from '@/types/lesson.types';
 
-// Enhanced lesson interface for UI
-interface EnhancedLesson extends Lesson {
-  progress: number;
-  isCompleted: boolean;
-  isLocked: boolean;
-  rating: number;
-  enrolledCount: number;
-  topics: string[];
-  category: string;
+interface LessonCardProps {
+  lesson: Lesson;
+  unit: Unit;
+  onClick: () => void;
 }
 
-const categories = ["All", "Basics", "Vocabulary", "Grammar", "Practical", "Culture", "Reading", "Speaking"]
-const difficulties = ["All", "A1", "A2", "B1", "B2", "C1", "C2"]
-
-export default function LessonsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [selectedDifficulty, setSelectedDifficulty] = useState("All")
-  const [sortBy, setSortBy] = useState("progress") // progress, rating, duration, title
-  const [lessons, setLessons] = useState<EnhancedLesson[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  // Temporarily use mock user progress until context issue is resolved
-  const userProgress = {
-    completedLessons: ['1', '2'] // Mock completed lessons
-  }
-
-  // Load curriculum data on component mount
-  useEffect(() => {
-    const loadLessons = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-
-        const curriculumData = await curriculumService.getCurriculumData()
-
-        // Transform curriculum lessons to enhanced lessons with UI data
-        const enhancedLessons: EnhancedLesson[] = curriculumData.lessons.map((lesson, index) => {
-          const isCompleted = userProgress?.completedLessons?.includes(lesson.id) || false
-          const progress = isCompleted ? 100 : Math.floor(Math.random() * 60) // Random progress for demo
-
-          // Determine category based on lesson content
-          let category = "Basics"
-          if (lesson.title.toLowerCase().includes("grammar") || lesson.title.toLowerCase().includes("verb")) {
-            category = "Grammar"
-          } else if (lesson.title.toLowerCase().includes("vocabulary") || lesson.title.toLowerCase().includes("word")) {
-            category = "Vocabulary"
-          } else if (lesson.title.toLowerCase().includes("culture") || lesson.title.toLowerCase().includes("turkish")) {
-            category = "Culture"
-          } else if (lesson.title.toLowerCase().includes("reading")) {
-            category = "Reading"
-          } else if (lesson.title.toLowerCase().includes("speaking") || lesson.title.toLowerCase().includes("pronunciation")) {
-            category = "Speaking"
-          } else if (lesson.title.toLowerCase().includes("practical") || lesson.title.toLowerCase().includes("shopping")) {
-            category = "Practical"
-          }
-
-          // Extract topics from exercises (with safety check)
-          const topics = lesson.exercises ? lesson.exercises.map(ex => ex.type.replace('_', ' ')).slice(0, 3) : []
-
-          return {
-            ...lesson,
-            progress,
-            isCompleted,
-            isLocked: false, // For now, no lessons are locked
-            rating: 4.2 + Math.random() * 0.8, // Random rating between 4.2-5.0
-            enrolledCount: 500 + Math.floor(Math.random() * 1000), // Random enrollment
-            topics: topics.length > 0 ? topics : ['Turkish', 'Language Learning'],
-            category
-          }
-        })
-
-        setLessons(enhancedLessons)
-      } catch (err) {
-        console.error('Failed to load lessons:', err)
-        setError('Failed to load lessons. Please try again.')
-      } finally {
-        setLoading(false)
-      }
+const LessonCard: React.FC<LessonCardProps> = ({ lesson, unit, onClick }) => {
+  const getDifficultyColor = (level: string) => {
+    switch (level) {
+      case 'A1': return 'bg-green-100 text-green-800';
+      case 'A2': return 'bg-blue-100 text-blue-800';
+      case 'B1': return 'bg-yellow-100 text-yellow-800';
+      case 'B2': return 'bg-orange-100 text-orange-800';
+      case 'C1': return 'bg-red-100 text-red-800';
+      case 'C2': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
+  };
 
-    loadLessons()
-  }, [])
+  const getTopicIcon = (exerciseType: ExerciseType) => {
+    const icons: Record<ExerciseType, string> = {
+      reading: '📖',
+      writing: '✍️',
+      speaking: '🗣️',
+      listening: '👂',
+      vocabulary: '📚',
+      grammar: '📝',
+      culture: '🏛️',
+      flashcards: '🃏',
+      picture_matching: '🖼️',
+      audio_listening: '🎧',
+      sentence_builder: '🧩',
+      word_scramble: '🔤',
+      mini_games: '🎮',
+      pronunciation: '🔊',
+      error_detection: '🔍',
+      grammar_animation: '🎬',
+      personalization: '👤',
+      dialogue: '💬',
+      quiz: '❓',
+      fill_in_blanks: '📝',
+      matching: '🔗'
+    };
+    return icons[exerciseType] || '📚';
+  };
 
-  const handleStartLesson = (lessonId: string) => {
-    window.location.href = `/lesson/${lessonId}`
-  }
+  return (
+    <div 
+      onClick={onClick}
+      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+    >
+      {/* Lesson Image/Header */}
+      <div className="h-48 bg-gradient-to-br from-blue-500 to-purple-600 relative">
+        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+        <div className="absolute bottom-4 left-4 text-white">
+          <div className={`inline-block px-2 py-1 rounded text-xs font-medium ${getDifficultyColor(lesson.difficultyLevel)} bg-white`}>
+            {lesson.difficultyLevel}
+          </div>
+        </div>
+        <div className="absolute top-4 right-4 text-white text-2xl">
+          {getTopicIcon(lesson.exercises[0]?.type || 'vocabulary')}
+        </div>
+      </div>
 
-  const filteredLessons = lessons
-    .filter(lesson => {
-      const matchesSearch = lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           lesson.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           lesson.topics.some(topic => topic.toLowerCase().includes(searchQuery.toLowerCase()))
+      {/* Lesson Content */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm text-blue-600 font-medium">
+            📚 {unit.title}
+          </span>
+          <span className="text-xs text-gray-500">
+            ⏱️ {lesson.estimatedMinutes} min
+          </span>
+        </div>
+        
+        <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+          {lesson.title}
+        </h3>
+        
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+          {lesson.description}
+        </p>
 
-      const matchesCategory = selectedCategory === "All" || lesson.category === selectedCategory
-      const matchesDifficulty = selectedDifficulty === "All" || lesson.difficulty === selectedDifficulty
+        {/* Exercise Topics */}
+        <div className="flex flex-wrap gap-1 mb-4">
+          {lesson.exercises.slice(0, 4).map((exercise, index) => (
+            <span 
+              key={index}
+              className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700"
+            >
+              {getTopicIcon(exercise.type)} {exercise.type}
+            </span>
+          ))}
+          {lesson.exercises.length > 4 && (
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-200 text-gray-600">
+              +{lesson.exercises.length - 4} more
+            </span>
+          )}
+        </div>
 
-      return matchesSearch && matchesCategory && matchesDifficulty
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "progress":
-          return b.progress - a.progress
-        case "rating":
-          return b.rating - a.rating
-        case "duration":
-          return a.duration - b.duration
-        case "title":
-          return a.title.localeCompare(b.title)
-        default:
-          return 0
+        {/* Progress and Stats */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <span>🎮 {lesson.exercises.length} exercises</span>
+          </div>
+          <div className="text-right">
+            <div className="text-sm font-medium text-gray-900">65%</div>
+            <div className="w-16 bg-gray-200 rounded-full h-1.5">
+              <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '65%' }}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LessonsPage: React.FC = () => {
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [sortBy, setSortBy] = useState<string>('Most Popular');
+  const router = useRouter();
+
+  useEffect(() => {
+    const loadCurriculum = async () => {
+      try {
+        setLoading(true);
+        
+        // Get all lessons and units from curriculum
+        const allLessons = curriculumApi.getAllLessons();
+        const allUnits = curriculumApi.getUnits();
+        
+        console.log('📚 Loaded curriculum:', {
+          lessons: allLessons.length,
+          units: allUnits.length
+        });
+        
+        setLessons(allLessons);
+        setUnits(allUnits);
+      } catch (error) {
+        console.error('❌ Failed to load curriculum:', error);
+      } finally {
+        setLoading(false);
       }
-    })
+    };
 
-  const stats = {
-    totalLessons: lessons.length,
-    completedLessons: lessons.filter(l => l.isCompleted).length,
-    inProgressLessons: lessons.filter(l => l.progress > 0 && !l.isCompleted).length,
-    averageRating: lessons.length > 0 ? (lessons.reduce((sum, l) => sum + l.rating, 0) / lessons.length).toFixed(1) : "0.0"
-  }
+    loadCurriculum();
+  }, []);
+
+  // Filter and search lessons
+  const filteredLessons = lessons.filter(lesson => {
+    const matchesSearch = lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         lesson.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesDifficulty = !selectedDifficulty || lesson.difficultyLevel === selectedDifficulty;
+    
+    const matchesCategory = !selectedCategory || 
+                           lesson.exercises.some(exercise => exercise.type === selectedCategory);
+    
+    return matchesSearch && matchesDifficulty && matchesCategory;
+  });
+
+  const handleLessonClick = (lesson: Lesson) => {
+    router.push(`/lesson/${lesson.id}`);
+  };
 
   if (loading) {
     return (
-      <MainLayout>
-        <div className="space-y-6">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Turkish Lessons
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Loading lessons from curriculum...
-            </p>
-          </div>
-          <div className="flex items-center justify-center py-12">
-            <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
-            <span className="ml-3 text-lg text-gray-600">Loading lessons...</span>
-          </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading lessons...</p>
         </div>
-      </MainLayout>
-    )
-  }
-
-  if (error) {
-    return (
-      <MainLayout>
-        <div className="space-y-6">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Turkish Lessons
-            </h1>
-          </div>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center py-8">
-                <div className="text-6xl mb-4">😕</div>
-                <h3 className="text-lg font-semibold mb-2">Failed to Load Lessons</h3>
-                <p className="text-muted-foreground mb-4">{error}</p>
-                <Button onClick={() => window.location.reload()}>
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Try Again
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </MainLayout>
-    )
+      </div>
+    );
   }
 
   return (
-    <MainLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Turkish Lessons
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Explore our comprehensive collection of Turkish language lessons from real curriculum
-          </p>
-        </div>
-
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <BookOpen className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-                <div className="text-2xl font-bold">{stats.totalLessons}</div>
-                <div className="text-sm text-muted-foreground">Total Lessons</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="h-8 w-8 mx-auto mb-2 bg-green-100 rounded-full flex items-center justify-center">
-                  <div className="w-4 h-4 bg-green-600 rounded-full"></div>
-                </div>
-                <div className="text-2xl font-bold">{stats.completedLessons}</div>
-                <div className="text-sm text-muted-foreground">Completed</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <Clock className="h-8 w-8 mx-auto mb-2 text-orange-600" />
-                <div className="text-2xl font-bold">{stats.inProgressLessons}</div>
-                <div className="text-sm text-muted-foreground">In Progress</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <Star className="h-8 w-8 mx-auto mb-2 text-yellow-600" />
-                <div className="text-2xl font-bold">{stats.averageRating}</div>
-                <div className="text-sm text-muted-foreground">Avg Rating</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Search and Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
-              <span>Search & Filter</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search lessons, topics, or descriptions..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Category</label>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map(category => (
-                    <Button
-                      key={category}
-                      variant={selectedCategory === category ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedCategory(category)}
-                    >
-                      {category}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">Difficulty</label>
-                <div className="flex flex-wrap gap-2">
-                  {difficulties.map(difficulty => (
-                    <Button
-                      key={difficulty}
-                      variant={selectedDifficulty === difficulty ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedDifficulty(difficulty)}
-                    >
-                      {difficulty}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">Sort By</label>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { value: "progress", label: "Progress" },
-                    { value: "rating", label: "Rating" },
-                    { value: "duration", label: "Duration" },
-                    { value: "title", label: "Title" }
-                  ].map(option => (
-                    <Button
-                      key={option.value}
-                      variant={sortBy === option.value ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSortBy(option.value)}
-                    >
-                      {option.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Results */}
-        <div className="space-y-4">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight">
-              Lessons ({filteredLessons.length})
-            </h2>
-            {searchQuery && (
-              <Button variant="ghost" onClick={() => setSearchQuery("")}>
-                Clear Search
-              </Button>
-            )}
-          </div>
-
-          {filteredLessons.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center py-8">
-                  <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-semibold mb-2">No lessons found</h3>
-                  <p className="text-muted-foreground">
-                    Try adjusting your search criteria or filters
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredLessons.map((lesson) => (
-                <LessonCard
-                  key={lesson.id}
-                  lesson={lesson}
-                  onStart={handleStartLesson}
-                />
-              ))}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Lesson Library</h1>
+              <p className="text-gray-600 mt-1">{filteredLessons.length} lessons available</p>
             </div>
-          )}
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              📝 Publish
+            </button>
+          </div>
         </div>
       </div>
-    </MainLayout>
-  )
-}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search and Filters */}
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">
+            {/* Search */}
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="🔍 Search lessons, topics, or phrases..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-4 items-center">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Filter Lessons</label>
+            </div>
+            
+            {/* Difficulty Filter */}
+            <select
+              value={selectedDifficulty}
+              onChange={(e) => setSelectedDifficulty(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Levels</option>
+              <option value="A1">Beginner (A1)</option>
+              <option value="A2">Elementary (A2)</option>
+              <option value="B1">Intermediate (B1)</option>
+              <option value="B2">Upper-Intermediate (B2)</option>
+              <option value="C1">Advanced (C1)</option>
+              <option value="C2">Proficient (C2)</option>
+            </select>
+
+            {/* Category Filter */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Categories</option>
+              <option value="vocabulary">📚 Vocabulary</option>
+              <option value="grammar">📝 Grammar</option>
+              <option value="reading">📖 Reading</option>
+              <option value="listening">👂 Listening</option>
+              <option value="speaking">🗣️ Speaking</option>
+              <option value="writing">✍️ Writing</option>
+              <option value="culture">🏛️ Culture</option>
+            </select>
+
+            {/* Sort */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Most Popular">📈 Sort: Most Popular</option>
+              <option value="Newest">🆕 Newest</option>
+              <option value="Difficulty">🎯 Difficulty</option>
+              <option value="Duration">⏱️ Duration</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Lessons Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredLessons.map((lesson) => {
+            const unit = units.find(u => u.id === lesson.unitId);
+            return (
+              <LessonCard
+                key={lesson.id}
+                lesson={lesson}
+                unit={unit || { id: '', title: 'Unknown Unit' } as Unit}
+                onClick={() => handleLessonClick(lesson)}
+              />
+            );
+          })}
+        </div>
+
+        {filteredLessons.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-gray-400 text-6xl mb-4">📚</div>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">No lessons found</h3>
+            <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default LessonsPage;

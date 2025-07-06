@@ -27,7 +27,11 @@ import { UserSession } from '../auth/entities/user-session.entity';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        url: configService.get('DATABASE_URL'),
+        host: configService.get('POSTGRES_HOST', 'localhost'),
+        port: configService.get('POSTGRES_PORT', 5432),
+        username: configService.get('POSTGRES_USER', 'postgres'),
+        password: configService.get('POSTGRES_PASSWORD', 'postgres123'),
+        database: configService.get('POSTGRES_DB', 'turkish_learning_app'),
         entities: [
           User,
           UserPreferences,

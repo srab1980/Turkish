@@ -4,6 +4,7 @@ import { MainLayout } from "@/components/layout/main-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Flame, Target, TrendingUp, Clock, Star } from "lucide-react"
+import { useState, useEffect } from "react"
 
 const streakData = {
   current: 7,
@@ -23,14 +24,25 @@ const weeklyActivity = [
   { day: 'Sun', date: '2024-01-21', completed: true, lessons: 2 }
 ]
 
-const monthlyCalendar = Array.from({ length: 31 }, (_, i) => {
-  const day = i + 1
-  const hasActivity = Math.random() > 0.3 // Simulate activity
-  const intensity = hasActivity ? Math.floor(Math.random() * 4) + 1 : 0
-  return { day, hasActivity, intensity }
-})
+// Fixed calendar data to prevent hydration mismatch
+const generateMonthlyCalendar = () => {
+  return Array.from({ length: 31 }, (_, i) => {
+    const day = i + 1
+    // Use deterministic pattern based on day number to avoid hydration mismatch
+    const hasActivity = (day % 3) !== 0 // Every 3rd day has no activity
+    const intensity = hasActivity ? ((day % 4) + 1) : 0 // Cycle through intensities 1-4
+    return { day, hasActivity, intensity }
+  })
+}
 
 export default function StreaksPage() {
+  const [monthlyCalendar, setMonthlyCalendar] = useState<Array<{day: number, hasActivity: boolean, intensity: number}>>([])
+
+  useEffect(() => {
+    // Generate calendar data on client side to prevent hydration mismatch
+    setMonthlyCalendar(generateMonthlyCalendar())
+  }, [])
+
   return (
     <MainLayout>
       <div className="space-y-8">
@@ -153,7 +165,7 @@ export default function StreaksPage() {
               ))}
             </div>
             <div className="grid grid-cols-7 gap-2">
-              {monthlyCalendar.map((day) => (
+              {monthlyCalendar.length > 0 ? monthlyCalendar.map((day) => (
                 <div key={day.day} className="aspect-square">
                   <div className={`w-full h-full rounded-lg flex items-center justify-center text-sm ${
                     day.hasActivity
@@ -166,7 +178,16 @@ export default function StreaksPage() {
                     {day.day}
                   </div>
                 </div>
-              ))}
+              )) : (
+                // Loading placeholder
+                Array.from({ length: 31 }, (_, i) => (
+                  <div key={i + 1} className="aspect-square">
+                    <div className="w-full h-full rounded-lg flex items-center justify-center text-sm bg-gray-50 text-gray-400">
+                      {i + 1}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
             <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
               <span>Less</span>

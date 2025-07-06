@@ -442,18 +442,9 @@ export default function SentenceBuilder({
   // Initialize with exactly 5 exercises
   useEffect(() => {
     const initializeExercises = () => {
-      let exerciseList = [...exercises];
-
-      // Ensure we have exactly 5 exercises by generating variations if needed
-      while (exerciseList.length < 5) {
-        const baseExercise = exerciseList[exerciseList.length % exerciseList.length];
-        const variation = generateSentenceVariation(baseExercise, exerciseList.length, lessonId);
-        exerciseList.push(variation);
-      }
-
-      // Limit to exactly 5 exercises
-      exerciseList = exerciseList.slice(0, 5);
-      setCurrentExercises(exerciseList);
+      // Always use fresh batch generation to ensure no duplicates
+      const initialBatch = generateFreshSentenceBatch(lessonId || 'default', 1);
+      setCurrentExercises(initialBatch);
 
       // Always show load more button for additional batches
       setShowLoadMore(true);

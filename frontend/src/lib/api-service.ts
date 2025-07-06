@@ -1,7 +1,8 @@
 // API Service for Frontend
 // Handles all API communication with fallback to mock data
 
-import { mockApiService } from './mock-api';
+import { curriculumApi } from './curriculum-api';
+import { NetworkError, handleError, safeAsync } from './error-handler';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -12,33 +13,50 @@ export interface ApiResponse<T> {
 
 class ApiService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-  private useMockApi = false;
+  private useCurriculumApi = true; // Use real curriculum by default
   private curriculumCache: any = null;
 
   private async makeRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
           ...options?.headers,
         },
+        signal: controller.signal,
         ...options,
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        throw new NetworkError(errorMessage, `API request to ${endpoint}`);
       }
 
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.message || 'API request failed');
+        throw new NetworkError(result.message || 'API request failed', `API request to ${endpoint}`);
       }
 
       return result.data;
     } catch (error) {
-      console.warn(`API request failed for ${endpoint}:`, error);
-      throw error;
+      clearTimeout(timeoutId);
+
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw new NetworkError('Request timeout', `API request to ${endpoint}`);
+      }
+
+      if (error instanceof NetworkError) {
+        throw error;
+      }
+
+      handleError(error, `API request to ${endpoint}`);
+      throw new NetworkError('Network request failed', `API request to ${endpoint}`);
     }
   }
 
@@ -46,11 +64,16 @@ class ApiService {
   private async getCurriculumCache() {
     if (!this.curriculumCache) {
       try {
-        this.curriculumCache = await this.makeRequest('/api/v1/curriculum/data');
+        if (this.useCurriculumApi) {
+          // Use real curriculum from textbooks
+          this.curriculumCache = curriculumApi.getCompleteCurriculum();
+        } else {
+          // Fallback to API
+          this.curriculumCache = await this.makeRequest('/api/v1/curriculum/data');
+        }
       } catch (error) {
-        console.warn('Failed to load curriculum data, using mock data:', error);
-        this.useMockApi = true;
-        throw error;
+        console.warn('Failed to load curriculum, using fallback:', error);
+        this.curriculumCache = curriculumApi.getCompleteCurriculum();
       }
     }
     return this.curriculumCache;
