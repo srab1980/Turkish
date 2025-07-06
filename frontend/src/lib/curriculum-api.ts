@@ -118,7 +118,7 @@ const A1_UNITS: Omit<Unit, 'lessons'>[] = [
 // Generate lessons for each unit (3 lessons per unit)
 const generateLessonsForUnit = (unit: Omit<Unit, 'lessons'>): Lesson[] => {
   const lessons: Lesson[] = [];
-  
+
   for (let lessonNum = 1; lessonNum <= 3; lessonNum++) {
     const lessonId = `${unit.id}-lesson-${lessonNum}`;
     

@@ -13,7 +13,7 @@ export interface ApiResponse<T> {
 
 class ApiService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-  private useCurriculumApi = true; // Use real curriculum by default
+  private useMockApi = false; // Use real curriculum by default (false = use curriculum API)
   private curriculumCache: any = null;
 
   private async makeRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -64,7 +64,7 @@ class ApiService {
   private async getCurriculumCache() {
     if (!this.curriculumCache) {
       try {
-        if (this.useCurriculumApi) {
+        if (!this.useMockApi) {
           // Use real curriculum from textbooks
           this.curriculumCache = curriculumApi.getCompleteCurriculum();
         } else {
