@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turkish Learning Admin - Full CRUD Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 py-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">🇹🇷 Turkish Learning Admin</h1>
+                        <p class="text-gray-600 mt-1">Complete CRUD Management for Courses, Lessons & Exercises</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="refreshData()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            🔄 Refresh Data
+                        </button>
+                        <a href="http://localhost:3000" target="_blank" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                            🌐 View Site
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Status Messages -->
+        <div id="status-messages" class="max-w-7xl mx-auto px-4 py-2"></div>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 py-6">
+            <!-- Tabs -->
+            <div class="mb-6">
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-8">
+                        <button onclick="showTab('courses')" class="tab-button border-b-2 border-blue-500 py-2 px-1 text-blue-600 font-medium" data-tab="courses">
+                            📚 Courses (<span id="courses-count">0</span>)
+                        </button>
+                        <button onclick="showTab('units')" class="tab-button border-b-2 border-transparent py-2 px-1 text-gray-500 hover:text-gray-700" data-tab="units">
+                            📖 Units (<span id="units-count">0</span>)
+                        </button>
+                        <button onclick="showTab('lessons')" class="tab-button border-b-2 border-transparent py-2 px-1 text-gray-500 hover:text-gray-700" data-tab="lessons">
+                            📝 Lessons (<span id="lessons-count">0</span>)
+                        </button>
+                        <button onclick="showTab('exercises')" class="tab-button border-b-2 border-transparent py-2 px-1 text-gray-500 hover:text-gray-700" data-tab="exercises">
+                            🎮 Exercises (<span id="exercises-count">0</span>)
+                        </button>
+                        <button onclick="showTab('analytics')" class="tab-button border-b-2 border-transparent py-2 px-1 text-gray-500 hover:text-gray-700" data-tab="analytics">
+                            📊 Analytics
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="courses-tab" class="tab-content active">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold mb-4">Course Management</h2>
+                    <div id="courses-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="text-center py-12">
+                            <div class="text-gray-400 mb-4">📚</div>
+                            <p class="text-gray-600">Loading courses...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="units-tab" class="tab-content">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold mb-4">Unit Management</h2>
+                    <div class="mb-4">
+                        <select id="course-filter" class="border rounded px-3 py-2" onchange="filterUnits()">
+                            <option value="">All Courses</option>
+                        </select>
+                    </div>
+                    <div id="units-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="text-center py-8">
+                            <p class="text-gray-600">Loading units...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lessons-tab" class="tab-content">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold mb-4">Lesson Management</h2>
+                    <div class="mb-4 flex gap-4">
+                        <select id="lesson-course-filter" class="border rounded px-3 py-2" onchange="filterLessons()">
+                            <option value="">All Courses</option>
+                        </select>
+                        <select id="lesson-unit-filter" class="border rounded px-3 py-2" onchange="filterLessons()">
+                            <option value="">All Units</option>
+                        </select>
+                    </div>
+                    <div id="lessons-grid" class="space-y-2">
+                        <div class="text-center py-8">
+                            <p class="text-gray-600">Loading lessons...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="exercises-tab" class="tab-content">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold mb-4">Exercise Management</h2>
+                    <div class="mb-4">
+                        <select id="exercise-lesson-filter" class="border rounded px-3 py-2" onchange="filterExercises()">
+                            <option value="">All Lessons</option>
+                        </select>
+                    </div>
+                    <div id="exercises-grid" class="grid grid-cols-1 gap-4">
+                        <div class="text-center py-8">
+                            <p class="text-gray-600">Loading exercises...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analytics-tab" class="tab-content">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold mb-4">Analytics Dashboard</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6" id="analytics-stats">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold">Total Courses</h3>
+                            <div class="text-3xl font-bold" id="total-courses">0</div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold">Total Units</h3>
+                            <div class="text-3xl font-bold" id="total-units">0</div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold">Total Lessons</h3>
+                            <div class="text-3xl font-bold" id="total-lessons">0</div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold">Total Exercises</h3>
+                            <div class="text-3xl font-bold" id="total-exercises">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold" id="preview-title">Preview</h2>
+                <button onclick="closeModal('preview-modal')" class="text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div id="preview-content"></div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold" id="edit-title">Edit</h2>
+                <button onclick="closeModal('edit-modal')" class="text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div id="edit-content"></div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-red-600">Confirm Delete</h2>
+                <button onclick="closeModal('delete-modal')" class="text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div id="delete-content"></div>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>

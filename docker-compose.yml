@@ -103,14 +103,14 @@ services:
   # Admin Panel (Next.js)
   admin:
     build:
-      context: ./admin-panel
+      context: ./admin
       dockerfile: Dockerfile
     container_name: turkish-app-admin
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://localhost:3001
     ports:
-      - "3002:3003"
+      - "3002:3000"
     depends_on:
       - backend
     networks:
