@@ -14,21 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load curriculum data from the frontend API
 async function loadCurriculumData() {
     showStatus('Loading curriculum data...', 'info');
-    
+
     try {
         const response = await fetch('http://localhost:3000/api/test-curriculum');
         if (!response.ok) {
             throw new Error('Failed to fetch curriculum data');
         }
-        
+
         const data = await response.json();
-        
+
         // Process the data
         curriculumData.courses = data.courses || [];
         curriculumData.units = data.units || [];
         curriculumData.lessons = data.lessons || [];
         curriculumData.exercises = data.exercises || [];
-        
+
         // Update UI
         updateCounts();
         renderCourses();
@@ -36,13 +36,87 @@ async function loadCurriculumData() {
         renderLessons();
         renderExercises();
         updateAnalytics();
-        
+
         showStatus(`✅ Loaded ${curriculumData.lessons.length} lessons and ${curriculumData.exercises.length} exercises`, 'success');
-        
+
     } catch (error) {
         console.error('Error loading curriculum data:', error);
-        showStatus('❌ Failed to load curriculum data. Make sure the main app is running at http://localhost:3000', 'error');
+        showStatus('⚠️ Using demo data. To connect to real curriculum, ensure the main app is running at http://localhost:3000', 'error');
+
+        // Load demo data as fallback
+        loadDemoData();
     }
+}
+
+// Load demo data for testing
+function loadDemoData() {
+    curriculumData.courses = [
+        {
+            id: 'course-1',
+            title: 'Istanbul Turkish A1',
+            description: 'Complete beginner Turkish course based on Istanbul Turkish textbooks',
+            level: 'A1',
+            totalUnits: 6,
+            estimatedHours: 90,
+            isPublished: true
+        }
+    ];
+
+    curriculumData.units = [
+        { id: 'unit-1', courseId: 'course-1', unitNumber: 1, title: 'Tanışma (Meeting)', description: 'Introduction and greetings', estimatedHours: 15, isPublished: true },
+        { id: 'unit-2', courseId: 'course-1', unitNumber: 2, title: 'Nerede (Where)', description: 'Locations and directions', estimatedHours: 15, isPublished: true },
+        { id: 'unit-3', courseId: 'course-1', unitNumber: 3, title: 'Aile (Family)', description: 'Family and relationships', estimatedHours: 15, isPublished: true },
+        { id: 'unit-4', courseId: 'course-1', unitNumber: 4, title: 'Yemek (Food)', description: 'Food and dining', estimatedHours: 15, isPublished: true },
+        { id: 'unit-5', courseId: 'course-1', unitNumber: 5, title: 'Zaman (Time)', description: 'Time and schedules', estimatedHours: 15, isPublished: true },
+        { id: 'unit-6', courseId: 'course-1', unitNumber: 6, title: 'Alışveriş (Shopping)', description: 'Shopping and commerce', estimatedHours: 15, isPublished: true }
+    ];
+
+    curriculumData.lessons = [];
+    curriculumData.exercises = [];
+
+    // Generate lessons and exercises
+    curriculumData.units.forEach((unit, unitIndex) => {
+        for (let lessonNum = 1; lessonNum <= 3; lessonNum++) {
+            const lessonId = `lesson-${unitIndex + 1}-${lessonNum}`;
+            const lesson = {
+                id: lessonId,
+                unitId: unit.id,
+                title: `${unit.title} - Lesson ${lessonNum}`,
+                description: `Lesson ${lessonNum} of ${unit.title} unit`,
+                estimatedMinutes: 45,
+                difficultyLevel: unitIndex + 1,
+                isPublished: true
+            };
+            curriculumData.lessons.push(lesson);
+
+            // Generate exercises for each lesson
+            const exerciseTypes = ['reading', 'writing', 'speaking', 'listening', 'vocabulary', 'grammar', 'culture'];
+            exerciseTypes.forEach((type, typeIndex) => {
+                const exerciseId = `exercise-${unitIndex + 1}-${lessonNum}-${typeIndex + 1}`;
+                const exercise = {
+                    id: exerciseId,
+                    lessonId: lessonId,
+                    title: `${type.charAt(0).toUpperCase() + type.slice(1)} Exercise`,
+                    description: `${type} exercise for ${unit.title} lesson ${lessonNum}`,
+                    type: type,
+                    estimatedMinutes: 10,
+                    difficultyLevel: unitIndex + 1,
+                    isPublished: true
+                };
+                curriculumData.exercises.push(exercise);
+            });
+        }
+    });
+
+    // Update UI
+    updateCounts();
+    renderCourses();
+    renderUnits();
+    renderLessons();
+    renderExercises();
+    updateAnalytics();
+
+    showStatus(`✅ Demo data loaded: ${curriculumData.lessons.length} lessons and ${curriculumData.exercises.length} exercises`, 'success');
 }
 
 // Show status messages
