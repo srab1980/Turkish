@@ -25,8 +25,8 @@ export class CoursesService {
     const queryBuilder = this.courseRepository
       .createQueryBuilder('course')
       .leftJoinAndSelect('course.units', 'units')
-      .orderBy('course.order', 'ASC')
-      .addOrderBy('units.order', 'ASC');
+      .orderBy('course.orderIndex', 'ASC')
+      .addOrderBy('units.orderIndex', 'ASC');
 
     if (level) {
       queryBuilder.andWhere('course.level = :level', { level });
@@ -40,9 +40,11 @@ export class CoursesService {
   }
 
   async findCourseById(id: string): Promise<Course> {
+    // TODO: Consider creating different DTOs for different contexts (e.g., course preview vs course detail)
+    // and select relations more granularly based on what's needed to avoid over-fetching.
     const course = await this.courseRepository.findOne({
       where: { id },
-      relations: ['units', 'units.lessons', 'units.lessons.exercises'],
+      relations: ['units', 'units.lessons'], // Removed 'units.lessons.exercises' for default load
     });
 
     if (!course) {
@@ -115,36 +117,44 @@ export class CoursesService {
 
   // Course statistics and analytics
   async getCourseStats(courseId: string) {
-    const course = await this.courseRepository
+    const courseData = await this.courseRepository
       .createQueryBuilder('course')
-      .leftJoinAndSelect('course.units', 'units')
-      .leftJoinAndSelect('units.lessons', 'lessons')
-      .leftJoinAndSelect('lessons.exercises', 'exercises')
+      .select([
+        'course.id',
+        'course.title',
+        'course.level',
+        'course.estimatedHours',
+        'COUNT(DISTINCT units.id) AS "totalUnits"',
+        'COUNT(DISTINCT lessons.id) AS "totalLessons"',
+        'COUNT(DISTINCT exercises.id) AS "totalExercises"',
+      ])
+      .leftJoin('course.units', 'units')
+      .leftJoin('units.lessons', 'lessons')
+      .leftJoin('lessons.exercises', 'exercises')
       .where('course.id = :courseId', { courseId })
-      .getOne();
+      .groupBy('course.id')
+      .getRawOne();
 
-    if (!course) {
-      throw new NotFoundException('Course not found');
+    if (!courseData) {
+      throw new NotFoundException('Course not found or no data available');
     }
 
-    const totalUnits = course.units?.length || 0;
-    const totalLessons = course.units?.reduce((sum, unit) => sum + (unit.lessons?.length || 0), 0) || 0;
-    const totalExercises = course.units?.reduce((sum, unit) => 
-      sum + (unit.lessons?.reduce((lessonSum, lesson) => 
-        lessonSum + (lesson.exercises?.length || 0), 0) || 0), 0) || 0;
+    const totalUnits = parseInt(courseData.totalUnits, 10) || 0;
+    const totalLessons = parseInt(courseData.totalLessons, 10) || 0;
+    const totalExercises = parseInt(courseData.totalExercises, 10) || 0;
 
     return {
       course: {
-        id: course.id,
-        title: course.title,
-        level: course.level,
-        estimatedHours: course.estimatedHours,
+        id: courseData.course_id,
+        title: courseData.course_title,
+        level: courseData.course_level,
+        estimatedHours: courseData.course_estimatedHours,
       },
       stats: {
         totalUnits,
         totalLessons,
         totalExercises,
-        isComplete: totalUnits > 0 && totalLessons > 0,
+        isComplete: totalUnits > 0 && totalLessons > 0, // This logic might need refinement based on actual completion criteria
       },
     };
   }

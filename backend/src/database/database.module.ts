@@ -53,9 +53,9 @@ import { UserSession } from '../auth/entities/user-session.entity';
           Notification,
           UserSession,
         ],
-        synchronize: true, // Enable sync to create tables
+        synchronize: false, // Should be false in production; use migrations
         logging: process.env.NODE_ENV === 'development',
-        dropSchema: true, // Drop and recreate schema
+        dropSchema: false, // Must be false to preserve data
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
       }),
       inject: [ConfigService],

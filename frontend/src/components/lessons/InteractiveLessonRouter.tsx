@@ -1,22 +1,27 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProgressUpdater } from '@/contexts/UserProgressContext';
+import dynamic from 'next/dynamic';
 
-// Import all the interactive components
-import FlashcardSystem from '../flashcards/FlashcardSystem';
-import PictureMatchingGame from '../games/PictureMatchingGame';
-import WordScrambleGame from '../games/WordScrambleGame';
-import AnimatedGrammarLesson from '../grammar/AnimatedGrammarLesson';
-import SentenceBuilder from '../grammar/SentenceBuilder';
-import AudioSystem from '../audio/AudioSystem';
-import SpeechRecognition from '../speech/SpeechRecognition';
-import GamificationSystem from '../gamification/GamificationSystem';
-import InteractiveReading from '../reading/InteractiveReading';
-import YaSizPersonalization from '../personalization/YaSizPersonalization';
-import EglenelimOgrenelimGames from '../games/EglenelimOgrenelimGames';
-import ErrorDetectionQuiz from '../exercises/ErrorDetectionQuiz';
+// Dynamically import all interactive components for lazy loading
+const FlashcardSystem = dynamic(() => import('../flashcards/FlashcardSystem'), { suspense: true });
+const PictureMatchingGame = dynamic(() => import('../games/PictureMatchingGame'), { suspense: true });
+const WordScrambleGame = dynamic(() => import('../games/WordScrambleGame'), { suspense: true });
+const AnimatedGrammarLesson = dynamic(() => import('../grammar/AnimatedGrammarLesson'), { suspense: true });
+const SentenceBuilder = dynamic(() => import('../grammar/SentenceBuilder'), { suspense: true });
+const AudioSystem = dynamic(() => import('../audio/AudioSystem'), { suspense: true });
+const SpeechRecognition = dynamic(() => import('../speech/SpeechRecognition'), { suspense: true });
+// Note: GamificationSystem is used for a popup, not an exercise type, so dynamic import might not be needed here unless it's heavy.
+// import GamificationSystem from '../gamification/GamificationSystem';
+const InteractiveReading = dynamic(() => import('../reading/InteractiveReading'), { suspense: true });
+const YaSizPersonalization = dynamic(() => import('../personalization/YaSizPersonalization'), { suspense: true });
+const EglenelimOgrenelimGames = dynamic(() => import('../games/EglenelimOgrenelimGames'), { suspense: true });
+const ErrorDetectionQuiz = dynamic(() => import('../exercises/ErrorDetectionQuiz'), { suspense: true });
+
+// TODO: Add a generic loading spinner component for Suspense fallback
+const ExerciseLoadingFallback = () => <div className="text-center p-8">Loading exercise...</div>;
 
 // Exercise variety mapping for each unit to ensure no repetition within units
 const getExerciseTypeForLesson = (unitId: string, lessonNumber: number) => {
@@ -405,7 +410,9 @@ export default function InteractiveLessonRouter({
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              {renderExercise()}
+              <Suspense fallback={<ExerciseLoadingFallback />}>
+                {renderExercise()}
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </div>

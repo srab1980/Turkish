@@ -133,40 +133,48 @@ const LessonsPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const loadCurriculum = async () => {
+    const loadInitialLessons = async () => {
       try {
         setLoading(true);
+        // TODO: Replace with actual API call to fetch paginated/filtered lessons
+        // For now, we'll still use the apiService which might use the local curriculumApi
+        // but ideally, apiService.getLessons() would fetch from a backend endpoint.
+        // Example: const data = await apiService.getLessons({ page: 1, limit: 20, difficulty: selectedDifficulty, category: selectedCategory, search: searchQuery });
+        // setLessons(data.lessons);
+        // setUnits(data.units); // Or fetch units separately if needed
+
+        // Simulating the existing behavior but through apiService to highlight the intended change path
+        const allLessons = await apiService.getLessons(); // This currently uses curriculumApi internally
+        const allUnits = await apiService.getUnits();     // This also uses curriculumApi internally
         
-        // Get all lessons and units from curriculum
-        const allLessons = curriculumApi.getAllLessons();
-        const allUnits = curriculumApi.getUnits();
-        
-        console.log('📚 Loaded curriculum:', {
-          lessons: allLessons.length,
-          units: allUnits.length
+        console.log('📚 Loaded initial lessons via apiService:', {
+          lessons: allLessons?.length || 0,
+          units: allUnits?.length || 0
         });
         
-        setLessons(allLessons);
-        setUnits(allUnits);
+        setLessons(allLessons || []);
+        setUnits(allUnits || []);
+
       } catch (error) {
-        console.error('❌ Failed to load curriculum:', error);
+        console.error('❌ Failed to load lessons:', error);
+        // TODO: Show user-friendly error message
       } finally {
         setLoading(false);
       }
     };
 
-    loadCurriculum();
-  }, []);
+    loadInitialLessons();
+  }, []); // Consider re-fetching when filters change if backend handles filtering
 
-  // Filter and search lessons
+  // Client-side filtering remains for now. Ideally, filtering would be backend-driven.
   const filteredLessons = lessons.filter(lesson => {
     const matchesSearch = lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         lesson.description.toLowerCase().includes(searchQuery.toLowerCase());
+                         (lesson.description && lesson.description.toLowerCase().includes(searchQuery.toLowerCase()));
     
     const matchesDifficulty = !selectedDifficulty || lesson.difficultyLevel === selectedDifficulty;
     
     const matchesCategory = !selectedCategory || 
-                           lesson.exercises.some(exercise => exercise.type === selectedCategory);
+                           (lesson.exercises && lesson.exercises.some(exercise => exercise.type === selectedCategory));
     
     return matchesSearch && matchesDifficulty && matchesCategory;
   });
